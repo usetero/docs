@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Hermit cache
+.hermit/
+
+# Task
+.task/
+
+# Environment
+.envrc.local
+
+# Mintlify
+.mintlify/
+_dist/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*

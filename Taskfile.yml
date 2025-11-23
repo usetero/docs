@@ -1,0 +1,34 @@
+version: "3"
+
+tasks:
+  do:
+    desc: "Fast development loop"
+    aliases: ["d"]
+    cmds:
+      - task: format
+      - task: lint
+
+  dev:
+    desc: "Start Mintlify dev server"
+    cmds:
+      - pnpm dev
+
+  build:
+    desc: "Build documentation"
+    cmds:
+      - pnpm build
+
+  format:
+    desc: "Format MDX files"
+    cmds:
+      - echo "Format task - add prettier when needed"
+
+  lint:
+    desc: "Lint documentation"
+    cmds:
+      - echo "Lint task - add vale or textlint when needed"
+
+  install:
+    desc: "Install dependencies"
+    cmds:
+      - pnpm install
