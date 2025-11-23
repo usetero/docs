@@ -9,7 +9,17 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [],
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Coming Soon",
+            "pages": []
+          }
+        ]
+      }
+    ],
     "global": {
       "anchors": [
         {
