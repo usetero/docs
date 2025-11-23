@@ -23,15 +23,20 @@ tasks:
     cmds:
       - echo "Format task - add prettier when needed"
 
+  check:
+    desc: "Run all checks"
+    cmds:
+      - task: check:links
+
+  check:links:
+    desc: "Check for broken links"
+    cmds:
+      - pnpm exec mint broken-links
+
   lint:
     desc: "Lint documentation"
     cmds:
       - echo "Lint task - add vale or textlint when needed"
-
-  links:
-    desc: "Check for broken links"
-    cmds:
-      - pnpm exec mint broken-links
 
   install:
     desc: "Install dependencies"
