@@ -28,6 +28,11 @@ tasks:
     cmds:
       - echo "Lint task - add vale or textlint when needed"
 
+  links:
+    desc: "Check for broken links"
+    cmds:
+      - pnpm exec mint broken-links
+
   install:
     desc: "Install dependencies"
     cmds:
