@@ -1,0 +1,102 @@
+---
+title: "Privacy"
+description: "What personal data we collect and how we handle it."
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+## What Personal Data We Collect
+
+**Account information** - Name, email address, company name for users who create Tero accounts.
+
+**Authentication data** - Login credentials, SSO tokens, multi-factor authentication settings.
+
+**Usage data** - Which features you use, pages you visit, actions you take in the product.
+
+**Telemetry metadata** - Service names, event types, volume metrics from your observability data. This is metadata about your telemetry, not the telemetry content itself.
+
+**Billing information** - Payment method details processed by our payment provider (Stripe). We don't store credit card numbers.
+
+## What We Don't Collect
+
+**Customer data from your logs** - We don't store log content, metric values, trace data, or any personal data that appears in your telemetry.
+
+**End user data** - We don't collect data about your customers or end users. Only metadata about telemetry patterns.
+
+## How We Use Your Data
+
+**Provide the service** - Analyze your telemetry, build the semantic catalog, identify waste, generate recommendations.
+
+**Improve the product** - Understand how features are used, identify bugs, prioritize development.
+
+**Communicate with you** - Send product updates, security notifications, billing information.
+
+**Support** - Respond to questions, troubleshoot issues, provide customer success.
+
+We don't sell your data. We don't use it for advertising. We don't share it with third parties except as described in our Sub-Processors page.
+
+## Where Data Is Stored
+
+**Control plane data** - Stored in Google Cloud Platform (United States) when using Tero-hosted control plane.
+
+**Self-hosted option** - All data stays in your infrastructure when you self-host the control plane.
+
+**Backups** - Encrypted backups stored in GCP (United States), retained for 30 days.
+
+## Data Subject Rights
+
+You have rights regarding your personal data.
+
+**Access** - Request a copy of your personal data. Email [{securityEmail}](mailto:{securityEmail}).
+
+**Correction** - Update incorrect information in your account settings or contact us.
+
+**Deletion** - Request deletion of your account and associated data. Email [{securityEmail}](mailto:{securityEmail}). We'll delete within 30 days.
+
+**Portability** - Request your data in machine-readable format (JSON).
+
+**Objection** - Object to processing of your data for specific purposes.
+
+We respond to data subject requests within 30 days.
+
+## Data Retention
+
+**Account data** - Retained while your account is active.
+
+**Telemetry metadata** - Retained while your workspace is active. Deleted when you delete the workspace.
+
+**Usage data** - Retained for 2 years for product analytics.
+
+**Backups** - Encrypted backups retained for 30 days, then permanently deleted.
+
+**Deleted data** - Permanently deleted within 30 days of deletion request. Backup copies deleted when backups expire.
+
+## Cookies and Tracking
+
+**Essential cookies** - Session management, authentication, security. Required for the product to work.
+
+**Analytics** - We use analytics to understand product usage. You can opt out in your account settings.
+
+**No advertising trackers** - We don't use advertising cookies or third-party ad networks.
+
+## International Data Transfers
+
+**Default hosting** - Data stored in United States (GCP us-central1 region) when using Tero-hosted control plane.
+
+**EU customers** - We provide Standard Contractual Clauses for GDPR compliance.
+
+**Self-hosted option** - Choose your region. Data stays where you deploy it.
+
+## Children's Privacy
+
+Tero is not intended for children under 13. We don't knowingly collect data from children.
+
+## Privacy Policy Updates
+
+We'll notify you of material changes to our privacy practices. Continued use after notification means acceptance of changes.
+
+## Questions?
+
+Privacy questions? Data processing agreement? GDPR documentation?
+
+Email [{securityEmail}](mailto:{securityEmail}).

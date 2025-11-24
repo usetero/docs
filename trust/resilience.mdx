@@ -1,0 +1,96 @@
+---
+title: "Resilience"
+description: "How Tero's architecture minimizes risk to your systems."
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+## Progressive Risk Model
+
+Tero's architecture is designed around progressive trust and minimal risk. You start with zero infrastructure changes and zero production impact. You add capabilities as you gain confidence.
+
+**Read-only API integration** - Connect Tero to your observability platform (Datadog, etc.) with read-only permissions. Tero analyzes your telemetry, builds the semantic catalog, identifies waste. Nothing changes in your infrastructure. No risk to production systems.
+
+**Write access (optional)** - Grant write permissions if you want Tero to configure optimizations for you (exclusion rules, sampling policies). This is optional. You can implement recommendations yourself and keep Tero read-only indefinitely.
+
+**Edge deployment (optional)** - Deploy edge proxy in your infrastructure when you want deeper savings. This is where Tero can enter your data path, so we've designed it for resilience.
+
+Each step is optional. Many customers stay API-only. Some add write permissions. Edge is for customers who want maximum control and savings.
+
+## Control Plane Availability
+
+The control plane is not in your critical path. It runs separately from your production systems.
+
+**Platform** - Google Cloud Platform, multi-zone deployment.
+
+**Uptime target** - 99.9% availability.
+
+**Failure impact** - If the control plane is unavailable, your existing quality rules continue executing in edge instances. No loss of filtering capability. Your production systems are unaffected.
+
+**Monitoring** - Real-time monitoring with GCP operations suite. Automated alerts for performance or availability issues.
+
+**Recovery** - Automated failover between zones. Manual failover between regions if needed.
+
+## Edge Resilience
+
+The edge proxy is designed to fail safe. It never blocks your telemetry flow.
+
+**Fail-open behavior** - If edge encounters any error it can't handle, it passes data through unfiltered. Your observability data reaches your vendor. You might send more data than intended temporarily, but you never lose visibility.
+
+**Performance impact** - Edge processes telemetry at line rate with minimal latency (typically <1ms added). We benchmark continuously and optimize for throughput.
+
+**Control plane dependency** - Edge pulls quality rules from the control plane on startup and caches them locally. If the control plane becomes unreachable, edge continues using cached rules. No interruption to filtering.
+
+**Rule updates** - When quality rules change, edge pulls updates from the control plane. If the update fails, edge continues with existing rules until the connection is restored.
+
+**Health checks** - Edge exposes health endpoints. Monitor edge health in your existing systems. If edge fails health checks, your orchestration can restart it or route around it.
+
+## Edge Deployment Options
+
+You control where and how edge runs. Choose the architecture that fits your reliability requirements.
+
+**Agent sidecar** - Deploy edge as a sidecar container alongside your telemetry agent (Datadog agent, OTEL collector, etc.). Data flows locally between containers. If edge fails, agent continues sending unfiltered data to vendor.
+
+**Pipeline sidecar** - Deploy edge in your existing telemetry pipeline (after log aggregation, before vendor egress). Same fail-open behavior. Centralized deployment for simpler management.
+
+**Central egress point** - Deploy edge as a proxy at your network boundary. All telemetry flows through it before leaving your network. Single point of control, but requires careful capacity planning.
+
+**Kubernetes-native** - Deploy as DaemonSet (per-node filtering) or Deployment (centralized). Use Kubernetes health checks and automatic restarts. Standard observability with Prometheus metrics.
+
+Each option has different resilience characteristics. We'll help you choose based on your infrastructure and requirements.
+
+## Data Durability
+
+The control plane stores your semantic catalog and quality rules. This data is backed up and replicated.
+
+**Backups** - Automated daily backups encrypted and stored in GCP Cloud Storage. Retained for 30 days.
+
+**Replication** - PostgreSQL database replicated across availability zones. Automatic failover if primary zone fails.
+
+**Recovery objectives** - RTO (Recovery Time Objective): 4 hours for full control plane restoration. RPO (Recovery Point Objective): Maximum 24 hours of data loss from last backup.
+
+**Self-hosted option** - When you self-host the control plane, you control backups and replication. Use your existing backup infrastructure and policies.
+
+## Incident Response
+
+**Detection** - Automated monitoring detects availability or performance issues. On-call engineer notified immediately.
+
+**Communication** - Status page shows real-time control plane availability. For incidents affecting customer data or edge behavior, we notify affected customers within 24 hours.
+
+**Post-incident** - Root cause analysis after every incident. Improvements implemented to prevent recurrence. Detailed reports available on request.
+
+**Status page** - Real-time status at https://status.usetero.com. Subscribe for incident notifications.
+
+## Disaster Recovery Testing
+
+**Quarterly testing** - We test disaster recovery procedures quarterly. Simulated failures of database, control plane, and individual zones.
+
+**Chaos engineering** - Regular chaos testing in staging environment. Validate fail-open behavior, rule caching, and degraded operation.
+
+**Results** - Test results documented and available to enterprise customers on request.
+
+## Questions?
+
+Need architecture review? Want to discuss edge deployment strategies? Questions about failure modes?
+
+Email [{securityEmail}](mailto:{securityEmail}).

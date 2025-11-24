@@ -1,0 +1,111 @@
+---
+title: "Security"
+description: "What data we handle and how we protect it."
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+## What Data We Handle
+
+**We build a semantic catalog of your telemetry, not a data warehouse.**
+
+When you connect Tero to your observability platform, we read log samples to understand patterns and structure. We use this to build metadata about what you're sending—schemas, volumes, quality patterns.
+
+### What We Store
+
+- Event schemas (field names, types, patterns)
+- Volume metrics (events per hour, per service)
+- Quality classifications (valuable, waste, mixed)
+- Rules and configurations you create
+- Account and workspace settings
+
+### What We Don't Store
+
+- Raw log content
+- Metric values
+- Trace data
+- Customer data from your logs
+
+**Example:** We store "payment_failed has fields: user_id (string), error_code (string), amount (number)" but NOT "user_id=12345, error_code=CARD_DECLINED, amount=99.99".
+
+### AI Analysis
+
+We use AI to classify telemetry and identify patterns. By default, we use Anthropic Claude. Sample data is sent to the AI, processed in memory, then discarded—never persisted in our database.
+
+You can configure Tero to use your approved AI provider instead (AWS Bedrock, Azure OpenAI, etc.). Or self-host the control plane entirely—data never leaves your network.
+
+## Infrastructure
+
+**Platform** - Google Cloud Platform.
+
+**Encryption** - Everything encrypted in transit (TLS 1.3) and at rest (AES-256).
+
+**Isolation** - Production, staging, and development run in separate GCP projects.
+
+**Network security** - Private networks, VPC isolation, minimal public exposure.
+
+**Monitoring** - GCP Security Command Center monitors for threats. All infrastructure access logged.
+
+**Database** - PostgreSQL managed by GCP. Encrypted, backed up daily, replicated across zones.
+
+## Access Controls
+
+**Authentication** - SSO with multi-factor authentication required. No shared accounts.
+
+**Role-based access** - Least privilege. Engineers access development environments. Limited production access for operations only.
+
+**Temporary access** - Production access is time-limited and requires justification.
+
+**Audit logs** - Every production access logged with who, what, when, and why.
+
+## Application Security
+
+**Code review** - Every change reviewed before merging. No solo production deploys.
+
+**Dependencies** - Automated scanning for vulnerabilities. Regular security updates.
+
+**Secrets** - Stored in Doppler and GCP Secret Manager. Never in code or config files.
+
+**APIs** - Rate limiting, authentication, input validation on all endpoints.
+
+## Edge Security
+
+The edge proxy runs in your infrastructure.
+
+**Local processing** - Edge applies quality rules at line rate in your network. Only rule execution results leave your infrastructure—no log content, no metric values, no trace data.
+
+**Flexible deployment** - Deploy as sidecar, in your pipeline, or standalone. You control the architecture.
+
+**Rule sync** - Edge pulls quality rules from the control plane over encrypted connection. You can review rules before deployment.
+
+## Self-Hosted Option
+
+The entire control plane can run in your infrastructure.
+
+**What runs in your network** - Control plane service, PostgreSQL database, semantic catalog—everything.
+
+**Your data stays yours** - Nothing leaves your infrastructure. We provide the software, you control the deployment.
+
+**Your AI** - Use your AI infrastructure with your keys.
+
+**Support** - We provide updates, documentation, and support. You manage the infrastructure.
+
+## Incident Response
+
+**Detection** - Automated monitoring, application alerts, anomaly detection.
+
+**Response** - Documented incident response plan. Security team notified immediately.
+
+**Communication** - If an incident affects customer data, we notify affected customers within 24 hours.
+
+**Post-incident** - Root cause analysis and improvements after every incident.
+
+## Responsible Disclosure
+
+Found a security issue? Email [{securityEmail}](mailto:{securityEmail}). We'll acknowledge within 24 hours and keep you updated as we investigate and fix.
+
+## Questions?
+
+Need architecture diagrams? Security questionnaire responses? Data flow details?
+
+Email [{securityEmail}](mailto:{securityEmail}).
