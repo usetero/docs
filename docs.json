@@ -23,7 +23,7 @@
         "tab": "Trust Center",
         "groups": [
           {
-            "group": "",
+            "group": "Trust Center",
             "pages": [
               "trust/overview",
               "trust/security",
