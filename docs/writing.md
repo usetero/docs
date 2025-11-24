@@ -57,13 +57,15 @@ We layer our own tone and voice on top of these frameworks.
 
 **Corporate speak** - "Leverage our platform to empower your teams" → "Use Tero to reduce observability costs"
 
+**Defensive posturing** - "This isn't like other vendors" or "We're not just another tool". Don't position against others, just explain what you do.
+
 **Unnecessary qualifiers** - "arguably", "potentially", "relatively", "somewhat" - These add noise.
 
 **Throat-clearing** - "Moreover", "Furthermore", "Additionally" - Just make your next point.
 
 **Excessive bolding** - When everything is bold, nothing is. Let the ideas carry weight.
 
-**Self-congratulation** - Don't tell readers something is "thoughtful" or "powerful". Show them through clear explanation.
+**Self-congratulation** - Don't tell readers something is "thoughtful" or "powerful" or "not a checkbox exercise". Show them through clear explanation. Let the work speak.
 
 ### Writing for Different Doc Types
 
@@ -88,12 +90,15 @@ We layer our own tone and voice on top of these frameworks.
 - Examples without lengthy explanations
 - Scannable and searchable
 
-**Explanation (Manual: Introduction, Understanding Your Data)**
+**Explanation (Manual: Introduction, Understanding Your Data, Trust Center)**
 - Build mental models
 - Use examples and analogies
 - Show how pieces connect
 - Answer "why" questions
 - Take time to develop ideas
+- More formal than tutorials, less procedural than how-tos
+- Clear and precise, but still conversational
+- Focus on building trust and understanding, not teaching tasks
 
 ### Sentence and Paragraph Structure
 
@@ -117,7 +122,24 @@ Use formatting to clarify structure, not to add emphasis.
 
 **Callouts** (Info, Warning, Tip boxes) for important asides. Don't overuse.
 
+**Accordions** for optional technical details, infrastructure specs, long lists. Don't hide core trust messages or important explanations behind accordions. Readers should get the essential information without clicking.
+
 **Bolding** rarely. Only for critical terms on first use or genuine emphasis.
+
+## Gold Standard Examples
+
+When in doubt about tone or structure, reference these examples:
+
+**Trust/Security Pages:** [37signals Security](https://37signals.com/policies/security)
+- Clear, direct, specific
+- Short sections, scannable headers
+- No fluff, every sentence does work
+- Confident without being cocky
+- Links to details without bloating the page
+
+**Not these:**
+- Datadog: Generic enterprise speak, feels like compliance checkbox
+- Sentry /trust/: Tries too hard to be casual ("pain in the ass"), forced personality
 
 ## For Tero Employees
 
