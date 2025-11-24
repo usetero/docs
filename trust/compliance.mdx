@@ -1,96 +1,77 @@
 ---
 title: "Compliance"
 description: "Certifications, audit reports, and compliance status."
+icon: "certificate"
+iconType: "duotone"
 ---
 
 import { securityEmail } from '/snippets/variables.mdx';
 
-## Current Status
+Compliance status depends on your deployment option. Self-hosted gives you complete control.
 
-We're early stage and building compliance systematically. Here's where we are.
+## Certifications & Frameworks
 
-**SOC 2 Type 2** - Not certified yet. Targeting completion Q2 2025. Our infrastructure and practices are designed to meet SOC 2 requirements.
+| Framework | Tero-Hosted | Self-Hosted |
+|-----------|-------------|-------------|
+| **SOC 2 Type 2** | <Badge color="blue" icon="calendar">Planned Q2 2025</Badge> | <Badge color="green" icon="circle-check">Inherit Your Certification</Badge> |
+| **Penetration Testing** | <Badge color="blue" icon="calendar">Planned Q1 2025</Badge> | <Badge color="green" icon="circle-check">Include in Your Testing</Badge> |
+| **ISO 27001** | <Badge color="blue" icon="calendar">Planned H2 2025</Badge> | <Badge color="green" icon="circle-check">Inherit Your Certification</Badge> |
+| **GDPR** | <Badge color="green" icon="circle-check">Compliant</Badge><br/>DPA and SCCs available | <Badge color="green" icon="circle-check">Your Infrastructure</Badge> |
+| **CCPA** | <Badge color="green" icon="circle-check">Compliant</Badge> | <Badge color="green" icon="circle-check">Your Infrastructure</Badge> |
+| **HIPAA** | <Badge color="gray" icon="circle-xmark">Not Applicable</Badge> | <Badge color="green" icon="circle-check">Use Your BAA</Badge> |
 
-**ISO 27001** - Not certified yet. Planned for 2025 following SOC 2 completion.
+## Available Documentation
 
-**Penetration Testing** - First third-party pen test planned Q1 2025. Results available to enterprise customers on request.
+**Data Processing Agreement** - Standard DPA with SCCs for GDPR compliance. Available on request.
 
-**Bug Bounty Program** - Not launched yet. Planned for Q2 2025 following pen test.
+**Security Questionnaires** - We respond to SIG, CAIQ, VSA, and custom questionnaires.
 
-## Supported Frameworks
+**Audit Reports** - SOC 2 and penetration test reports available after completion.
 
-**GDPR (General Data Protection Regulation)** - We provide data access, portability, deletion, and Standard Contractual Clauses for EU customers.
+**Architecture Documentation** - Diagrams and technical details for security reviews.
 
-**CCPA (California Consumer Privacy Act)** - We provide data access, deletion, and opt-out capabilities for California residents.
-
-**HIPAA** - Not certified. If you need HIPAA compliance, use the self-hosted control plane option with your own BAA.
-
-**PCI DSS** - Not applicable. We don't process, store, or transmit credit card data. Payments handled by Stripe (PCI DSS Level 1 certified).
-
-## Audit Reports
-
-**SOC 2 Report** - Not available yet. Targeting Q2 2025.
-
-**Penetration Test Report** - Not available yet. First test planned Q1 2025. Results available to enterprise customers under NDA.
-
-**Security Questionnaires** - We respond to standard questionnaires (SIG, CAIQ, VSA). Email [{securityEmail}](mailto:{securityEmail}) with your questionnaire.
-
-## Data Processing Agreement
-
-**DPA availability** - Standard DPA available on request for customers processing EU personal data.
-
-**Standard Contractual Clauses** - We provide SCCs for international data transfers under GDPR.
-
-**Business Associate Agreement** - Not available. For HIPAA requirements, use self-hosted option.
-
-Email [{securityEmail}](mailto:{securityEmail}) to request our DPA.
-
-## Compliance Controls
-
-Even without formal certifications, we implement security controls aligned with SOC 2 and ISO 27001:
-
-**Access management** - Role-based access, MFA required, least privilege principles.
-
-**Data protection** - Encryption in transit and at rest, secure key management, regular backups.
-
-**Change management** - Code review required, staging environment, rollback procedures.
-
-**Incident response** - Documented procedures, 24-hour notification for data incidents.
-
-**Vendor management** - Third-party risk assessment for all sub-processors (see Sub-Processors page).
-
-**Security monitoring** - Automated threat detection, audit logging, vulnerability scanning.
-
-**Employee security** - Background checks, security training, device management, offboarding procedures.
+Email [{securityEmail}](mailto:{securityEmail}) to request documentation.
 
 ## Self-Hosted Compliance
 
-For strict compliance requirements, the self-hosted control plane gives you complete control:
+When you self-host the control plane, compliance becomes simpler:
 
 **Your compliance boundary** - All data stays in your infrastructure. Tero never processes customer data.
 
-**Your certifications** - Inherit your existing SOC 2, ISO 27001, HIPAA, or other certifications.
+**Your certifications** - Inherit your existing SOC 2, ISO 27001, HIPAA, or other certifications. Tero runs as internal software.
+
+**Your audit scope** - Include Tero in your existing compliance audits. No separate vendor audit required.
+
+**Your data residency** - Deploy in any region. Meet your geographic data requirements.
 
 **Your BAA** - Use your own Business Associate Agreement for HIPAA compliance.
 
-**Your region** - Deploy in your required geographic region for data residency.
+This is the path for organizations with strict compliance requirements that can't wait for vendor certifications.
 
-**Your audit** - Include Tero in your existing compliance audits as internal software.
+## Compliance Controls
 
-## Compliance Roadmap
+Even without formal certifications, we implement controls aligned with SOC 2 and ISO 27001:
 
-**Q1 2025** - Third-party penetration test, vulnerability disclosure program.
+**Access management** - Role-based access, MFA required, least privilege, temporary production access.
 
-**Q2 2025** - SOC 2 Type 2 audit completion, bug bounty program launch.
+**Data protection** - Encryption in transit (TLS 1.3) and at rest (AES-256), secure key management, daily backups.
 
-**H2 2025** - ISO 27001 certification (based on customer demand).
+**Change management** - Code review required, staging environment, automated testing, rollback procedures.
 
-**2026** - Additional certifications based on enterprise customer requirements.
+**Incident response** - Documented plan, 24-hour notification for data incidents, post-incident reviews.
 
-This timeline assumes current customer demand and company growth. Email [{securityEmail}](mailto:{securityEmail}) if you need specific certifications for procurement—it helps us prioritize.
+**Vendor management** - Third-party risk assessment for all sub-processors. See Sub-Processors page.
 
-## Questions?
+**Security monitoring** - Automated threat detection, audit logging, vulnerability scanning, GCP Security Command Center.
 
-Need our DPA? Security questionnaire responses? Compliance documentation for your review?
+**Employee security** - Background checks, security training, device management, access revocation on offboarding.
 
-Email [{securityEmail}](mailto:{securityEmail}).
+## Contact
+
+<Card title="Compliance Questions & Documentation" icon="envelope" href={`mailto:${securityEmail}`}>
+  **Need documentation?** DPA, security questionnaires, audit reports, or architecture reviews.
+  
+  **Have compliance requirements?** Let us know what certifications you need. It helps us prioritize.
+  
+  Email us at **{securityEmail}**.
+</Card>

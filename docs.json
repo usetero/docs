@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "aspen",
+  "theme": "mint",
   "name": "Tero Documentation",
   "colors": {
     "primary": "#14b8a6",
@@ -21,6 +21,7 @@
       },
       {
         "tab": "Trust Center",
+        "icon": "shield-check",
         "groups": [
           {
             "group": "Trust Center",

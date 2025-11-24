@@ -1,6 +1,8 @@
 ---
 title: "Security"
 description: "What data we handle and how we protect it."
+icon: "shield-halved"
+iconType: "duotone"
 ---
 
 import { securityEmail } from '/snippets/variables.mdx';
@@ -100,12 +102,12 @@ The entire control plane can run in your infrastructure.
 
 **Post-incident** - Root cause analysis and improvements after every incident.
 
-## Responsible Disclosure
+## Contact Security
 
-Found a security issue? Email [{securityEmail}](mailto:{securityEmail}). We'll acknowledge within 24 hours and keep you updated as we investigate and fix.
-
-## Questions?
-
-Need architecture diagrams? Security questionnaire responses? Data flow details?
-
-Email [{securityEmail}](mailto:{securityEmail}).
+<Card title="Security Questions & Vulnerability Reports" icon="envelope" href={`mailto:${securityEmail}`}>
+  **Found a security issue?** We'll acknowledge within 24 hours and keep you updated as we investigate and fix.
+  
+  **Need documentation?** Architecture diagrams, security questionnaire responses, or data flow details.
+  
+  Email us at **{securityEmail}**.
+</Card>

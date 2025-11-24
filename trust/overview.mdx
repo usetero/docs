@@ -1,55 +1,52 @@
 ---
 title: "Overview"
 description: "How Tero handles your data and earns your trust."
+icon: "house"
+iconType: "duotone"
 ---
 
 import { securityEmail } from '/snippets/variables.mdx';
 
 Tero analyzes your observability telemetry to identify waste and suggest optimizations. We need access to some of your data to do this. This section explains what we see, what we store, and how we protect it.
 
-## How It Works
-
-**Start with read-only access.** Connect Tero to your observability platform (Datadog, etc.) with read-only API permissions. We analyze your telemetry, build a semantic catalog of what you're sending, and show you where the waste is. No infrastructure changes required.
-
-**Grant write access if you want us to optimize for you.** If you want Tero to configure exclusion rules or adjust sampling—instead of doing it yourself—grant write permissions to your observability platform. This is optional. Scope permissions however you need. Revoke them anytime.
-
-**Deploy edge when you're ready.** The edge proxy runs in your infrastructure and blocks waste before it leaves your network. This delivers the biggest savings but requires deploying software in your environment. Many customers start API-only and add edge later.
-
-**Self-host for complete control.** The control plane can run entirely in your infrastructure. Your data, your network, your compliance boundary. We provide the software, you run it.
-
-Progressive trust. You control every step.
-
-## What's Here
-
 <CardGroup cols={2}>
-  <Card title="Security" icon="shield-halved" href="/trust/security">
+  <Card title="Security" icon="shield-halved" iconType="duotone" href="/trust/security">
     What data we handle, how we protect it, and where it runs.
   </Card>
-  <Card title="Privacy" icon="user-lock" href="/trust/privacy">
+  <Card title="Privacy" icon="user-lock" iconType="duotone" href="/trust/privacy">
     What we collect, what we don't, and how you stay in control.
   </Card>
-  <Card title="Compliance" icon="certificate" href="/trust/compliance">
+  <Card title="Compliance" icon="certificate" iconType="duotone" href="/trust/compliance">
     Certifications, audit reports, and compliance status.
   </Card>
-  <Card title="Resilience" icon="heart-pulse" href="/trust/resilience">
+  <Card title="Resilience" icon="heart-pulse" iconType="duotone" href="/trust/resilience">
     How Tero's architecture minimizes risk to your systems.
   </Card>
 </CardGroup>
 
-## Where We Are
+## Progressive Trust
 
-We're early stage. Here's our current compliance status:
+You start with minimal access and add capabilities as you gain confidence. Every step is optional.
 
-**SOC 2:** Targeting completion Q2 2025. Our infrastructure and practices are designed to meet SOC 2 Type 2 requirements—we're not formally certified yet.
+<Steps>
+  <Step title="Start with read-only access">
+    Connect Tero to your observability platform (Datadog, etc.) with read-only API permissions. We analyze your telemetry, build a semantic catalog of what you're sending, and show you where the waste is. No infrastructure changes required.
+  </Step>
+  <Step title="Grant write access if you want us to optimize for you">
+    If you want Tero to configure exclusion rules or adjust sampling—instead of doing it yourself—grant write permissions to your observability platform. This is optional. Scope permissions however you need. Revoke them anytime.
+  </Step>
+  <Step title="Deploy edge when you're ready">
+    The edge proxy runs in your infrastructure and blocks waste before it leaves your network. This delivers the biggest savings but requires deploying software in your environment. Many customers start API-only and add edge later.
+  </Step>
+  <Step title="Self-host for complete control">
+    The control plane can run entirely in your infrastructure. Your data, your network, your compliance boundary. We provide the software, you run it.
+  </Step>
+</Steps>
 
-**Penetration Testing:** First third-party pen test planned Q1 2025. Results available to enterprise customers on request.
-
-**GDPR/CCPA:** We provide data access, portability, and deletion. Our practices align with GDPR and CCPA requirements.
-
-If you need specific certifications or documentation for procurement, email [{securityEmail}](mailto:{securityEmail}). We'll work with you to meet your requirements or give you a clear timeline.
+Progressive trust. You control every step.
 
 ## Questions?
 
-Need a Data Processing Agreement? Security questionnaire? Architecture review?
-
-Email [{securityEmail}](mailto:{securityEmail}).
+<Card title="Contact Security Team" icon="envelope" href={`mailto:${securityEmail}`}>
+  Need a Data Processing Agreement? Security questionnaire? Architecture review? Email us at **{securityEmail}**.
+</Card>
