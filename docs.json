@@ -35,21 +35,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Support",
-          "href": "mailto:support@usetero.com",
-          "icon": "life-ring"
-        },
-        {
-          "anchor": "Status",
-          "href": "https://status.usetero.com",
-          "icon": "signal"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
@@ -58,10 +44,19 @@
   "navbar": {
     "links": [
       {
-        "label": "Sign In",
-        "href": "https://app.usetero.com"
+        "label": "Support",
+        "href": "mailto:support@usetero.com"
+      },
+      {
+        "label": "Status",
+        "href": "https://status.usetero.com"
       }
-    ]
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Sign In",
+      "href": "https://app.usetero.com"
+    }
   },
   "contextual": {
     "options": [
