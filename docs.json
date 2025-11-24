@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "palm",
   "name": "Tero Documentation",
   "colors": {
     "primary": "#16A34A",
@@ -18,18 +18,37 @@
             "pages": []
           }
         ]
+      },
+      {
+        "tab": "Trust Center",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["trust/overview"]
+          },
+          {
+            "group": "Details",
+            "pages": [
+              "trust/security",
+              "trust/privacy",
+              "trust/compliance",
+              "trust/resilience",
+              "trust/sub-processors"
+            ]
+          }
+        ]
       }
     ],
     "global": {
       "anchors": [
         {
           "anchor": "Support",
-          "href": "mailto:support@tero.com",
+          "href": "mailto:support@usetero.com",
           "icon": "life-ring"
         },
         {
           "anchor": "Status",
-          "href": "https://status.tero.com",
+          "href": "https://status.usetero.com",
           "icon": "signal"
         }
       ]
@@ -43,7 +62,7 @@
     "links": [
       {
         "label": "Sign In",
-        "href": "https://app.tero.com"
+        "href": "https://app.usetero.com"
       }
     ]
   },
