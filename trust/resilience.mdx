@@ -37,7 +37,7 @@ The edge proxy is designed to fail safe. It never blocks your telemetry flow.
 
 **Fail-open behavior** - If edge encounters any error it can't handle, it passes data through unfiltered. Your observability data reaches your vendor. You might send more data than intended temporarily, but you never lose visibility.
 
-**Performance impact** - Edge processes telemetry at line rate with minimal latency (typically <1ms added). We benchmark continuously and optimize for throughput.
+**Performance impact** - Edge processes telemetry at line rate with minimal latency (typically &lt;1ms added). We benchmark continuously and optimize for throughput.
 
 **Control plane dependency** - Edge pulls quality rules from the control plane on startup and caches them locally. If the control plane becomes unreachable, edge continues using cached rules. No interruption to filtering.
 
