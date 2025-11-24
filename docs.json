@@ -23,12 +23,9 @@
         "tab": "Trust Center",
         "groups": [
           {
-            "group": "Overview",
-            "pages": ["trust/overview"]
-          },
-          {
-            "group": "Details",
+            "group": "",
             "pages": [
+              "trust/overview",
               "trust/security",
               "trust/privacy",
               "trust/compliance",
