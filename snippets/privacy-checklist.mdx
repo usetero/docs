@@ -1,0 +1,62 @@
+#### What We Collect
+
+| Data Type | What We Collect | What We Don't Collect |
+|-----------|----------------|----------------------|
+| Account information | Name, email, company name | Government IDs, social security numbers |
+| Authentication | SSO tokens, MFA settings | Passwords (handled by your SSO provider) |
+| Telemetry metadata | Schemas, field types, volume patterns, quality classifications | Log content, metric values, trace data |
+| Usage data | Features used, actions taken in the product | Individual browsing behavior |
+| Billing information | Payment details via Stripe | Credit card numbers (stored by Stripe) |
+
+#### Who We Share Data With
+
+| Service | What We Share | Why |
+|---------|--------------|-----|
+| Google Cloud Platform | Control plane data, backups | Infrastructure hosting |
+| Anthropic (default) | Telemetry samples, not persisted | AI classification |
+| WorkOS | User email, authentication tokens | SSO and authentication |
+| Stripe | Billing information (self-service only) | Payment processing for self-service customers |
+| Self-hosted | Nothing (runs in your infrastructure) | Complete data control |
+
+See [Sub-Processors](/trust/sub-processors) for complete details.
+
+#### Your Rights
+
+| Right | How to Exercise |
+|-------|----------------|
+| Access your data | Email [{securityEmail}](mailto:{securityEmail}) for JSON export |
+| Correct your data | Update in account settings or email [{securityEmail}](mailto:{securityEmail}) |
+| Delete your data | Email [{securityEmail}](mailto:{securityEmail}) (deleted within 30 days) |
+| Export your data | Request machine-readable export |
+| Object to processing | Email [{securityEmail}](mailto:{securityEmail}) to discuss concerns |
+| Restrict processing | Request limits on specific uses |
+
+We respond to all requests within 30 days. GDPR (EU) and CCPA (California) rights are fully supported. Workspace deletion removes all associated telemetry metadata, quality rules, and configurations.
+
+#### Data Retention
+
+| Data Type | Retention Period |
+|-----------|-----------------|
+| Account data | While your account is active |
+| Telemetry metadata | While your workspace is active |
+| Quality rules | While your workspace is active |
+| Usage analytics | 2 years |
+| Backups | 30 days, then permanently deleted |
+
+When you delete your account or workspace, data is removed from active systems within 30 days. Backup copies are deleted when backups expire.
+
+#### Data Location
+
+**Tero-hosted:** United States (GCP us-central1)  
+**Self-hosted:** Your chosen region and infrastructure  
+**Edge proxy:** Always runs in your infrastructure
+
+#### Privacy Practices
+
+| Practice | Implementation |
+|---------|---------------|
+| Data minimization | Store metadata only, not log content or metric values |
+| Purpose limitation | Data used only for documented purposes |
+| Privacy by design | Architecture built to minimize data collection |
+| Transparency | Clear documentation of what we collect and why |
+| User control | Progressive access model, self-hosted option available |

@@ -1,104 +1,102 @@
 ---
 title: "Privacy"
-description: "What personal data we collect and how we handle it."
-icon: "user-lock"
+description: "What we collect, what we don't, and how you stay in control."
+icon: "lock"
 iconType: "duotone"
 ---
 
 import { securityEmail } from '/snippets/variables.mdx';
+import PrivacyChecklist from '/snippets/privacy-checklist.mdx';
+import PrivacyDocuments from '/snippets/privacy-documents.mdx';
+import ProgressiveTrustSteps from '/snippets/progressive-trust-steps.mdx';
 
-## What Personal Data We Collect
+<Frame>
+  <img src="/images/trust-center-privacy-hero.svg" alt="Privacy" />
+</Frame>
 
-**Account information** - Name, email address, company name for users who create Tero accounts.
+Privacy isn't a feature we added. It's built into how Tero works.
 
-**Authentication data** - Login credentials, SSO tokens, multi-factor authentication settings.
+<Info>
+**Looking for privacy details?** Jump to the [Reference section](#reference) at the bottom for our checklist and available documents.
+</Info>
 
-**Usage data** - Which features you use, pages you visit, actions you take in the product.
+## Metadata, Not Content
 
-**Telemetry metadata** - Service names, event types, volume metrics from your observability data. This is metadata about your telemetry, not the telemetry content itself.
+The fundamental privacy decision we made was architectural: build a semantic catalog of telemetry metadata, not a warehouse of log content.
 
-**Billing information** - Payment method details processed by our payment provider (Stripe). We don't store credit card numbers.
+When you connect Tero to your observability platform, we analyze log samples to understand structure and patterns. We extract the schema: what fields exist, what types they are, what semantic meaning they have. This becomes the catalog entry for that log event type.
 
-## What We Don't Collect
+The content itself—the actual error messages, the user IDs in your logs, the request parameters—we don't store it. We process samples in memory during classification, extract the metadata, and discard the content. This isn't a limitation. It's how the product works.
 
-**Customer data from your logs** - We don't store log content, metric values, trace data, or any personal data that appears in your telemetry.
+This means we can tell you "this log event appears 2 million times per hour and costs $8,000 per month" without ever seeing what those 2 million logs say. The metadata is enough to deliver value.
 
-**End user data** - We don't collect data about your customers or end users. Only metadata about telemetry patterns.
+For privacy, this changes everything. We're not asking you to trust us with your customer data or business secrets. We're not storing PII from your logs. We're building a catalog of patterns, not a database of content.
 
-## How We Use Your Data
+## Your Control
 
-**Provide the service** - Analyze your telemetry, build the semantic catalog, identify waste, generate recommendations.
+You control what data you share with Tero at every step. Each step is optional.
 
-**Improve the product** - Understand how features are used, identify bugs, prioritize development.
+<ProgressiveTrustSteps />
 
-**Communicate with you** - Send product updates, security notifications, billing information.
+## How AI Processing Works
 
-**Support** - Respond to questions, troubleshoot issues, provide customer success.
+We use AI to classify telemetry and understand quality. This requires sending log samples to an AI provider.
 
-We don't sell your data. We don't use it for advertising. We don't share it with third parties except as described in our Sub-Processors page.
+By default, we use Anthropic Claude. Sample logs are sent to Anthropic, processed in memory for classification, and the results are returned. The samples themselves are not persisted in Anthropic's systems or ours. This is enforced through API contracts.
 
-## Where Data Is Stored
+<Tip>
+**Need to use your approved AI provider?** Configure Tero to use AWS Bedrock, Azure OpenAI, or other providers with your API keys and compliance agreements. This works with both Tero-hosted and self-hosted deployments.
+</Tip>
 
-**Control plane data** - Stored in Google Cloud Platform (United States) when using Tero-hosted control plane.
+If you have approved AI providers, configure Tero to use them. AWS Bedrock, Azure OpenAI, or others. Use your API keys, your compliance agreements, your data residency requirements.
 
-**Self-hosted option** - All data stays in your infrastructure when you self-host the control plane.
+If you self-host the control plane, you control the entire AI pipeline. Use your models, your infrastructure, your security boundary.
 
-**Backups** - Encrypted backups stored in GCP (United States), retained for 30 days.
+The key point: AI classification happens on samples, not your full dataset. And samples are processed transiently, not stored.
 
-## Data Subject Rights
+## What Actually Gets Stored
 
-You have rights regarding your personal data.
+To be specific about what we store:
 
-**Access** - Request a copy of your personal data. Email [{securityEmail}](mailto:{securityEmail}).
+**Account data** includes your name, email, company name. This is what you provide when creating an account. We also store authentication tokens from your SSO provider (WorkOS) for single sign-on. For self-service customers, billing information is processed through Stripe (we don't store credit card numbers, Stripe does). Enterprise customers typically pay via invoice.
 
-**Correction** - Update incorrect information in your account settings or contact us.
+**Telemetry metadata** includes schemas (field names and types), volume metrics (events per hour), quality classifications (valuable, waste, mixed), and the quality rules you define. This is what enables the semantic catalog and quality management.
 
-**Deletion** - Request deletion of your account and associated data. Email [{securityEmail}](mailto:{securityEmail}). We'll delete within 30 days.
+**Usage data** includes which features you use, actions you take in the product, and where errors occur. Standard product analytics to improve the experience.
 
-**Portability** - Request your data in machine-readable format (JSON).
+<Tip>
+**Data residency requirements?** Self-host the control plane to keep all data in your chosen region and infrastructure. Your data never leaves your network. See [Compliance](/trust/compliance) for details.
+</Tip>
 
-**Objection** - Object to processing of your data for specific purposes.
+We keep data while it's useful. When you delete your account or workspace, we delete the data within 30 days. Backups are retained for 30 days, then permanently deleted.
 
-We respond to data subject requests within 30 days.
+## Privacy by Design
 
-## Data Retention
+Privacy wasn't bolted on after building the product. The semantic catalog architecture means we don't need log content to deliver value. The progressive trust model means you control access at every step. The self-hosted option means you can run everything in your network if requirements demand it.
 
-**Account data** - Retained while your account is active.
+This is privacy by design. The product works this way because we built it to respect data boundaries from the start.
 
-**Telemetry metadata** - Retained while your workspace is active. Deleted when you delete the workspace.
+## Reference
 
-**Usage data** - Retained for 2 years for product analytics.
+### Checklist
 
-**Backups** - Encrypted backups retained for 30 days, then permanently deleted.
+<PrivacyChecklist />
 
-**Deleted data** - Permanently deleted within 30 days of deletion request. Backup copies deleted when backups expire.
+See the complete [Checklist](/trust/checklist) across all trust areas.
 
-## Cookies and Tracking
+### Documents
 
-**Essential cookies** - Session management, authentication, security. Required for the product to work.
+<PrivacyDocuments />
 
-**Analytics** - We use analytics to understand product usage. You can opt out in your account settings.
-
-**No advertising trackers** - We don't use advertising cookies or third-party ad networks.
-
-## International Data Transfers
-
-**Default hosting** - Data stored in United States (GCP us-central1 region) when using Tero-hosted control plane.
-
-**EU customers** - We provide Standard Contractual Clauses for GDPR compliance.
-
-**Self-hosted option** - Choose your region. Data stays where you deploy it.
-
-## Children's Privacy
-
-Tero is not intended for children under 13. We don't knowingly collect data from children.
-
-## Privacy Policy Updates
-
-We'll notify you of material changes to our privacy practices. Continued use after notification means acceptance of changes.
+See all available [Documents](/trust/documents) across all trust areas.
 
 ## Questions?
 
-Privacy questions? Data processing agreement? GDPR documentation?
-
-Email [{securityEmail}](mailto:{securityEmail}).
+<Card 
+  title="Contact Privacy Team" 
+  icon="envelope" 
+  href={`mailto:${securityEmail}`}
+  horizontal
+>
+  Privacy questions? Data processing agreement? GDPR documentation? Email **{securityEmail}**.
+</Card>

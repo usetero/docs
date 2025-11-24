@@ -1,0 +1,75 @@
+#### Encryption & Data Protection
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Data encrypted in transit | <Badge color="green">Implemented</Badge> | TLS 1.3 for all connections |
+| Data encrypted at rest | <Badge color="green">Implemented</Badge> | AES-256 for database, backups, and temporary storage |
+| Encryption key management | <Badge color="green">Implemented</Badge> | GCP KMS with automatic rotation |
+| Database encryption | <Badge color="green">Implemented</Badge> | PostgreSQL encrypted connections required, private IP only |
+| Backup encryption | <Badge color="green">Implemented</Badge> | AES-256, geo-redundant storage, 30-day retention |
+
+#### Authentication & Access Control
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Multi-factor authentication | <Badge color="green">Required</Badge> | SSO via WorkOS with MFA enforcement |
+| Single sign-on (SSO) | <Badge color="green">Supported</Badge> | SAML 2.0, OpenID Connect |
+| Role-based access control | <Badge color="green">Implemented</Badge> | Least privilege, per-resource permissions |
+| Session management | <Badge color="green">Implemented</Badge> | 24-hour expiration, secure token storage |
+| API key security | <Badge color="green">Implemented</Badge> | Scoped permissions, rotation supported |
+| Production access controls | <Badge color="green">Implemented</Badge> | Time-limited, justification required, audit logged |
+| Password requirements | <Badge color="green">Enforced</Badge> | Minimum 12 characters, complexity requirements |
+
+#### Infrastructure Security
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Cloud provider | <Badge color="green">GCP</Badge> | Google Cloud Platform, us-central1 region |
+| Multi-zone deployment | <Badge color="green">Implemented</Badge> | Automatic failover between availability zones |
+| Network isolation | <Badge color="green">Implemented</Badge> | Private VPC, restricted access |
+| DDoS protection | <Badge color="green">Implemented</Badge> | Cloud Armor with rate limiting |
+| Container security | <Badge color="green">Implemented</Badge> | Immutable infrastructure, automatic patching |
+| Vulnerability scanning | <Badge color="green">Automated</Badge> | Dependency checks, container image scanning |
+| Infrastructure as code | <Badge color="green">Implemented</Badge> | Version controlled, peer reviewed |
+
+#### Monitoring & Incident Response
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Security monitoring | <Badge color="green">Active</Badge> | GCP Security Command Center, real-time alerts |
+| Application monitoring | <Badge color="green">Implemented</Badge> | Error tracking, performance monitoring |
+| Audit logging | <Badge color="green">Implemented</Badge> | Infrastructure and application changes logged |
+| Failed authentication tracking | <Badge color="green">Implemented</Badge> | Suspicious activity detection |
+| Incident response plan | <Badge color="green">Documented</Badge> | Response procedures, escalation paths |
+| Vulnerability disclosure | <Badge color="green">Active</Badge> | Responsible disclosure, 24-hour acknowledgment |
+
+#### Application Security
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Code review | <Badge color="green">Required</Badge> | Peer review for all changes |
+| Automated testing | <Badge color="green">Implemented</Badge> | Tests required before deployment |
+| Dependency scanning | <Badge color="green">Automated</Badge> | Vulnerability alerts, prompt patching |
+| Secrets management | <Badge color="green">Implemented</Badge> | Doppler and GCP Secret Manager |
+| Input validation | <Badge color="green">Implemented</Badge> | All API endpoints validated |
+| Rate limiting | <Badge color="green">Implemented</Badge> | Per-endpoint and per-user limits |
+| Security headers | <Badge color="green">Implemented</Badge> | HSTS, CSP, X-Frame-Options |
+
+#### Edge Security
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Customer infrastructure | <Badge color="green">Your Control</Badge> | Edge runs in your environment |
+| Fail-open design | <Badge color="green">By Design</Badge> | Never blocks observability data on error |
+| Local rule processing | <Badge color="green">Implemented</Badge> | No telemetry content sent to control plane |
+| Encrypted communication | <Badge color="green">Implemented</Badge> | TLS 1.3 for all control plane sync |
+| Deployment flexibility | <Badge color="green">Supported</Badge> | Sidecar, pipeline, or boundary deployment |
+
+#### Self-Hosted Security
+
+| Control | Status | Implementation |
+|---------|--------|----------------|
+| Self-hosted control plane | <Badge color="green">Available</Badge> | Complete infrastructure control |
+| Custom AI providers | <Badge color="green">Supported</Badge> | Use your AWS Bedrock, Azure OpenAI, or other providers |
+| Air-gapped deployment | <Badge color="surface">Contact Us</Badge> | Available for enterprise requirements |
+| Network isolation | <Badge color="green">Your Control</Badge> | Deploy within your security boundary |

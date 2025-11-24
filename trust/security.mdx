@@ -1,113 +1,158 @@
 ---
 title: "Security"
-description: "What data we handle and how we protect it."
+description: "What data we handle, how we protect it, and where it runs."
 icon: "shield-halved"
 iconType: "duotone"
 ---
 
 import { securityEmail } from '/snippets/variables.mdx';
+import SecurityChecklist from '/snippets/security-checklist.mdx';
+import SecurityDocuments from '/snippets/security-documents.mdx';
 
-## What Data We Handle
+<Frame>
+  <img src="/images/trust-center-security-hero.svg" alt="Security" />
+</Frame>
 
-**We build a semantic catalog of your telemetry, not a data warehouse.**
+We take security seriously. This page explains how we protect the data we handle, where it runs, and how we respond to threats.
 
-When you connect Tero to your observability platform, we read log samples to understand patterns and structure. We use this to build metadata about what you're sending—schemas, volumes, quality patterns.
+<Info>
+**Looking for security details?** Jump to the [Reference section](#reference) at the bottom for our checklist and available documents.
+</Info>
 
-### What We Store
+## What We Protect
 
-- Event schemas (field names, types, patterns)
-- Volume metrics (events per hour, per service)
-- Quality classifications (valuable, waste, mixed)
-- Rules and configurations you create
-- Account and workspace settings
+Security starts with architecture. We designed Tero to minimize risk at every integration point.
 
-### What We Don't Store
+<Frame>
+  <img src="/images/how-it-works.svg" alt="Tero Architecture" />
+</Frame>
 
-- Raw log content
-- Metric values
-- Trace data
-- Customer data from your logs
+You start with read-only API access to your observability platform. We analyze telemetry samples to build a semantic catalog: schemas, field types, volume patterns, quality classifications. You see the analysis, review recommendations, and decide what to implement yourself.
 
-**Example:** We store "payment_failed has fields: user_id (string), error_code (string), amount (number)" but NOT "user_id=12345, error_code=CARD_DECLINED, amount=99.99".
+When you're ready, grant write access. We configure exclusion rules and sampling policies directly in your observability platform instead of you implementing them manually. You scope these permissions however you need and revoke them anytime.
 
-### AI Analysis
+The edge proxy (optional) runs in your infrastructure. You deploy it, control it, monitor it. Rules sync from the control plane over encrypted connections, but edge operates independently. If the control plane goes offline, edge continues with cached rules.
 
-We use AI to classify telemetry and identify patterns. By default, we use Anthropic Claude. Sample data is sent to the AI, processed in memory, then discarded—never persisted in our database.
+We store the semantic catalog and your quality rules in the control plane. We don't store telemetry content. Not log messages, not metric values, not trace data. Your telemetry stays in your observability platform or gets filtered at the edge before reaching your vendor.
 
-You can configure Tero to use your approved AI provider instead (AWS Bedrock, Azure OpenAI, etc.). Or self-host the control plane entirely—data never leaves your network.
+This architecture separates the control plane (intelligence and optimization) from the data plane (processing and filtering). The control plane never sits in your telemetry path. Even with write access, we configure your systems through APIs, not by intercepting data.
 
-## Infrastructure
+## Infrastructure Security
 
-**Platform** - Google Cloud Platform.
+The control plane runs on Google Cloud Platform in a multi-zone configuration. If one zone fails, traffic shifts to another automatically.
 
-**Encryption** - Everything encrypted in transit (TLS 1.3) and at rest (AES-256).
+Everything is encrypted. Data in transit uses TLS 1.3. Data at rest uses AES-256. This includes the database, backups, and any temporary storage. Encryption keys are managed through GCP's Key Management Service with automatic rotation.
 
-**Isolation** - Production, staging, and development run in separate GCP projects.
+Network access is restricted. The control plane runs in a private VPC. Only specific services are exposed publicly, and those sit behind load balancers with DDoS protection. Internal services communicate over private networks.
 
-**Network security** - Private networks, VPC isolation, minimal public exposure.
+We monitor infrastructure continuously using GCP Security Command Center. This detects anomalies, flags misconfigurations, and alerts on potential threats. All access to infrastructure is logged.
 
-**Monitoring** - GCP Security Command Center monitors for threats. All infrastructure access logged.
-
-**Database** - PostgreSQL managed by GCP. Encrypted, backed up daily, replicated across zones.
+Database backups run daily and are encrypted. We retain backups for 30 days, stored in geographically separate regions from the primary database. Recovery is tested quarterly.
 
 ## Access Controls
 
-**Authentication** - SSO with multi-factor authentication required. No shared accounts.
+Authentication requires SSO with multi-factor authentication. No shared accounts. No password-only access.
 
-**Role-based access** - Least privilege. Engineers access development environments. Limited production access for operations only.
+Access is role-based. Engineers can access development and staging environments. Production access is limited to operations staff and requires justification. Production access is time-limited and expires automatically.
 
-**Temporary access** - Production access is time-limited and requires justification.
+Every production action is logged: who accessed what, when, and why. These logs are immutable and retained for compliance purposes.
 
-**Audit logs** - Every production access logged with who, what, when, and why.
+When employees leave, access is revoked immediately across all systems. We maintain a formal offboarding checklist that covers infrastructure, repositories, and third-party services.
 
 ## Application Security
 
-**Code review** - Every change reviewed before merging. No solo production deploys.
+Every code change requires review before merging. No one can push directly to production branches. Automated tests must pass before code can be deployed.
 
-**Dependencies** - Automated scanning for vulnerabilities. Regular security updates.
+We scan dependencies for known vulnerabilities. When a vulnerability is identified, we evaluate severity and patch within 7 days for critical issues, 30 days for high-severity issues.
 
-**Secrets** - Stored in Doppler and GCP Secret Manager. Never in code or config files.
+Secrets never live in code or configuration files. API keys, database credentials, and other secrets are stored in Doppler and GCP Secret Manager. Applications retrieve secrets at runtime.
 
-**APIs** - Rate limiting, authentication, input validation on all endpoints.
+All API endpoints implement rate limiting, authentication, and input validation. We assume all input is malicious until proven otherwise.
 
 ## Edge Security
 
-The edge proxy runs in your infrastructure.
+The edge proxy runs in your infrastructure, not ours. You control where it deploys and how it's configured.
 
-**Local processing** - Edge applies quality rules at line rate in your network. Only rule execution results leave your infrastructure—no log content, no metric values, no trace data.
+Edge applies quality rules locally. It processes telemetry at line rate and decides what to keep or drop based on rules synced from the control plane. Only rule execution results leave your infrastructure. No log content, no metric values, no trace data.
 
-**Flexible deployment** - Deploy as sidecar, in your pipeline, or standalone. You control the architecture.
+Edge is designed to fail open. If it encounters an error it can't handle, it passes data through unfiltered. This reduces many classes of failures, but putting any tool in your data path has operational risk. The complete mitigation is an upstream failover system that bypasses edge if it fails. We support this architecture but don't provide the failover component yet.
 
-**Rule sync** - Edge pulls quality rules from the control plane over encrypted connection. You can review rules before deployment.
+<Tip>
+**Evaluating edge deployment?** The edge proxy is [open source](https://github.com/usetero/edge) - built by the creators of Vector.dev with the same reliability focus. Fail-open design means processing errors won't block your telemetry. For additional resilience, we can help you architect an upstream failover system.
+</Tip>
 
-## Self-Hosted Option
+Rule sync happens over encrypted connections. Edge pulls rules from the control plane on startup and caches them locally. If the control plane becomes unreachable, edge continues using cached rules until connectivity is restored.
 
-The entire control plane can run in your infrastructure.
+You control the deployment architecture. Run edge as a sidecar to your agent, in your telemetry pipeline, or at your network boundary. Choose what makes sense for your security and reliability requirements.
 
-**What runs in your network** - Control plane service, PostgreSQL database, semantic catalog—everything.
+## AI Security
 
-**Your data stays yours** - Nothing leaves your infrastructure. We provide the software, you control the deployment.
+We use AI to classify telemetry and identify quality patterns. By default, this uses Anthropic Claude.
 
-**Your AI** - Use your AI infrastructure with your keys.
+Telemetry samples are sent to the AI provider, processed in memory, and the classification results are returned. The samples themselves are not persisted in our database or the AI provider's systems. This is enforced through API contracts with providers.
 
-**Support** - We provide updates, documentation, and support. You manage the infrastructure.
+If you prefer to use your own AI infrastructure, you can configure Tero to use AWS Bedrock, Azure OpenAI, or other providers with your own API keys. This means samples never leave your approved systems.
+
+If you self-host the control plane, you control the entire AI pipeline. Use your infrastructure, your models, your keys.
+
+## Self-Hosted Security
+
+When you self-host the control plane, everything runs in your infrastructure. The database, the application, the AI classification—all of it.
+
+Your data never leaves your network. We provide the software, you run it. Your security controls apply. Your compliance boundary is maintained.
+
+We provide updates, documentation, and support. You manage the infrastructure, monitoring, and incident response. This gives you complete control over security posture.
+
+Self-hosting makes sense for organizations with strict data residency requirements, regulatory constraints, or security policies that prohibit external data processing.
+
+<Tip>
+**Need to keep data in your infrastructure?** Self-host the control plane. Your data never leaves your network. We provide the software, you run it with your security controls.
+</Tip>
 
 ## Incident Response
 
-**Detection** - Automated monitoring, application alerts, anomaly detection.
+We monitor for security incidents through automated alerts, anomaly detection, and application logging. If an incident is detected, our security team is notified immediately.
 
-**Response** - Documented incident response plan. Security team notified immediately.
+We have a documented incident response plan that covers identification, containment, eradication, and recovery. Every incident gets a post-mortem with action items to prevent recurrence.
 
-**Communication** - If an incident affects customer data, we notify affected customers within 24 hours.
+If an incident affects customer data, we notify affected customers within 24 hours. We provide details about what happened, what data was affected, and what we're doing to prevent it from happening again.
 
-**Post-incident** - Root cause analysis and improvements after every incident.
+We've never had a data breach. That doesn't mean we're perfect or invulnerable. It means we take security seriously and remain vigilant.
 
-## Contact Security
+## Vulnerability Reporting
 
-<Card title="Security Questions & Vulnerability Reports" icon="envelope" href={`mailto:${securityEmail}`}>
-  **Found a security issue?** We'll acknowledge within 24 hours and keep you updated as we investigate and fix.
-  
-  **Need documentation?** Architecture diagrams, security questionnaire responses, or data flow details.
-  
-  Email us at **{securityEmail}**.
+We work with security researchers through responsible disclosure. Report the issue privately, give us time to fix it, and we'll credit you publicly once the vulnerability is patched.
+
+<Card 
+  title="Report a Security Vulnerability" 
+  icon="shield-exclamation" 
+  href={`mailto:${securityEmail}`}
+  horizontal
+>
+  Found a security issue? Email **{securityEmail}**. We'll acknowledge within 24 hours and keep you updated throughout the investigation and fix.
+</Card>
+
+## Reference
+
+### Checklist
+
+<SecurityChecklist />
+
+See the complete [Checklist](/trust/checklist) across all trust areas.
+
+### Documents
+
+<SecurityDocuments />
+
+See all available [Documents](/trust/documents) across all trust areas.
+
+## Questions?
+
+<Card 
+  title="Contact Security Team" 
+  icon="envelope" 
+  href={`mailto:${securityEmail}`}
+  horizontal
+>
+  Need architecture diagrams? Security questionnaire responses? Want to discuss deployment options? Email **{securityEmail}**.
 </Card>

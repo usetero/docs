@@ -30,8 +30,15 @@
               "trust/security",
               "trust/privacy",
               "trust/compliance",
-              "trust/resilience",
-              "trust/sub-processors"
+              "trust/resilience"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "trust/checklist",
+              "trust/sub-processors",
+              "trust/documents"
             ]
           }
         ]
