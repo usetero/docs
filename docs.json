@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "palm",
+  "theme": "aspen",
   "name": "Tero Documentation",
   "colors": {
     "primary": "#14b8a6",
