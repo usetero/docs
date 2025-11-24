@@ -3,9 +3,13 @@
   "theme": "palm",
   "name": "Tero Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#14b8a6",
+    "light": "#2dd4bf",
+    "dark": "#14b8a6",
+    "anchors": {
+      "from": "#14b8a6",
+      "to": "#2dd4bf"
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
