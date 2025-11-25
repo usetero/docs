@@ -3,9 +3,15 @@
   "theme": "mint",
   "name": "Tero Documentation",
   "colors": {
-    "primary": "#14b8a6",
-    "light": "#2dd4bf",
-    "dark": "#14b8a6"
+    "primary": "#00bcff",
+    "light": "#00bcff",
+    "dark": "#1447e6"
+  },
+  "background": {
+    "color": {
+      "light": "#fafafa",
+      "dark": "#020618"
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
