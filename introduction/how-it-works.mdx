@@ -1,0 +1,63 @@
+---
+title: "How it works"
+description: "The architecture behind Tero's intelligence layer"
+---
+
+# How it works
+
+Tero has three main components that work together: the control plane, the workbench, and the edge.
+
+{/* TODO: Add architecture diagram here showing:
+- Control plane (context graph, AI analysis, policy generation)
+- Integration with Datadog API (read telemetry, configure exclusions)
+- Edge (optional, executes policies at line rate)
+- Data flow between components
+*/}
+
+## The control plane
+
+The control plane is the brain. It connects to your observability tools (starting with Datadog), reads your telemetry data, and builds a semantic understanding of what it all means.
+
+This understanding lives in the **context graph**—a catalog of every log event, every service, every pattern we've discovered. Not just format and structure, but meaning. What this log represents, when it matters, how it connects to other signals.
+
+The control plane runs AI analysis to evaluate your data: what's valuable, what's waste, what's worth keeping. It generates policies based on that understanding—rules about what to do with each type of data.
+
+For Datadog customers, the control plane can configure exclusion rules directly via Datadog's API. Waste stops flowing immediately, no deployment required.
+
+## The workbench
+
+The workbench is how you interact with Tero. It's where you ask questions, explore your data, and take action.
+
+You can ask questions like "what percentage of my data is waste?" and get back rich, interactive answers—tables, graphs, breakdowns by service. You can drill into any result, override classifications, and approve suggested changes.
+
+The workbench connects to wherever your data lives—Datadog, Splunk, ClickHouse, S3. We don't own storage. We're the intelligence layer that makes any storage useful.
+
+Think of it like working in a code editor with AI. You `@`-reference context (services, log events, past conversations), ask questions, and get answers that incorporate everything we know about your infrastructure.
+
+## The edge (optional)
+
+The edge is where policies execute in your infrastructure. It's optional—many customers start by letting Tero configure their existing tools via API. But for deeper control, you can deploy edge components.
+
+We offer distributions of popular tools (Vector, OTel Collector) with Tero's policy engine built in. Or you can deploy our lightweight proxy as a sidecar. Either way, the edge receives policies from the control plane and executes them at line rate—blocking waste, redacting PII, enforcing quality rules before data leaves your network.
+
+Policies are portable. They use OpenTelemetry's data model, so the same policy works across any tool that implements our spec. You control where and how they run.
+
+## How it all fits together
+
+Here's the flow:
+
+1. **Discovery**: The control plane connects to your Datadog account (read-only to start), pulls telemetry data, and begins building the context graph.
+
+2. **Analysis**: AI evaluates every log event: what does this mean? Is it valuable? How is it used? The assessment gets stored in the graph.
+
+3. **Recommendations**: Based on the analysis, Tero suggests what to do with each type of data. Keep all `payment_failed` events—they're critical. Drop `debug_log` events—they're development artifacts. Sample `health_check` events—keep anomalies, drop routine ones.
+
+4. **Review**: You review suggestions in the workbench. Approve, reject, or modify based on your context. The AI learns from your decisions.
+
+5. **Execution**: Once approved, policies get executed. Either Tero configures exclusions directly in Datadog via API, or policies get pushed to edge components you've deployed.
+
+6. **Results**: Waste stops flowing. Costs drop. You track progress in the workbench and refine over time.
+
+The entire process happens without rip-and-replace. We work with what you have, prove value fast, and expand from there.
+
+Ready to see it in action? Let's get you started.

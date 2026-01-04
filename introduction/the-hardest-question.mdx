@@ -1,0 +1,70 @@
+---
+title: "The hardest question"
+description: "Why no one else can tell you what percentage of your data is waste"
+---
+
+# The hardest question
+
+**What percentage of your observability data is waste?**
+
+Simple question. Brutally hard to answer.
+
+To answer it honestly, you need two things most companies don't have: complete visibility across every telemetry source, and deep comprehension of each piece of data—the ability to assess value, not just match patterns.
+
+## Why vendors won't answer it
+
+Ask Datadog what percentage of your logs are waste and they'll give you volume breakdowns. Maybe some sampling recommendations. But they can't tell you what's actually worth keeping because they don't understand what any of it means.
+
+They see text and numbers. A log line is just bytes. A metric is just a name and tags. All the intelligence—the understanding of what matters—lives in your head, not theirs.
+
+This isn't a technical limitation. It's structural. Vendors charge by volume. Helping you identify waste means helping you send them less data. The incentive is backwards.
+
+## Why pipelines can't answer it
+
+Pipeline tools like Cribl and Vector move data around. They're excellent at routing, transforming, filtering. But they don't understand what they're moving.
+
+You can write rules: drop DEBUG logs, sample health checks, filter by regex. But you have to know what to filter. You write the rules based on your understanding. When your systems evolve, your rules break. It's constant maintenance.
+
+Pipelines are infrastructure. They do what you tell them. Understanding is still your job.
+
+## Why your team can't answer it
+
+Your engineers have intuitions. The senior SRE knows which logs matter during incidents. The platform team has identified obvious waste—verbose stack traces, development artifacts that made it to production.
+
+But no one has the complete picture. The data is too vast, too fragmented, too constantly changing. Manual analysis doesn't scale. You catch the obvious waste and miss the rest.
+
+## What makes it answerable
+
+We can answer this question because we build something no one else has: a context graph of your telemetry.
+
+Not just indexes or schemas. Semantic understanding. We know what each log event means—is this a business-critical error or infrastructure noise? We know how it's used—is this ever queried during incidents? We know how it connects—does this error follow that timeout?
+
+That understanding lets us assess value at scale. For every log event your systems produce, we evaluate: always valuable, always waste, or mixed—valuable sometimes, noise other times.
+
+The AI makes these assessments based on what the data means and how it's actually used. Not pattern matching. Not heuristics. Genuine analysis.
+
+## What you get
+
+When we answer the question, you get a number. Not a range, not a guess. **42% of your log volume is waste.** Or 61%. Or 28%. Whatever it actually is.
+
+Then we show you exactly what we're counting:
+- Breakdown by service
+- Breakdown by log event type  
+- Explanation of why each piece is classified as waste
+- Cost impact of each category
+- Suggestions for what to do about it
+
+You can drill down into any service, any log type, and see the analysis. If something looks wrong, you can override it. The AI learns from your decisions and improves.
+
+## Why this proves everything else
+
+Waste identification is the most demanding proof of understanding. If we can assess the value of every piece of data you produce, we can answer any other question you'd ask:
+- Why is this service slow?
+- What changed in the last deploy?
+- What should I alert on?
+
+The context graph that evaluates waste is the same graph that explains incidents, connects errors to deploys, and makes any question about your systems answerable.
+
+We start with waste because it's the hardest proof and the most immediate value. Everything else follows from the same foundation.
+
+Ready to see your number? Let's get started.

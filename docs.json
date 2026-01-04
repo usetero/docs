@@ -3,25 +3,34 @@
   "theme": "mint",
   "name": "Tero Documentation",
   "colors": {
-    "primary": "#00bcff",
-    "light": "#00bcff",
-    "dark": "#1447e6"
+    "primary": "#10b981",
+    "light": "#10b981",
+    "dark": "#059669"
   },
   "background": {
     "color": {
       "light": "#fafafa",
-      "dark": "#020618"
+      "dark": "#0a0a0a"
     }
+  },
+  "appearance": {
+    "default": "dark",
+    "strict": true
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
         "tab": "Documentation",
+        "icon": "book",
         "groups": [
           {
-            "group": "Coming Soon",
-            "pages": []
+            "group": "Introduction",
+            "pages": [
+              "introduction/what-is-tero",
+              "introduction/the-hardest-question",
+              "introduction/how-it-works"
+            ]
           }
         ]
       },
