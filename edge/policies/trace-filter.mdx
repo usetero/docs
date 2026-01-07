@@ -1,0 +1,31 @@
+---
+title: "Trace Filter"
+description: "Filter distributed traces by span attributes"
+---
+
+<Note>
+  Trace filter policies are coming soon. Currently, Edge supports log and metric
+  policies. Trace support is in development.
+</Note>
+
+## Planned Capabilities
+
+Trace filtering will support:
+
+- **Span matching** by name, kind, status, and attributes
+- **Resource matching** by service name, version, and other attributes
+- **Drop** decisions at the span or trace level
+- **Sampling** by percentage or rate limit
+
+## Current Options
+
+While trace filtering is in development, you can:
+
+1. **Sample at the source** using OpenTelemetry SDK head sampling
+2. **Use Tail Sampling Processor** in OpenTelemetry Collector
+3. **Filter downstream** in your observability platform
+
+## Request This Feature
+
+If trace filtering is critical for your use case, contact us at
+[support@usetero.com](mailto:support@usetero.com).

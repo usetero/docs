@@ -1,0 +1,256 @@
+---
+title: "Edge OTLP"
+description: "Edge distribution for OpenTelemetry Protocol"
+---
+
+Edge OTLP is optimized for environments using OpenTelemetry. It supports the
+standard OTLP HTTP endpoints for logs and metrics.
+
+## Supported Endpoints
+
+| Endpoint      | Method | Description         |
+| ------------- | ------ | ------------------- |
+| `/v1/logs`    | POST   | OTLP log export     |
+| `/v1/metrics` | POST   | OTLP metrics export |
+| `/health`     | GET    | Health check        |
+
+## Configuration
+
+```json config.json
+{
+  "listen_address": "0.0.0.0",
+  "listen_port": 8080,
+  "upstream_url": "https://your-otlp-endpoint.com",
+  "log_level": "info",
+  "policy_providers": [
+    {
+      "id": "local",
+      "type": "file",
+      "path": "policies.json"
+    }
+  ]
+}
+```
+
+### Vendor Endpoints
+
+Configure `upstream_url` for your observability vendor:
+
+| Vendor        | Endpoint                                                  |
+| ------------- | --------------------------------------------------------- |
+| Datadog       | `https://otlp.datadoghq.com` (or regional variant)        |
+| Honeycomb     | `https://api.honeycomb.io`                                |
+| Grafana Cloud | `https://otlp-gateway-prod-us-central-0.grafana.net/otlp` |
+| New Relic     | `https://otlp.nr-data.net`                                |
+| Lightstep     | `https://ingest.lightstep.com`                            |
+
+## Running
+
+<CodeGroup>
+```bash Docker
+docker run -d \
+  --name edge-otlp \
+  -p 8080:8080 \
+  -v $(pwd)/config.json:/etc/edge/config.json \
+  -v $(pwd)/policies.json:/etc/edge/policies.json \
+  ghcr.io/usetero/edge-otlp:latest \
+  /etc/edge/config.json
+```
+
+```bash Binary
+./edge-otlp config.json
+```
+
+```bash Source
+zig build run-otlp -- config.json
+```
+
+</CodeGroup>
+
+## OpenTelemetry Collector Configuration
+
+Configure the OpenTelemetry Collector to export through Edge.
+
+### As an Exporter
+
+```yaml otel-collector-config.yaml
+exporters:
+  otlphttp:
+    endpoint: "http://edge-host:8080"
+    compression: gzip
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp]
+```
+
+### SDK Direct Export
+
+For applications using the OpenTelemetry SDK directly:
+
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://edge-host:8080"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/json"
+```
+
+## OTLP Data Model
+
+Edge works with the standard OTLP data model. Here's how OTLP fields map to
+policy matchers.
+
+### Log Records
+
+| OTLP Field            | Policy Matcher               |
+| --------------------- | ---------------------------- |
+| `body`                | `log_field: body`            |
+| `severityText`        | `log_field: severity_text`   |
+| `severityNumber`      | `log_field: severity_number` |
+| `attributes`          | `log_attribute: <key>`       |
+| `resource.attributes` | `resource_attribute: <key>`  |
+| `scope.name`          | `scope_name`                 |
+| `scope.version`       | `scope_version`              |
+| `scope.attributes`    | `scope_attribute: <key>`     |
+
+### Metrics
+
+| OTLP Field                | Policy Matcher               |
+| ------------------------- | ---------------------------- |
+| `name`                    | `metric_field: name`         |
+| `description`             | `metric_field: description`  |
+| `unit`                    | `metric_field: unit`         |
+| `dataPoints[].attributes` | `datapoint_attribute: <key>` |
+| `resource.attributes`     | `resource_attribute: <key>`  |
+
+## Example Policies
+
+### Filter by Severity
+
+```json
+{
+  "id": "drop-debug-trace",
+  "name": "Drop DEBUG and TRACE logs",
+  "log": {
+    "match": [{ "log_field": "severity_text", "regex": "^(DEBUG|TRACE)$" }],
+    "keep": "none"
+  }
+}
+```
+
+### Filter by Resource Attribute
+
+```json
+{
+  "id": "sample-api-gateway",
+  "name": "Sample API Gateway logs",
+  "log": {
+    "match": [{ "resource_attribute": "service.name", "exact": "api-gateway" }],
+    "keep": "25%"
+  }
+}
+```
+
+### Filter by Log Attribute
+
+```json
+{
+  "id": "drop-healthcheck",
+  "name": "Drop health check spans",
+  "log": {
+    "match": [{ "log_attribute": "http.route", "exact": "/health" }],
+    "keep": "none"
+  }
+}
+```
+
+### Filter by Scope
+
+```json
+{
+  "id": "drop-library-logs",
+  "name": "Drop logs from noisy library",
+  "log": {
+    "match": [
+      {"scope_name": "exact": "noisy-http-client"}
+    ],
+    "keep": "none"
+  }
+}
+```
+
+### Redact Sensitive Attributes
+
+```json
+{
+  "id": "redact-pii",
+  "name": "Redact PII from logs",
+  "log": {
+    "match": [{ "log_attribute": "user.email", "exists": true }],
+    "transform": {
+      "redact": [{ "log_attribute": "user.email" }]
+    }
+  }
+}
+```
+
+## Request Format
+
+Edge expects OTLP JSON format (`application/json`). Example log export request:
+
+```json
+{
+  "resourceLogs": [
+    {
+      "resource": {
+        "attributes": [
+          { "key": "service.name", "value": { "stringValue": "my-service" } }
+        ]
+      },
+      "scopeLogs": [
+        {
+          "scope": {
+            "name": "my-library",
+            "version": "1.0.0"
+          },
+          "logRecords": [
+            {
+              "timeUnixNano": "1234567890000000000",
+              "severityText": "INFO",
+              "body": { "stringValue": "Hello, world!" },
+              "attributes": [
+                { "key": "user.id", "value": { "stringValue": "12345" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Compression
+
+Edge supports gzip compression for both incoming requests and outgoing requests.
+Set the `Content-Encoding: gzip` header for compressed requests.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Log Filter" icon="filter" href="/edge/policies/log-filter">
+    All log filtering options
+  </Card>
+  <Card
+    title="Metric Filter"
+    icon="chart-line"
+    href="/edge/policies/metric-filter"
+  >
+    Filter metrics before export
+  </Card>
+</CardGroup>

@@ -1,0 +1,31 @@
+---
+title: "Metric Transform"
+description: "Transform metric data before forwarding"
+---
+
+<Note>
+  Metric transform policies are coming soon. Currently, Edge supports filtering
+  metrics but not transforming them.
+</Note>
+
+## Planned Capabilities
+
+Metric transform will support:
+
+- **Remove** - Delete datapoint attributes to reduce cardinality
+- **Rename** - Normalize metric names and attribute keys
+- **Add** - Insert metadata attributes
+
+## Current Options
+
+While metric transforms are in development, you can:
+
+1. **Filter aggressively** using
+   [metric filter policies](/edge/policies/metric-filter)
+2. **Transform at the source** in your application or OpenTelemetry Collector
+3. **Use log transforms** for any data that can be sent as structured logs
+
+## Request This Feature
+
+If metric transforms are critical for your use case, contact us at
+[support@usetero.com](mailto:support@usetero.com).

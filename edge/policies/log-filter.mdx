@@ -1,0 +1,445 @@
+---
+title: "Log Filter"
+description: "Filter logs by severity, content, attributes, and more"
+---
+
+Log filter policies control which logs pass through Edge. Use them to drop
+noise, sample high-volume events, and rate limit bursts.
+
+## Basic Structure
+
+```json
+{
+  "id": "policy-id",
+  "name": "Human-readable name",
+  "log": {
+    "match": [...],
+    "keep": "..."
+  }
+}
+```
+
+Every log policy has:
+
+- `match`: One or more matchers that identify target logs
+- `keep`: What to do with matching logs
+
+## Matchers
+
+Matchers identify which logs a policy applies to. When a policy has multiple
+matchers, all must match (AND logic).
+
+### Log Fields
+
+Match on well-known log fields:
+
+| Field           | Description                                             |
+| --------------- | ------------------------------------------------------- |
+| `body`          | The log message content                                 |
+| `severity_text` | Severity level as text (DEBUG, INFO, WARN, ERROR, etc.) |
+| `trace_id`      | Associated trace ID                                     |
+| `span_id`       | Associated span ID                                      |
+| `event_name`    | Event name for event logs                               |
+
+```json
+{
+  "id": "match-debug-logs",
+  "name": "Match DEBUG severity logs",
+  "log": {
+    "match": [
+      {
+        "log_field": "severity_text",
+        "exact": "DEBUG"
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+### Log Attributes
+
+Match on log record attributes:
+
+```json
+{
+  "id": "match-200-status",
+  "name": "Match logs with 200 status code",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "http.status_code",
+        "exact": "200"
+      }
+    ],
+    "keep": "all"
+  }
+}
+```
+
+### Resource Attributes
+
+Match on resource attributes (service name, host, etc.):
+
+```json
+{
+  "id": "match-checkout-service",
+  "name": "Match checkout-api service logs",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "exact": "checkout-api"
+      }
+    ],
+    "keep": "10%"
+  }
+}
+```
+
+### Scope Attributes
+
+Match on instrumentation scope:
+
+```json
+{
+  "id": "match-otel-python",
+  "name": "Match OpenTelemetry Python logs",
+  "log": {
+    "match": [
+      {
+        "scope_attribute": "library.name",
+        "exact": "opentelemetry-python"
+      }
+    ],
+    "keep": "all"
+  }
+}
+```
+
+## Match Types
+
+### Exact Match
+
+Match the exact string value:
+
+```json
+{
+  "id": "match-errors",
+  "name": "Match ERROR logs",
+  "log": {
+    "match": [
+      {
+        "log_field": "severity_text",
+        "exact": "ERROR"
+      }
+    ],
+    "keep": "all"
+  }
+}
+```
+
+### Regex Match
+
+Match using RE2 regular expressions:
+
+```json
+{
+  "id": "match-order-completed",
+  "name": "Match order completed logs",
+  "log": {
+    "match": [
+      {
+        "log_field": "body",
+        "regex": "order.*completed"
+      }
+    ],
+    "keep": "50%"
+  }
+}
+```
+
+Common patterns:
+
+- `^prefix` - Starts with
+- `suffix$` - Ends with
+- `word1.*word2` - Contains both words in order
+- `(option1|option2)` - Either option
+- `\\d+` - One or more digits
+
+### Exists Match
+
+Match on field presence:
+
+```json
+{
+  "id": "match-has-user-id",
+  "name": "Match logs with user.id attribute",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "user.id",
+        "exists": true
+      }
+    ],
+    "keep": "all"
+  }
+}
+```
+
+Use `exists: false` to match when a field is absent.
+
+### Negation
+
+Invert any match with `negate`:
+
+```json
+{
+  "id": "match-non-errors",
+  "name": "Match all logs except ERROR",
+  "log": {
+    "match": [
+      {
+        "log_field": "severity_text",
+        "exact": "ERROR",
+        "negate": true
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+This matches all logs except ERROR.
+
+## Keep Values
+
+The `keep` field determines what happens to matching logs.
+
+### Drop All
+
+```json
+"keep": "none"
+```
+
+Drop all matching logs. Use for:
+
+- Debug and trace logs in production
+- Health check logs
+- Known noisy log patterns
+
+### Keep All
+
+```json
+"keep": "all"
+```
+
+Explicitly keep matching logs.
+
+### Percentage Sampling
+
+```json
+"keep": "50%"
+```
+
+Keep a random percentage of matching logs. Valid range: 0-100%.
+
+Use for:
+
+- High-volume events where you don't need every instance
+- Cost reduction on repetitive logs
+
+### Rate Limiting
+
+```json
+"keep": "100/s"
+```
+
+Keep up to N logs per time window:
+
+- `100/s` - 100 per second
+- `1000/m` - 1000 per minute
+
+Use for:
+
+- Burst protection
+- Capping runaway log sources
+
+## Policy Precedence
+
+When multiple policies match the same log, the most restrictive action wins:
+
+1. `none` (drop) beats everything
+2. Lower percentages beat higher percentages
+3. Rate limits are evaluated independently
+
+Example: If Policy A says `keep: 50%` and Policy B says `keep: none`, the log is
+dropped.
+
+## Examples
+
+### Drop Debug Logs
+
+```json
+{
+  "id": "drop-debug-logs",
+  "name": "Drop debug and trace logs",
+  "log": {
+    "match": [
+      {
+        "log_field": "severity_text",
+        "regex": "^(DEBUG|TRACE)$"
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+### Drop Health Checks
+
+```json
+{
+  "id": "drop-health-checks",
+  "name": "Drop health check request logs",
+  "log": {
+    "match": [
+      {
+        "log_field": "body",
+        "regex": "(GET|HEAD) /(health|ready|live)"
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+### Sample by Service
+
+```json
+{
+  "id": "sample-checkout",
+  "name": "Sample checkout service logs to 10%",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "exact": "checkout-api"
+      }
+    ],
+    "keep": "10%"
+  }
+}
+```
+
+### Rate Limit Noisy Service
+
+```json
+{
+  "id": "rate-limit-metrics-exporter",
+  "name": "Rate limit metrics exporter logs",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "exact": "metrics-exporter"
+      },
+      {
+        "log_field": "severity_text",
+        "exact": "INFO"
+      }
+    ],
+    "keep": "100/s"
+  }
+}
+```
+
+### Drop by Attribute Presence
+
+```json
+{
+  "id": "drop-internal-logs",
+  "name": "Drop logs with internal flag",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "internal",
+        "exists": true
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+### Combine Multiple Conditions
+
+```json
+{
+  "id": "drop-verbose-payment-logs",
+  "name": "Drop verbose logs from payment services",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "regex": "^payment-"
+      },
+      {
+        "log_field": "severity_text",
+        "regex": "^(DEBUG|TRACE|INFO)$"
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+### Keep Everything Except
+
+Using `negate` to keep only important logs:
+
+```json
+{
+  "id": "keep-only-errors",
+  "name": "Keep only ERROR and FATAL logs",
+  "log": {
+    "match": [
+      {
+        "log_field": "severity_text",
+        "regex": "^(ERROR|FATAL)$",
+        "negate": true
+      }
+    ],
+    "keep": "none"
+  }
+}
+```
+
+## Best Practices
+
+1. **Start broad, then narrow**: Begin with service-level policies, then add
+   event-specific ones
+2. **Use regex sparingly**: Exact matches are faster than regex
+3. **Combine policies**: Multiple simple policies are easier to manage than one
+   complex policy
+4. **Document intent**: Use descriptive names and IDs
+5. **Test first**: Verify policies in a staging environment before production
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Log Transform"
+    icon="wand-magic-sparkles"
+    href="/edge/policies/log-transform"
+  >
+    Modify logs: redact, remove, rename, add
+  </Card>
+  <Card
+    title="Metric Filter"
+    icon="chart-line"
+    href="/edge/policies/metric-filter"
+  >
+    Filter metrics
+  </Card>
+</CardGroup>

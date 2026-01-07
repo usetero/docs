@@ -1,0 +1,467 @@
+---
+title: "Metric Filter"
+description: "Filter metrics by name, type, and attributes"
+---
+
+Metric filter policies control which metrics pass through Edge. Use them to drop
+noisy metrics, reduce cardinality, and cut costs.
+
+## Basic Structure
+
+```json
+{
+  "id": "policy-id",
+  "name": "Human-readable name",
+  "metric": {
+    "match": [...],
+    "keep": true
+  }
+}
+```
+
+Every metric policy has:
+
+- `match`: One or more matchers that identify target metrics
+- `keep`: Boolean (`true` to keep, `false` to drop)
+
+<Note>
+  Unlike log policies, metric policies don't support percentage sampling or rate
+  limiting. The `keep` value is a simple boolean.
+</Note>
+
+## Matchers
+
+Matchers identify which metrics a policy applies to. When a policy has multiple
+matchers, all must match (AND logic).
+
+### Metric Fields
+
+Match on well-known metric fields:
+
+| Field           | Description                            |
+| --------------- | -------------------------------------- |
+| `name`          | The metric name                        |
+| `description`   | Metric description                     |
+| `unit`          | Metric unit (e.g., `ms`, `bytes`, `1`) |
+| `scope_name`    | Instrumentation scope name             |
+| `scope_version` | Instrumentation scope version          |
+
+```json
+{
+  "id": "match-cpu-metrics",
+  "name": "Match system CPU metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^system\\.cpu\\."
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Metric Type
+
+Match on metric type:
+
+| Type                                | Description                  |
+| ----------------------------------- | ---------------------------- |
+| `METRIC_TYPE_GAUGE`                 | Instantaneous measurement    |
+| `METRIC_TYPE_SUM`                   | Cumulative or delta sum      |
+| `METRIC_TYPE_HISTOGRAM`             | Distribution of values       |
+| `METRIC_TYPE_EXPONENTIAL_HISTOGRAM` | Exponential bucket histogram |
+| `METRIC_TYPE_SUMMARY`               | Pre-calculated quantiles     |
+
+```json
+{
+  "id": "match-histograms",
+  "name": "Match histogram metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_type": "METRIC_TYPE_HISTOGRAM"
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Aggregation Temporality
+
+Match on how metrics report aggregated values:
+
+| Temporality                          | Description                      |
+| ------------------------------------ | -------------------------------- |
+| `AGGREGATION_TEMPORALITY_DELTA`      | Reports change since last report |
+| `AGGREGATION_TEMPORALITY_CUMULATIVE` | Reports total since start        |
+
+```json
+{
+  "id": "match-delta-metrics",
+  "name": "Match delta temporality metrics",
+  "metric": {
+    "match": [
+      {
+        "aggregation_temporality": "AGGREGATION_TEMPORALITY_DELTA"
+      }
+    ],
+    "keep": true
+  }
+}
+```
+
+### Datapoint Attributes
+
+Match on data point attributes (dimensions/labels):
+
+```json
+{
+  "id": "match-prod-web-01",
+  "name": "Match metrics from prod-web-01",
+  "metric": {
+    "match": [
+      {
+        "datapoint_attribute": "host.name",
+        "exact": "prod-web-01"
+      }
+    ],
+    "keep": true
+  }
+}
+```
+
+### Resource Attributes
+
+Match on resource attributes:
+
+```json
+{
+  "id": "match-api-gateway",
+  "name": "Match api-gateway service metrics",
+  "metric": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "exact": "api-gateway"
+      }
+    ],
+    "keep": true
+  }
+}
+```
+
+### Scope Attributes
+
+Match on instrumentation scope attributes:
+
+```json
+{
+  "id": "match-otel-go",
+  "name": "Match OpenTelemetry Go metrics",
+  "metric": {
+    "match": [
+      {
+        "scope_attribute": "library.name",
+        "exact": "opentelemetry-go"
+      }
+    ],
+    "keep": true
+  }
+}
+```
+
+## Match Types
+
+### Exact Match
+
+Match the exact string value:
+
+```json
+{
+  "id": "match-request-duration",
+  "name": "Match HTTP request duration metric",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "exact": "http.request.duration"
+      }
+    ],
+    "keep": true
+  }
+}
+```
+
+### Regex Match
+
+Match using RE2 regular expressions:
+
+```json
+{
+  "id": "drop-debug-metrics",
+  "name": "Drop debug-prefixed metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^debug\\."
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Exists Match
+
+Match on field presence:
+
+```json
+{
+  "id": "match-internal-flag",
+  "name": "Match metrics with internal attribute",
+  "metric": {
+    "match": [
+      {
+        "datapoint_attribute": "internal",
+        "exists": true
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Negation
+
+Invert any match with `negate`:
+
+```json
+{
+  "id": "drop-non-system-metrics",
+  "name": "Drop metrics not starting with system",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^system\\.",
+        "negate": true
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+## Policy Precedence
+
+When multiple policies match the same metric, `keep: false` takes precedence
+over `keep: true`.
+
+## Examples
+
+### Drop Debug Metrics
+
+```json
+{
+  "id": "drop-debug-metrics",
+  "name": "Drop debug-prefixed metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^debug\\."
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Drop System Load Metrics
+
+```json
+{
+  "id": "drop-system-load",
+  "name": "Drop system load metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^system\\.load"
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Drop Histogram Metrics
+
+```json
+{
+  "id": "drop-histograms",
+  "name": "Drop all histogram metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_type": "METRIC_TYPE_HISTOGRAM"
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Drop by Datapoint Attribute
+
+```json
+{
+  "id": "drop-internal-metrics",
+  "name": "Drop metrics with internal flag",
+  "metric": {
+    "match": [
+      {
+        "datapoint_attribute": "internal",
+        "exists": true
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Drop by Service
+
+```json
+{
+  "id": "drop-test-service-metrics",
+  "name": "Drop metrics from test services",
+  "metric": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "regex": "^test-"
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Drop High-Cardinality Metrics
+
+```json
+{
+  "id": "drop-per-request-metrics",
+  "name": "Drop per-request ID metrics",
+  "metric": {
+    "match": [
+      {
+        "datapoint_attribute": "request.id",
+        "exists": true
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Keep Only Specific Metrics
+
+Using negation to drop everything except what you want:
+
+```json
+{
+  "id": "keep-only-business-metrics",
+  "name": "Drop non-business metrics",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^business\\.",
+        "negate": true
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+### Combined Conditions
+
+```json
+{
+  "id": "drop-noisy-api-metrics",
+  "name": "Drop high-frequency API metrics from non-prod",
+  "metric": {
+    "match": [
+      {
+        "metric_field": "name",
+        "regex": "^http\\."
+      },
+      {
+        "resource_attribute": "deployment.environment",
+        "exact": "production",
+        "negate": true
+      }
+    ],
+    "keep": false
+  }
+}
+```
+
+## Common Use Cases
+
+### Cost Reduction
+
+Drop metrics you never query:
+
+- Debug and internal metrics
+- Per-request ID dimensions (high cardinality)
+- Redundant system metrics
+- Metrics from test/dev environments
+
+### Cardinality Control
+
+High-cardinality metrics (many unique label combinations) are expensive. Drop
+metrics with:
+
+- Unique request IDs as labels
+- User IDs as labels
+- Timestamps as labels
+- Unbounded string values as labels
+
+### Compliance
+
+Drop metrics that might contain sensitive information:
+
+- Metrics with PII in labels
+- Metrics from sensitive services
+- Internal topology information
+
+## Best Practices
+
+1. **Start with observability**: Know what you're dropping before you drop it
+2. **Use exact matches when possible**: Faster than regex
+3. **Target high-volume metrics**: Focus on metrics that cost the most
+4. **Be careful with negation**: Easy to accidentally drop important metrics
+5. **Test in staging**: Verify policies before production deployment
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Log Filter" icon="filter" href="/edge/policies/log-filter">
+    Filter logs
+  </Card>
+  <Card
+    title="Log Transform"
+    icon="wand-magic-sparkles"
+    href="/edge/policies/log-transform"
+  >
+    Transform log data
+  </Card>
+</CardGroup>
