@@ -17,6 +17,14 @@
     "default": "dark",
     "strict": true
   },
+  "fonts": {
+    "body": {
+      "family": "Oxygen"
+    },
+    "heading": {
+      "family": "Oxanium"
+    }
+  },
   "favicon": "/favicon.svg",
   "homepage": "introduction/what-is-tero",
   "navigation": {
