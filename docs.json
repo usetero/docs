@@ -44,8 +44,7 @@
               "edge/overview",
               "edge/concepts",
               "edge/architecture",
-              "edge/quickstart",
-              "edge/reference"
+              "edge/quickstart"
             ]
           },
           {
@@ -57,13 +56,17 @@
             ]
           },
           {
-            "group": "Policies",
+            "group": "Edge Reference",
+            "pages": ["edge/reference/config"]
+          },
+          {
+            "group": "Policy Reference",
             "pages": [
-              "edge/policies/log-filter",
-              "edge/policies/log-transform",
-              "edge/policies/metric-filter",
-              "edge/policies/metric-transform",
-              "edge/policies/trace-filter"
+              "edge/reference/log-filter",
+              "edge/reference/log-transform",
+              "edge/reference/metric-filter",
+              "edge/reference/metric-transform",
+              "edge/reference/trace-filter"
             ]
           }
         ]
