@@ -18,25 +18,120 @@
     "strict": true
   },
   "favicon": "/favicon.svg",
+  "homepage": "introduction/what-is-tero",
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
-        "icon": "book",
+        "tab": "Tero",
+        "icon": "robot",
         "groups": [
           {
             "group": "Introduction",
             "pages": [
               "introduction/what-is-tero",
-              "introduction/the-hardest-question",
+              "introduction/tero-versus",
               "introduction/how-it-works"
             ]
+          },
+          {
+            "group": "Getting Started",
+            "pages": [
+              "getting-started/create-account",
+              "getting-started/connect-datadog",
+              "getting-started/ask-first-question"
+            ]
+          },
+          {
+            "group": "Questions",
+            "pages": [
+              {
+                "group": "How much of my data is waste?",
+                "icon": "trash-can",
+                "pages": [
+                  "questions/waste/overview",
+                  {
+                    "group": "Understanding the Results",
+                    "pages": [
+                      "questions/waste/results/by-service",
+                      "questions/waste/results/by-log-event",
+                      "questions/waste/results/evaluating-quality"
+                    ]
+                  },
+                  {
+                    "group": "Taking Action",
+                    "pages": [
+                      "questions/waste/action/overview",
+                      "questions/waste/action/drop-in-provider",
+                      "questions/waste/action/deploy-to-infrastructure",
+                      "questions/waste/action/remove-from-code",
+                      "questions/waste/action/monitoring-impact"
+                    ]
+                  },
+                  {
+                    "group": "Managing Your Contract",
+                    "pages": [
+                      "questions/waste/contract/overview",
+                      "questions/waste/contract/renewal-planning",
+                      "questions/waste/contract/executive-reporting"
+                    ]
+                  },
+                  {
+                    "group": "Scaling Quality",
+                    "pages": [
+                      "questions/waste/scaling/overview",
+                      "questions/waste/scaling/starting-small",
+                      "questions/waste/scaling/automating-decisions",
+                      "questions/waste/scaling/team-ownership"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Context",
+            "pages": [
+              "context/overview",
+              "context/services",
+              "context/log-events",
+              "context/metrics"
+            ]
+          },
+          {
+            "group": "Capabilities",
+            "pages": ["capabilities/overview"]
+          },
+          {
+            "group": "Integrations",
+            "pages": ["integrations/overview", "integrations/datadog"]
+          },
+          {
+            "group": "CLI",
+            "pages": ["cli/overview"]
+          }
+        ]
+      },
+      {
+        "tab": "Control Plane",
+        "icon": "server",
+        "groups": [
+          {
+            "group": "Control Plane",
+            "pages": ["control-plane/overview"]
+          },
+          {
+            "group": "Deployment",
+            "pages": ["control-plane/cloud", "control-plane/self-hosted"]
+          },
+          {
+            "group": "Configuration",
+            "pages": ["control-plane/bring-your-own-ai"]
           }
         ]
       },
       {
         "tab": "Edge",
-        "icon": "microchip",
+        "icon": "cube",
         "groups": [
           {
             "group": "Getting Started",
@@ -75,11 +170,11 @@
         ]
       },
       {
-        "tab": "Trust Center",
+        "tab": "Trust",
         "icon": "shield-check",
         "groups": [
           {
-            "group": "Trust Center",
+            "group": "Trust",
             "pages": [
               "trust/overview",
               "trust/security",
@@ -101,8 +196,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/logo.svg",
+    "dark": "/images/logo-dark.svg"
   },
   "navbar": {
     "links": [
