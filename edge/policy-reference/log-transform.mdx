@@ -1,0 +1,538 @@
+---
+title: "Log Transform"
+description: "Redact, remove, rename, and add log fields"
+---
+
+Log transform policies modify logs that pass through Edge. Use them to redact
+sensitive data, remove verbose fields, normalize attribute names, and add
+metadata.
+
+## Basic Structure
+
+```json
+{
+  "id": "policy-id",
+  "name": "Human-readable name",
+  "log": {
+    "match": [...],
+    "transform": {
+      "remove": [...],
+      "redact": [...],
+      "rename": [...],
+      "add": [...]
+    }
+  }
+}
+```
+
+Transforms can be combined with `keep` values. Transforms only apply to logs
+that survive the keep stage.
+
+## Transform Order
+
+Transforms execute in a strict order:
+
+1. **Remove** - Delete fields
+2. **Redact** - Mask field values
+3. **Rename** - Change field names
+4. **Add** - Insert new fields
+
+This order is fixed. You cannot change it. Design your transforms with this
+order in mind.
+
+## Remove
+
+Remove fields from logs. Use this to strip verbose or internal data.
+
+```json
+{
+  "id": "remove-verbose-fields",
+  "name": "Remove verbose debug fields",
+  "log": {
+    "match": [
+      {
+        "log_field": "body",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "remove": [
+        {
+          "log_attribute": "debug_trace"
+        },
+        {
+          "log_attribute": "internal_id"
+        },
+        {
+          "resource_attribute": "k8s.pod.uid"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Removable Fields
+
+| Field Type         | Syntax                          |
+| ------------------ | ------------------------------- |
+| Log attribute      | `{"log_attribute": "key"}`      |
+| Resource attribute | `{"resource_attribute": "key"}` |
+| Scope attribute    | `{"scope_attribute": "key"}`    |
+
+### Example: Remove Verbose Kubernetes Metadata
+
+```json
+{
+  "id": "remove-k8s-verbose",
+  "name": "Remove verbose Kubernetes metadata",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "k8s.pod.name",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "remove": [
+        {
+          "resource_attribute": "k8s.pod.uid"
+        },
+        {
+          "resource_attribute": "k8s.replicaset.name"
+        },
+        {
+          "resource_attribute": "k8s.replicaset.uid"
+        },
+        {
+          "resource_attribute": "k8s.deployment.uid"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Redact
+
+Replace field values with a placeholder. The field remains present, but the
+value is masked.
+
+```json
+{
+  "id": "redact-sensitive-fields",
+  "name": "Redact email and credit card",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "user.email",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "redact": [
+        {
+          "log_attribute": "user.email"
+        },
+        {
+          "log_attribute": "credit_card",
+          "replacement": "[CARD REDACTED]"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Options
+
+| Option        | Default        | Description               |
+| ------------- | -------------- | ------------------------- |
+| `replacement` | `"[REDACTED]"` | The value to replace with |
+
+### Example: Redact PII
+
+```json
+{
+  "id": "redact-pii",
+  "name": "Redact personally identifiable information",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "user.email",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "redact": [
+        {
+          "log_attribute": "user.email"
+        },
+        {
+          "log_attribute": "user.phone"
+        },
+        {
+          "log_attribute": "user.ssn",
+          "replacement": "[SSN REDACTED]"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Example: Redact Payment Data
+
+```json
+{
+  "id": "redact-payment",
+  "name": "Redact payment card data",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "regex": "^payment-"
+      }
+    ],
+    "transform": {
+      "redact": [
+        {
+          "log_attribute": "card.number",
+          "replacement": "[PAN REDACTED]"
+        },
+        {
+          "log_attribute": "card.cvv",
+          "replacement": "[CVV REDACTED]"
+        },
+        {
+          "log_attribute": "card.expiry"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Example: Redact When Present
+
+Only redact fields that exist:
+
+```json
+{
+  "id": "redact-pan-if-exists",
+  "name": "Redact PAN wherever it appears",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "pan",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "redact": [
+        {
+          "log_attribute": "pan"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Rename
+
+Change field names. Use this to normalize attribute names across services.
+
+```json
+{
+  "id": "rename-field",
+  "name": "Rename old_name to new_name",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "old_name",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "rename": [
+        {
+          "from_log_attribute": "old_name",
+          "to": "new_name"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Options
+
+| Option   | Default | Description                                                                                 |
+| -------- | ------- | ------------------------------------------------------------------------------------------- |
+| `upsert` | `false` | If `true`, overwrite the target if it exists. If `false`, skip the rename if target exists. |
+
+### Source Field Types
+
+| Source             | Syntax                             |
+| ------------------ | ---------------------------------- |
+| Log attribute      | `"from_log_attribute": "key"`      |
+| Resource attribute | `"from_resource_attribute": "key"` |
+| Scope attribute    | `"from_scope_attribute": "key"`    |
+
+The `to` field is always the new key name within the same attribute category.
+
+### Example: Normalize Attribute Names
+
+```json
+{
+  "id": "normalize-user-id",
+  "name": "Normalize user ID attribute name",
+  "log": {
+    "match": [
+      {
+        "log_attribute": "userId",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "rename": [
+        {
+          "from_log_attribute": "userId",
+          "to": "user.id"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Example: Rename with Upsert
+
+```json
+{
+  "id": "standardize-service-name",
+  "name": "Standardize service name attribute",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "app.name",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "rename": [
+        {
+          "from_resource_attribute": "app.name",
+          "to": "service.name",
+          "upsert": true
+        }
+      ]
+    }
+  }
+}
+```
+
+## Add
+
+Insert new fields. Use this to add metadata, tags, or computed values.
+
+```json
+{
+  "id": "add-processed-by",
+  "name": "Add processed_by attribute",
+  "log": {
+    "match": [
+      {
+        "log_field": "body",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "add": [
+        {
+          "log_attribute": "processed_by",
+          "value": "edge"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Options
+
+| Option   | Default | Description                                                                            |
+| -------- | ------- | -------------------------------------------------------------------------------------- |
+| `upsert` | `true`  | If `true`, overwrite existing values. If `false`, only add if the field doesn't exist. |
+
+### Field Types
+
+| Type               | Syntax                        |
+| ------------------ | ----------------------------- |
+| Log attribute      | `"log_attribute": "key"`      |
+| Resource attribute | `"resource_attribute": "key"` |
+| Scope attribute    | `"scope_attribute": "key"`    |
+
+### Example: Add Processing Metadata
+
+```json
+{
+  "id": "add-edge-metadata",
+  "name": "Add Edge processing metadata",
+  "log": {
+    "match": [
+      {
+        "log_field": "body",
+        "exists": true
+      }
+    ],
+    "transform": {
+      "add": [
+        {
+          "log_attribute": "edge.processed",
+          "value": "true"
+        },
+        {
+          "log_attribute": "edge.version",
+          "value": "1.0.0"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Example: Add Environment Tag
+
+```json
+{
+  "id": "add-environment",
+  "name": "Add production environment tag",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "deployment.environment",
+        "exists": false
+      }
+    ],
+    "transform": {
+      "add": [
+        {
+          "resource_attribute": "deployment.environment",
+          "value": "production",
+          "upsert": false
+        }
+      ]
+    }
+  }
+}
+```
+
+## Combined Transforms
+
+You can use multiple transform operations in a single policy:
+
+```json
+{
+  "id": "payment-log-cleanup",
+  "name": "Clean up payment service logs",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "exact": "payment-api"
+      }
+    ],
+    "transform": {
+      "remove": [
+        {
+          "log_attribute": "debug_context"
+        },
+        {
+          "log_attribute": "internal_trace_id"
+        }
+      ],
+      "redact": [
+        {
+          "log_attribute": "card.number"
+        },
+        {
+          "log_attribute": "card.cvv"
+        }
+      ],
+      "rename": [
+        {
+          "from_log_attribute": "txn_id",
+          "to": "transaction.id"
+        }
+      ],
+      "add": [
+        {
+          "log_attribute": "pci.compliant",
+          "value": "true"
+        }
+      ]
+    }
+  }
+}
+```
+
+Remember: operations execute in order (remove -> redact -> rename -> add).
+
+## Combining with Keep
+
+Transforms only apply to logs that survive the keep stage:
+
+```json
+{
+  "id": "sample-and-redact-checkout",
+  "name": "Sample checkout logs and redact cart data",
+  "log": {
+    "match": [
+      {
+        "resource_attribute": "service.name",
+        "exact": "checkout-api"
+      }
+    ],
+    "keep": "50%",
+    "transform": {
+      "redact": [
+        {
+          "log_attribute": "cart.contents"
+        }
+      ]
+    }
+  }
+}
+```
+
+This keeps 50% of checkout logs and redacts cart contents from the survivors.
+
+## Best Practices
+
+1. **Redact, don't remove** PII—preserves the signal that data existed
+2. **Use descriptive replacements** for redacted fields (`[EMAIL REDACTED]` vs
+   `[REDACTED]`)
+3. **Test transforms** in staging before production
+4. **Combine related transforms** in one policy for clarity
+5. **Document why** fields are being modified
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Log Filter"
+    icon="filter"
+    href="/edge/policy-reference/log-filter"
+  >
+    Filter logs by content and attributes
+  </Card>
+  <Card
+    title="Metric Filter"
+    icon="chart-line"
+    href="/edge/policy-reference/metric-filter"
+  >
+    Filter metrics
+  </Card>
+</CardGroup>

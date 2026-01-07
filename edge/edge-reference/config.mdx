@@ -1,0 +1,182 @@
+---
+title: "Config"
+description: "Complete configuration reference for Edge"
+---
+
+This page covers all configuration options for Edge.
+
+## Configuration File
+
+Edge uses a JSON configuration file. Pass the path as the first argument:
+
+```bash
+./edge config.json
+```
+
+### Full Example
+
+```json config.json
+{
+  "listen_address": "0.0.0.0",
+  "listen_port": 8080,
+  "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+  "logs_url": "https://agent-http-intake.logs.datadoghq.com",
+  "metrics_url": "https://api.datadoghq.com",
+  "workspace_id": "your-workspace-id",
+  "log_level": "info",
+  "max_body_size": 1048576,
+  "policy_providers": [
+    {
+      "id": "local",
+      "type": "file",
+      "path": "/etc/edge/policies.json"
+    },
+    {
+      "id": "remote",
+      "type": "http",
+      "url": "https://api.usetero.com/v1/policies",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer your-api-key"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Configuration Reference
+
+<Info>
+  The edge is configured to work with a maximum of 8k policies. Please open an
+  [issue on GitHub](https://github.com/usetero/edge/issues/new) if more are
+  needed.
+</Info>
+
+### Server Settings
+
+| Field            | Type   | Default       | Description                                            |
+| ---------------- | ------ | ------------- | ------------------------------------------------------ |
+| `listen_address` | string | `"127.0.0.1"` | IP address to bind to                                  |
+| `listen_port`    | number | `8080`        | Port to listen on                                      |
+| `max_body_size`  | number | `1048576`     | Maximum request body size in bytes (1MB default)       |
+| `log_level`      | string | `"info"`      | Logging level: `trace`, `debug`, `info`, `warn`, `err` |
+
+### Upstream Settings
+
+| Field          | Type   | Required | Description                                                               |
+| -------------- | ------ | -------- | ------------------------------------------------------------------------- |
+| `upstream_url` | string | Yes      | Default upstream destination (fallback when specific URLs not set)        |
+| `logs_url`     | string | No       | Upstream destination for log endpoints (falls back to `upstream_url`)     |
+| `metrics_url`  | string | No       | Upstream destination for metrics endpoints (falls back to `upstream_url`) |
+
+### Workspace Settings
+
+| Field          | Type   | Required | Description                          |
+| -------------- | ------ | -------- | ------------------------------------ |
+| `workspace_id` | string | No       | Workspace identifier for policy sync |
+
+### Policy Providers
+
+The `policy_providers` array configures where Edge loads policies from.
+
+#### File Provider
+
+Loads policies from a local file and watches for changes.
+
+```json
+{
+  "id": "local",
+  "type": "file",
+  "path": "/etc/edge/policies.json"
+}
+```
+
+| Field  | Type   | Required | Description                         |
+| ------ | ------ | -------- | ----------------------------------- |
+| `id`   | string | Yes      | Unique identifier for this provider |
+| `type` | string | Yes      | Must be `"file"`                    |
+| `path` | string | Yes      | Path to the policy file             |
+
+The file is watched using OS-native mechanisms (inotify on Linux, kqueue on
+macOS). Changes are applied immediately.
+
+#### HTTP Provider
+
+Loads policies from an HTTP endpoint with periodic polling.
+
+```json
+{
+  "id": "remote",
+  "type": "http",
+  "url": "https://api.example.com/policies",
+  "headers": [
+    {
+      "name": "Authorization",
+      "value": "Bearer token"
+    }
+  ]
+}
+```
+
+| Field     | Type   | Required | Description                         |
+| --------- | ------ | -------- | ----------------------------------- |
+| `id`      | string | Yes      | Unique identifier for this provider |
+| `type`    | string | Yes      | Must be `"http"`                    |
+| `url`     | string | Yes      | URL to fetch policies from          |
+| `headers` | array  | No       | HTTP headers to include in requests |
+
+## Policy File Format
+
+Policies are defined in a JSON file:
+
+```json policies.json
+{
+  "policies": [
+    {
+      "id": "policy-1",
+      "name": "Human-readable name",
+      "description": "What this policy does",
+      "enabled": true,
+      "log": {
+        "match": [...],
+        "keep": "...",
+        "transform": {...}
+      }
+    },
+    {
+      "id": "policy-2",
+      "name": "Another policy",
+      "metric": {
+        "match": [...],
+        "keep": true
+      }
+    }
+  ]
+}
+```
+
+See the [Policies](/edge/policy-reference/log-filter) section for detailed
+policy configuration.
+
+## Environment Variables
+
+| Variable         | Description                       |
+| ---------------- | --------------------------------- |
+| `TERO_LOG_LEVEL` | Override the configured log level |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Operations" icon="server" href="/edge/edge-reference/operations">
+    Logging, health checks, and resource requirements
+  </Card>
+  <Card
+    title="Log Filtering"
+    icon="filter"
+    href="/edge/policy-reference/log-filter"
+  >
+    Configure log filtering policies
+  </Card>
+</CardGroup>

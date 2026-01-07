@@ -1,0 +1,134 @@
+---
+title: "Operations"
+description:
+  "Running Edge in production: logging, health checks, resource requirements"
+---
+
+This page covers operational aspects of running Edge in production.
+
+## Logging
+
+Edge outputs structured logs to stdout:
+
+```
+2026-01-06T17:29:36.322Z [INFO] server.starting
+2026-01-06T17:29:36.322Z [INFO] configuration.loaded path="config.json"
+2026-01-06T17:29:36.323Z [INFO] listen.address.configured address="127.0.0.1" port=8080
+2026-01-06T17:29:36.323Z [INFO] upstream.configured url="https://agent-http-intake.logs.datadoghq.com"
+2026-01-06T17:29:36.323Z [INFO] policy.loader.starting provider_count=1
+2026-01-06T17:29:36.324Z [INFO] policies.loading path="/etc/edge/policies.json"
+2026-01-06T17:29:36.324Z [INFO] server.ready
+2026-01-06T17:29:36.324Z [INFO] server.listening address="127.0.0.1" port=8080
+```
+
+### Log Levels
+
+Configure the log level in your config file or via environment variable:
+
+```json
+{
+  "log_level": "info"
+}
+```
+
+Or override with `TERO_LOG_LEVEL`:
+
+```bash
+TERO_LOG_LEVEL=debug ./edge config.json
+```
+
+| Level   | Description                        |
+| ------- | ---------------------------------- |
+| `trace` | Most verbose, includes all details |
+| `debug` | Debugging information              |
+| `info`  | Normal operation messages          |
+| `warn`  | Warning conditions                 |
+| `err`   | Error conditions only              |
+
+## Health Checks
+
+Edge exposes a health endpoint for load balancer and orchestrator integration:
+
+```bash
+curl http://localhost:8080/_health
+```
+
+Returns `200 OK` when Edge is healthy and ready to process requests.
+
+### Kubernetes Probes
+
+Edge starts instantly, so probes can begin immediately:
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /_health
+    port: 8080
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /_health
+    port: 8080
+  periodSeconds: 5
+```
+
+## Graceful Shutdown
+
+Edge handles SIGINT and SIGTERM for graceful shutdown:
+
+1. Stops accepting new connections
+2. Waits for in-flight requests to complete
+3. Exits cleanly
+
+This ensures zero dropped requests during deployments and scaling events.
+
+### Kubernetes Termination
+
+Edge shuts down instantly after draining in-flight requests. A short grace
+period is sufficient:
+
+```yaml
+terminationGracePeriodSeconds: 10
+```
+
+## Resource Requirements
+
+Recommended minimums:
+
+| Resource | Minimum  | Recommended      |
+| -------- | -------- | ---------------- |
+| CPU      | 0.5 core | 1+ cores         |
+| Memory   | 10MB     | 100MB            |
+| Disk     | 10MB     | 100MB (for logs) |
+
+### Memory Scaling
+
+Memory usage scales with:
+
+- **Number of policies** — Each policy consumes memory for its compiled matchers
+- **Regex complexity** — Hyperscan databases for complex patterns
+- **Request body sizes** — Buffered during processing
+
+### Kubernetes Resources
+
+```yaml
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  limits:
+    cpu: 1000m
+    memory: 256Mi
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/edge/edge-reference/config">
+    Full configuration reference
+  </Card>
+  <Card title="Architecture" icon="sitemap" href="/edge/architecture">
+    Understand Edge internals
+  </Card>
+</CardGroup>

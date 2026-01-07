@@ -1,0 +1,156 @@
+---
+title: "Edge"
+description: "Full Edge distribution supporting all protocols"
+---
+
+The Edge distribution includes support for all protocols: Datadog APIs and OTLP.
+Use this when your environment sends telemetry in multiple formats.
+
+## Supported Endpoints
+
+| Endpoint         | Method | Protocol | Description       |
+| ---------------- | ------ | -------- | ----------------- |
+| `/api/v2/logs`   | POST   | Datadog  | Log ingestion     |
+| `/api/v1/series` | POST   | Datadog  | Metrics ingestion |
+| `/v1/logs`       | POST   | OTLP     | Log export        |
+| `/v1/metrics`    | POST   | OTLP     | Metrics export    |
+| `/health`        | GET    | -        | Health check      |
+
+## Configuration
+
+```json config.json
+{
+  "listen_address": "0.0.0.0",
+  "listen_port": 8080,
+  "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+  "logs_url": "https://agent-http-intake.logs.datadoghq.com",
+  "metrics_url": "https://api.datadoghq.com",
+  "log_level": "info",
+  "policy_providers": [
+    {
+      "id": "local",
+      "type": "file",
+      "path": "policies.json"
+    }
+  ]
+}
+```
+
+<Note>
+  You can configure separate upstream URLs for logs (`logs_url`) and metrics
+  (`metrics_url`). If not specified, they fall back to `upstream_url`.
+</Note>
+
+## Running
+
+<CodeGroup>
+```bash Docker
+docker run -d \
+  --name edge \
+  -p 8080:8080 \
+  -v $(pwd)/config.json:/etc/edge/config.json \
+  -v $(pwd)/policies.json:/etc/edge/policies.json \
+  ghcr.io/usetero/edge:latest \
+  /etc/edge/config.json
+```
+
+```bash Binary
+./edge config.json
+```
+
+```bash Source
+zig build run -- config.json
+```
+
+</CodeGroup>
+
+## When to Use This Distribution
+
+Use the Edge distribution when:
+
+- **Mixed telemetry sources**: Some applications use Datadog agents, others use
+  OpenTelemetry
+- **Migration**: Transitioning from one protocol to another
+- **Multi-vendor**: Sending data to multiple backends that prefer different
+  protocols
+- **Flexibility**: Want a single deployment that handles everything
+
+For single-protocol environments, prefer the focused distributions:
+
+- [Edge Datadog](/edge/distributions/datadog) for Datadog-only
+- [Edge OTLP](/edge/distributions/otlp) for OpenTelemetry-only
+
+Focused distributions have a smaller binary size and attack surface.
+
+## Features
+
+- Handles Datadog `/api/v2/logs` and `/api/v1/series` endpoints
+- Handles OTLP `/v1/logs` and `/v1/metrics` endpoints
+- Policy-based filtering (DROP/KEEP) for logs and metrics
+- Separate upstream URLs for logs and metrics
+- Async policy loading (server starts immediately while policies load in
+  background)
+- Fail-open behavior (errors pass data through unchanged)
+- Lock-free policy updates via atomic snapshots
+- Graceful shutdown with signal handling
+
+## Unified Policies
+
+Policies work the same regardless of the incoming protocol. A log filter policy
+applies to both Datadog logs and OTLP logs.
+
+```json
+{
+  "id": "drop-debug",
+  "name": "Drop debug logs from all sources",
+  "log": {
+    "match": [{ "log_field": "severity_text", "regex": "^(debug|DEBUG)$" }],
+    "keep": "none"
+  }
+}
+```
+
+This policy drops debug logs whether they arrive via `/api/v2/logs` (Datadog) or
+`/v1/logs` (OTLP).
+
+### Protocol-Specific Filtering
+
+To apply policies only to specific protocols, match on protocol-specific
+attributes:
+
+```json
+{
+  "id": "sample-datadog-agent-logs",
+  "name": "Sample logs from Datadog agents",
+  "log": {
+    "match": [{ "log_attribute": "ddsource", "exists": true }],
+    "keep": "10%"
+  }
+}
+```
+
+The `ddsource` attribute is specific to Datadog, so this policy only affects
+Datadog-format logs.
+
+## Resource Considerations
+
+The Edge distribution:
+
+- Has a larger binary size than focused distributions
+- Loads all protocol modules at startup
+- Uses slightly more memory
+
+For most deployments, this overhead is negligible. Consider focused
+distributions only if you're running Edge in constrained environments (embedded
+systems, very small containers).
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Datadog" icon="dog" href="/edge/distributions/datadog">
+    Datadog-specific configuration
+  </Card>
+  <Card title="OTLP" icon="tower-broadcast" href="/edge/distributions/otlp">
+    OTLP-specific configuration
+  </Card>
+</CardGroup>

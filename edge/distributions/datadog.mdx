@@ -1,0 +1,214 @@
+---
+title: "Edge Datadog"
+description: "Edge distribution for Datadog log and metric ingestion"
+---
+
+Edge Datadog is optimized for environments sending telemetry to Datadog. It
+supports the Datadog Logs API and Metrics API.
+
+## Supported Endpoints
+
+| Endpoint         | Method | Description               |
+| ---------------- | ------ | ------------------------- |
+| `/api/v2/logs`   | POST   | Datadog log ingestion     |
+| `/api/v1/series` | POST   | Datadog metrics ingestion |
+| `/health`        | GET    | Health check              |
+
+## Configuration
+
+```json config.json
+{
+  "listen_address": "0.0.0.0",
+  "listen_port": 8080,
+  "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+  "metrics_url": "https://api.datadoghq.com",
+  "log_level": "info",
+  "policy_providers": [
+    {
+      "id": "local",
+      "type": "file",
+      "path": "policies.json"
+    }
+  ]
+}
+```
+
+### Regional Endpoints
+
+Set `upstream_url` and `metrics_url` based on your Datadog region:
+
+| Region | Logs URL                                           | Metrics URL                     |
+| ------ | -------------------------------------------------- | ------------------------------- |
+| US1    | `https://agent-http-intake.logs.datadoghq.com`     | `https://api.datadoghq.com`     |
+| US3    | `https://agent-http-intake.logs.us3.datadoghq.com` | `https://api.us3.datadoghq.com` |
+| US5    | `https://agent-http-intake.logs.us5.datadoghq.com` | `https://api.us5.datadoghq.com` |
+| EU1    | `https://agent-http-intake.logs.datadoghq.eu`      | `https://api.datadoghq.eu`      |
+| AP1    | `https://agent-http-intake.logs.ap1.datadoghq.com` | `https://api.ap1.datadoghq.com` |
+
+## Running
+
+<CodeGroup>
+```bash Docker
+docker run -d \
+  --name edge-datadog \
+  -p 8080:8080 \
+  -v $(pwd)/config.json:/etc/edge/config.json \
+  -v $(pwd)/policies.json:/etc/edge/policies.json \
+  ghcr.io/usetero/edge-datadog:latest \
+  /etc/edge/config.json
+```
+
+```bash Binary
+./edge-datadog config.json
+```
+
+```bash Source
+zig build run-datadog -- config.json
+```
+
+</CodeGroup>
+
+## Datadog Agent Configuration
+
+Point your Datadog Agent at Edge instead of Datadog directly.
+
+### Logs
+
+In `datadog.yaml`:
+
+```yaml
+logs_config:
+  logs_dd_url: "edge-host:8080"
+  use_http: true
+  use_compression: true
+```
+
+Or via environment variables:
+
+```bash
+DD_LOGS_CONFIG_LOGS_DD_URL=edge-host:8080
+DD_LOGS_CONFIG_USE_HTTP=true
+```
+
+### Metrics
+
+In `datadog.yaml`:
+
+```yaml
+dd_url: "http://edge-host:8080"
+```
+
+Or via environment variable:
+
+```bash
+DD_DD_URL=http://edge-host:8080
+```
+
+## Log Format
+
+Edge expects Datadog's log format:
+
+```json
+[
+  {
+    "message": "Log message content",
+    "status": "info",
+    "hostname": "host-1",
+    "service": "my-service",
+    "ddsource": "python",
+    "ddtags": "env:production,version:1.2.3"
+  }
+]
+```
+
+### Field Mapping
+
+Datadog fields map to policy matchers:
+
+| Datadog Field | Policy Matcher                                 |
+| ------------- | ---------------------------------------------- |
+| `message`     | `log_field: body`                              |
+| `status`      | `log_field: severity_text`                     |
+| `hostname`    | `resource_attribute: host.name`                |
+| `service`     | `resource_attribute: service.name`             |
+| `ddsource`    | `log_attribute: ddsource`                      |
+| `ddtags`      | Parsed into individual `log_attribute` entries |
+
+## Example Policies
+
+### Drop Debug Logs
+
+```json
+{
+  "id": "drop-debug",
+  "name": "Drop debug logs",
+  "log": {
+    "match": [{ "log_field": "severity_text", "regex": "^(debug|DEBUG)$" }],
+    "keep": "none"
+  }
+}
+```
+
+### Filter by Service
+
+```json
+{
+  "id": "sample-checkout",
+  "name": "Sample checkout service logs",
+  "log": {
+    "match": [{ "resource_attribute": "service.name", "exact": "checkout" }],
+    "keep": "10%"
+  }
+}
+```
+
+### Drop Health Checks
+
+```json
+{
+  "id": "drop-health-checks",
+  "name": "Drop health check logs",
+  "log": {
+    "match": [{ "log_field": "body", "regex": "GET /health" }],
+    "keep": "none"
+  }
+}
+```
+
+### Drop Noisy Metrics
+
+```json
+{
+  "id": "drop-system-load",
+  "name": "Drop system load metrics",
+  "metric": {
+    "match": [{ "metric_field": "name", "regex": "^system\\.load" }],
+    "keep": false
+  }
+}
+```
+
+## Compression
+
+Edge supports gzip and zstd compression for both incoming requests and outgoing
+requests to Datadog. The Datadog Agent sends compressed payloads by default—Edge
+handles this automatically.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Log Filter"
+    icon="filter"
+    href="/edge/policy-reference/log-filter"
+  >
+    All log filtering options
+  </Card>
+  <Card
+    title="Log Transform"
+    icon="wand-magic-sparkles"
+    href="/edge/policy-reference/log-transform"
+  >
+    Redact and transform logs
+  </Card>
+</CardGroup>

@@ -35,6 +35,46 @@
         ]
       },
       {
+        "tab": "Edge",
+        "icon": "microchip",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "edge/overview",
+              "edge/concepts",
+              "edge/architecture",
+              "edge/quickstart"
+            ]
+          },
+          {
+            "group": "Distributions",
+            "pages": [
+              "edge/distributions/datadog",
+              "edge/distributions/otlp",
+              "edge/distributions/all"
+            ]
+          },
+          {
+            "group": "Edge Reference",
+            "pages": [
+              "edge/edge-reference/config",
+              "edge/edge-reference/operations"
+            ]
+          },
+          {
+            "group": "Policy Reference",
+            "pages": [
+              "edge/policy-reference/log-filter",
+              "edge/policy-reference/log-transform",
+              "edge/policy-reference/metric-filter",
+              "edge/policy-reference/metric-transform",
+              "edge/policy-reference/trace-filter"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Trust Center",
         "icon": "shield-check",
         "groups": [

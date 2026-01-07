@@ -1,0 +1,337 @@
+---
+title: "Architecture"
+description: "How Edge is built and why it's fast"
+---
+
+Edge is a lightweight proxy built in Zig, designed for high throughput and low
+latency telemetry processing via Policies.
+
+## Component Overview
+
+### Internal Architecture
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#0e2b22', 'lineColor': '#fafafa', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#0e2b22', 'clusterBkg': '#171717', 'clusterBorder': '#0e2b22', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717'}}}%%
+graph TB
+    subgraph Clients["Clients"]
+        C["HTTP Clients"]
+    end
+
+    subgraph Server["HTTP Server (httpz)"]
+        TP["Thread Pool"]
+        SC["ServerContext"]
+    end
+
+    subgraph Routing["Request Routing"]
+        R["Router<br/>Exact/Prefix/Suffix Match"]
+    end
+
+    subgraph Modules["Module Pipeline"]
+        direction LR
+        H["HealthModule<br/>/_health"]
+        DD["DatadogModule<br/>/api/v2/logs<br/>/api/v2/series"]
+        OT["OtlpModule<br/>/v1/logs<br/>/v1/metrics"]
+        PT["PassthroughModule<br/>Catch-all"]
+    end
+
+    subgraph Filtering["Policy Engine"]
+        REG["PolicyRegistry<br/>Lock-free Snapshots"]
+        PE["PolicyEngine<br/>Filter + Transform"]
+    end
+
+    subgraph Providers["Policy Providers"]
+        PL["PolicyLoader<br/>Async"]
+        FP["FileProvider<br/>Watch Loop"]
+        HP["HttpProvider<br/>Poll Loop"]
+    end
+
+    subgraph Upstream["Upstream"]
+        UCM["UpstreamClientManager<br/>Connection Pool"]
+        TLS["TLS Client"]
+    end
+
+    C -->|Request| TP
+    TP --> SC
+    SC --> R
+    R --> H & DD & OT & PT
+
+    DD --> PE
+    OT --> PE
+    PE -->|Filtered| UCM
+
+    PT --> UCM
+    UCM --> TLS
+
+    PL -.->|async| FP & HP
+    FP & HP -.->|update| REG
+    REG -.->|snapshot| PE
+
+    style C fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style TP fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style SC fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style R fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style H fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style DD fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style OT fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style PT fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style REG fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style PE fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style PL fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style FP fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style HP fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style UCM fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style TLS fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+```
+
+### Protocol Modules
+
+Each distribution includes modules for specific protocols:
+
+| Module          | Endpoints        | Description                  |
+| --------------- | ---------------- | ---------------------------- |
+| Datadog Logs    | `/api/v2/logs`   | Datadog log ingestion API    |
+| Datadog Metrics | `/api/v1/series` | Datadog metrics API          |
+| OTLP Logs       | `/v1/logs`       | OpenTelemetry log export     |
+| OTLP Metrics    | `/v1/metrics`    | OpenTelemetry metrics export |
+
+Modules are stateless. They parse incoming requests, evaluate policies, and
+forward results. All state lives in the policy registry.
+
+### Policy Registry
+
+The registry holds all loaded policies and provides lock-free read access during
+request processing.
+
+Key properties:
+
+- **Atomic snapshots**: Writers create new snapshots; readers use existing ones
+- **Lock-free reads**: No contention during policy evaluation
+- **Hot reload**: New policies take effect without restart
+
+This design means policy updates never block request processing.
+
+### Policy Engine
+
+The engine evaluates policies against telemetry using Vectorscan (a Hyperscan
+fork) for regex matching.
+
+Evaluation flow:
+
+1. **Index lookup**: Find policies that might match based on field keys
+2. **Regex scan**: Evaluate regex patterns against field values
+3. **Action merge**: Combine keep/transform actions from matching policies
+4. **Apply**: Execute the merged actions
+
+Vectorscan compiles regex patterns into finite automata, enabling simultaneous
+evaluation of thousands of patterns in a single pass.
+
+### Policy Providers
+
+Providers load policies from external sources:
+
+| Provider | Source           | Reload Mechanism                   |
+| -------- | ---------------- | ---------------------------------- |
+| File     | Local filesystem | inotify/kqueue file watching       |
+| HTTP     | Remote endpoint  | Polling with configurable interval |
+
+Multiple sources can be configured. Policies from all sources merge together.
+The policy ID acts as a unique key. If two providers emit a policy with the same
+ID, the one from the higher-priority source (HTTP > file) wins. Same-priority
+sources will have the later update win. This structure allows you to create a
+set of default policies that can be overridden remotely.
+
+## Design Principles
+
+### Data-Oriented Design
+
+Edge optimizes for memory access patterns and cache coherency. Data structures
+are laid out for sequential access, minimizing cache misses during
+high-throughput processing.
+
+### Lock-Free Reads
+
+Policy evaluation is a read-heavy operation—every request needs to read
+policies, but updates are rare. Edge uses atomic pointers to policy snapshots,
+eliminating read-side synchronization.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#404040', 'lineColor': '#737373', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#404040', 'clusterBkg': '#171717', 'clusterBorder': '#404040', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717', 'actorLineColor': '#333333', 'signalColor': '#a3a3a3', 'signalTextColor': '#fafafa', 'labelTextColor': '#fafafa', 'actorBkg': '#0e2b22', 'actorTextColor': '#fafafa', 'noteBkgColor': '#1a3a2e', 'noteTextColor': '#fafafa', 'noteBorderColor': '#2d5a48', 'activationBkgColor': '#0e2b22', 'activationBorderColor': '#404040', 'sequenceNumberColor': '#fafafa', 'labelBoxBkgColor': '#1a3a2e', 'labelBoxBorderColor': '#2d5a48'}}}%%
+sequenceDiagram
+    participant R1 as Request Thread 1
+    participant R2 as Request Thread 2
+    participant Reg as Policy Registry
+    participant U as Update Thread
+
+    Note over Reg: Snapshot v1 active
+
+    rect rgba(26, 58, 46, 0.3)
+        Note left of R1: Parallel: Both threads<br/>read same snapshot
+        R1->>Reg: read snapshot
+        Reg-->>R1: Snapshot v1
+        R2->>Reg: read snapshot
+        Reg-->>R2: Snapshot v1
+    end
+
+    Note over U,Reg: Policy update arrives
+    U->>Reg: create Snapshot v2
+    U->>Reg: atomic swap pointer
+    Note over Reg: Snapshot v2 now active
+
+    rect rgba(26, 58, 46, 0.3)
+        Note left of R1: Parallel: Both threads<br/>now see new snapshot
+        R1->>Reg: read snapshot
+        Reg-->>R1: Snapshot v2
+        R2->>Reg: read snapshot
+        Reg-->>R2: Snapshot v2
+    end
+```
+
+### Fail-Open
+
+Edge prioritizes availability. If policy evaluation fails for any reason,
+telemetry passes through unchanged. You might miss a filter, but you won't lose
+data.
+
+### Stateless Modules
+
+Protocol modules don't maintain state. All they do is:
+
+1. Parse the request
+2. Read policies from the registry
+3. Apply policies to the data
+4. Forward to upstream
+
+This makes modules easy to reason about and safe to run in parallel.
+
+## Performance Characteristics
+
+| Metric              | Typical Value     |
+| ------------------- | ----------------- |
+| Latency overhead    | < 5ms p99         |
+| Requests per second | 90k+              |
+| Policy evaluation   | O(1) average case |
+| Memory per policy   | ~1KB              |
+| Max policies tested | 8,000+            |
+
+Performance depends on:
+
+- Number of regex patterns (more patterns = more evaluation time)
+- Request body size (larger bodies take longer to parse)
+
+## Deployment Patterns
+
+### Gateway
+
+Deploy Edge as a shared gateway for multiple services:
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#262626', 'lineColor': '#fafafa', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#262626', 'clusterBkg': '#171717', 'clusterBorder': '#262626', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717'}}}%%
+flowchart LR
+    subgraph Applications
+        App1[App 1]
+        App2[App 2]
+        App3[App 3]
+    end
+
+    subgraph Telemetry Pipeline
+        Collector[OTel Collector<br/>/ Vector / Fluentd]
+    end
+
+    subgraph Egress Gateway
+        Edge[Tero Edge<br/>Gateway]
+    end
+
+    subgraph External Vendors
+        DD[Datadog<br/>$$$/GB]
+        NR[New Relic<br/>$$$/GB]
+        Grafana[Grafana Cloud<br/>$$$/GB]
+    end
+
+    App1 --> Collector
+    App2 --> Collector
+    App3 --> Collector
+    Collector -->|All Data| Edge
+    Edge -->|Filtered Data<br/>70-90% reduction| DD
+    Edge -->|Filtered Data| NR
+    Edge -->|Filtered Data| Grafana
+
+    style Edge fill:#10b981,stroke:#262626,color:#fff
+    style Collector fill:#f59e0b,stroke:#262626,color:#000
+    style App1 fill:#262626,stroke:#262626,color:#fafafa
+    style App2 fill:#262626,stroke:#262626,color:#fafafa
+    style App3 fill:#262626,stroke:#262626,color:#fafafa
+    style DD fill:#632ca6,stroke:#262626,color:#fff
+    style NR fill:#0ea5e9,stroke:#262626,color:#fff
+    style Grafana fill:#f97316,stroke:#262626,color:#fff
+```
+
+**Use Case**: Tero Edge sits at the egress point after your telemetry pipeline.
+It acts as a final gateway before data leaves your network, applying
+cost-focused policies to dramatically reduce egress to expensive SaaS vendors.
+Drop redundant health checks, sample high-cardinality metrics, and keep only
+actionable data—cutting observability costs by up to 90%.
+
+Best for:
+
+- Centralized policy management
+- Environments with many services
+- When you want a single point of control
+
+### Sidecar
+
+Deploy Edge alongside each service:
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#262626', 'lineColor': '#fafafa', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#262626', 'clusterBkg': '#171717', 'clusterBorder': '#262626', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717'}}}%%
+flowchart LR
+    subgraph Pod/Host
+        App[Application]
+        Edge[Tero Edge<br/>Sidecar]
+    end
+
+    subgraph Telemetry Pipeline
+        Collector[OTel Collector<br/>/ Vector / Fluentd]
+    end
+
+    subgraph Backend
+        DD[Datadog]
+        Splunk[Splunk]
+        S3[S3/Object Storage]
+    end
+
+    App -->|Logs/Metrics| Edge
+    Edge -->|Filtered Data| Collector
+    Collector --> DD
+    Collector --> Splunk
+    Collector --> S3
+
+    style Edge fill:#10b981,stroke:#262626,color:#fff
+    style App fill:#262626,stroke:#262626,color:#fafafa
+    style Collector fill:#f59e0b,stroke:#262626,color:#000
+    style DD fill:#632ca6,stroke:#262626,color:#fff
+    style Splunk fill:#059669,stroke:#262626,color:#fff
+    style S3 fill:#0ea5e9,stroke:#262626,color:#fff
+```
+
+**Use Case**: Tero Edge runs as a lightweight sidecar next to each application.
+It applies policies at the source—dropping noisy debug logs, redacting PII, or
+sampling high-volume metrics—before data ever reaches the telemetry pipeline.
+This reduces load on collectors and network bandwidth within your
+infrastructure.
+
+Best for:
+
+- Service-specific policies
+- Isolation between services
+- Kubernetes environments with sidecar injection
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/edge/quickstart">
+    Get Edge running in 5 minutes
+  </Card>
+  <Card title="Reference" icon="gear" href="/edge/reference">
+    Full configuration reference
+  </Card>
+</CardGroup>

@@ -1,0 +1,193 @@
+---
+title: "Concepts"
+description: "Core concepts and mental models for working with Edge"
+---
+
+Before diving into configuration, it helps to understand how Edge thinks about
+telemetry processing.
+
+## Policies
+
+A **policy** is an atomic rule that matches specific telemetry and applies an
+action. Each policy does one thing: identify telemetry that meets certain
+conditions, then decide what happens to it. You can think of a policy as a way
+to select a group of telemetry and apply an action to it. The policy syntax is
+based on the
+[OpenTelemetry Semantic Convention](https://opentelemetry.io/docs/concepts/semantic-conventions/)
+and is being
+[evaluated for donation](https://github.com/open-telemetry/opentelemetry-specification/pull/4738)
+to the OpenTelemetry project. For now, you can read
+[Tero's Policy Specification](https://github.com/usetero/policy) to learn more.
+
+<Warning>
+  The policy specification is still in development and subject to change.
+</Warning>
+
+```yaml
+id: drop-debug-logs
+name: Drop debug and trace logs
+log:
+  match:
+    - log_field: severity_text
+      regex: "^(DEBUG|TRACE)$"
+  keep: none
+```
+
+This policy matches logs with DEBUG or TRACE severity and drops them. Nothing
+else.
+
+### Policy Properties
+
+Every policy has these characteristics:
+
+- **Atomic**: One intent per policy. Match one pattern, apply a set of actions.
+- **Self-contained**: No dependencies between policies. Each stands alone.
+- **Fail-open**: If evaluation fails, telemetry passes through.
+- **Idempotent**: Safe to apply multiple times with identical results.
+
+### Why Atomic Policies?
+
+Traditional pipelines are sequential. Telemetry flows through a chain of
+processors, each modifying the data. This creates problems:
+
+- **Order matters**: Changing one processor affects downstream processors
+- **Hidden dependencies**: Processors rely on fields set by earlier processors
+- **Debugging nightmare**: Tracing why telemetry changed requires understanding
+  the entire chain
+
+Edge policies execute in parallel. Each policy evaluates independently against
+the original telemetry. No policy depends on another policy's output. This makes
+policies:
+
+- Easy to add, remove, or modify without side effects
+- Simple to understand in isolation
+- Safe to generate programmatically
+
+## Matchers
+
+**Matchers** identify which telemetry a policy applies to. A policy can have
+multiple matchers—all must match for the policy to apply (AND logic). When
+creating a policy, it's best to ensure the matchers are mutually exclusive to
+avoid unintended matches.
+
+```yaml
+match:
+  - resource_attribute: service.name
+    exact: checkout-api
+  - log_field: severity_text
+    exact: DEBUG
+```
+
+This matches only DEBUG logs from the checkout-api service.
+
+### Match Types
+
+| Type     | Description            | Example              |
+| -------- | ---------------------- | -------------------- |
+| `exact`  | Exact string equality  | `exact: "error"`     |
+| `regex`  | RE2 regular expression | `regex: "^payment-"` |
+| `exists` | Field presence check   | `exists: true`       |
+
+### Negation
+
+Add `negate: true` to invert any match:
+
+```yaml
+match:
+  - log_field: severity_text
+    exact: DEBUG
+    negate: true # Matches everything EXCEPT DEBUG
+```
+
+## Actions
+
+When a policy matches, it contributes to two stages: **keep** and **transform**.
+
+### Keep Stage
+
+The keep action determines whether telemetry survives processing:
+
+| Value         | Effect                                  |
+| ------------- | --------------------------------------- |
+| `keep: all`   | Keep all matching telemetry (default)   |
+| `keep: none`  | Drop all matching telemetry             |
+| `keep: 50%`   | Keep 50% (percentage sampling)          |
+| `keep: 100/s` | Keep max 100 per second (rate limiting) |
+
+When multiple policies match the same telemetry, the most restrictive action
+wins:
+
+1. `none` (drop) beats everything
+2. Lower percentages beat higher percentages
+3. Rate limits are evaluated independently
+
+### Transform Stage
+
+Transforms modify telemetry that survives the keep stage:
+
+| Operation | Effect             |
+| --------- | ------------------ |
+| `remove`  | Delete fields      |
+| `redact`  | Mask field values  |
+| `rename`  | Change field names |
+| `add`     | Insert new fields  |
+
+Transforms execute in strict order: remove → redact → rename → add.
+
+## Execution Model
+
+Edge processes telemetry in two fixed stages:
+
+```
+Telemetry → Match (parallel) → Keep → Transform → Output
+                ├─ Policy 1
+                ├─ Policy 2
+                └─ Policy N
+```
+
+1. **Match**: All policies evaluate in parallel against the incoming telemetry
+2. **Keep**: Matching policies contribute their keep values; most restrictive
+   wins
+3. **Transform**: Surviving telemetry has all matching transforms applied
+
+This parallel model scales to thousands of policies without performance
+degradation. There's no sequential bottleneck.
+
+## Telemetry Types
+
+Edge currently supports two telemetry types:
+
+| Type    | Description                                 | Policy Actions            |
+| ------- | ------------------------------------------- | ------------------------- |
+| Logs    | Log records with body, severity, attributes | Filter, sample, transform |
+| Metrics | Numeric measurements with dimensions        | Filter only               |
+| Traces  | Distributed traces with spans               | Filter only (coming soon) |
+
+Each policy targets exactly one telemetry type. You cannot mix log and metric
+matchers in the same policy.
+
+## Policy Sources
+
+Edge loads policies from its policy providers. Currently two policy providers
+are supported:
+
+- **File**: Local JSON files with file watching for hot reload
+- **HTTP/gRPC**: Remote endpoints with polling for updates
+  ([view the gRPC API](https://github.com/usetero/policy/blob/8b00e7c88e7714dd941d596a5bf748064e6a75a7/proto/tero/policy/v1/policy.proto#L168-L176))
+
+Multiple sources can be configured. Policies from all sources merge together.
+The policy ID acts as a unique key. If two providers emit a policy with the same
+ID, the one from the higher-priority source (HTTP > file) wins. Same-priority
+sources will have the later update win. This structure allows you to create a
+set of default policies that can be overridden remotely.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="sitemap" href="/edge/architecture">
+    Understand how Edge is built
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/edge/quickstart">
+    Get Edge running in 5 minutes
+  </Card>
+</CardGroup>

@@ -1,0 +1,203 @@
+---
+title: "Quickstart"
+description: "Get Edge running in 5 minutes"
+---
+
+This guide gets you from zero to filtering telemetry in under 5 minutes.
+
+## Prerequisites
+
+- A running observability platform (Datadog, or any OTLP-compatible backend)
+- Docker or a Zig build environment
+
+## Step 1: Create a Configuration
+
+Create a `config.json` file:
+
+<Tabs>
+  <Tab title="Datadog">
+    ```json config.json
+    {
+      "listen_address": "127.0.0.1",
+      "listen_port": 8080,
+      "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+      "metrics_url": "https://api.datadoghq.com",
+      "log_level": "info",
+      "policy_providers": [
+        {
+          "id": "local",
+          "type": "file",
+          "path": "policies.json"
+        }
+      ]
+    }
+    ```
+
+    <Note>
+      Replace the URLs with your Datadog region's endpoints. See [Datadog distribution](/edge/distributions/datadog) for region-specific URLs.
+    </Note>
+
+  </Tab>
+  <Tab title="OTLP">
+    ```json config.json
+    {
+      "listen_address": "127.0.0.1",
+      "listen_port": 8080,
+      "upstream_url": "https://your-otlp-endpoint.com",
+      "log_level": "info",
+      "policy_providers": [
+        {
+          "id": "local",
+          "type": "file",
+          "path": "policies.json"
+        }
+      ]
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Step 2: Create a Policy
+
+Create a `policies.json` file with a simple policy that drops debug logs:
+
+```json policies.json
+{
+  "policies": [
+    {
+      "id": "drop-debug-logs",
+      "name": "Drop debug and trace logs",
+      "log": {
+        "match": [
+          {
+            "log_field": "severity_text",
+            "regex": "^(DEBUG|TRACE)$"
+          }
+        ],
+        "keep": "none"
+      }
+    }
+  ]
+}
+```
+
+This policy:
+
+- Matches logs with severity DEBUG or TRACE
+- Drops them (`keep: none`)
+
+## Step 3: Run Edge
+
+<Tabs>
+  <Tab title="Docker">
+    ```bash
+    docker run -d \
+      -p 8080:8080 \
+      -v $(pwd)/config.json:/etc/edge/config.json \
+      -v $(pwd)/policies.json:/etc/edge/policies.json \
+      ghcr.io/usetero/edge:latest \
+      /etc/edge/config.json
+    ```
+  </Tab>
+  <Tab title="Binary">
+    ```bash
+    # Download the appropriate binary for your platform
+    curl -LO https://github.com/usetero/edge/releases/latest/download/edge-linux-amd64
+    chmod +x edge-linux-amd64
+
+    # Run Edge
+    ./edge-linux-amd64 config.json
+    ```
+
+  </Tab>
+  <Tab title="From Source">
+    ```bash
+    # Clone the repository
+    git clone https://github.com/usetero/edge.git
+    cd edge
+
+    # Build and run
+    zig build run -- config.json
+    ```
+
+  </Tab>
+</Tabs>
+
+## Step 4: Point Your Telemetry at Edge
+
+Configure your applications or agents to send telemetry to Edge instead of
+directly to your backend.
+
+<Tabs>
+  <Tab title="Datadog Agent">
+    In your `datadog.yaml`:
+
+    ```yaml
+    logs_config:
+        logs_dd_url: "localhost:8080"
+        use_http: true
+    ```
+
+  </Tab>
+  <Tab title="OTLP">
+    Point your OTLP exporter to Edge:
+
+    ```yaml
+    exporters:
+      otlphttp:
+        endpoint: "http://localhost:8080"
+    ```
+
+  </Tab>
+</Tabs>
+
+## Step 5: Verify It's Working
+
+Send a test log and check that debug logs are being dropped:
+
+```bash
+# Send a debug log (should be dropped)
+curl -X POST http://localhost:8080/api/v2/logs \
+  -H "Content-Type: application/json" \
+  -d '[{"message": "test debug message", "status": "debug"}]'
+
+# Send an error log (should pass through)
+curl -X POST http://localhost:8080/api/v2/logs \
+  -H "Content-Type: application/json" \
+  -d '[{"message": "test error message", "status": "error"}]'
+```
+
+Check Edge's logs to see policy hits:
+
+```bash
+docker logs edge
+# or
+tail -f /var/log/edge.log
+```
+
+## What's Next?
+
+You now have Edge filtering telemetry. From here:
+
+<CardGroup cols={2}>
+  <Card title="Reference" icon="gear" href="/edge/edge-reference/config">
+    Full configuration reference
+  </Card>
+  <Card
+    title="Log Filter"
+    icon="filter"
+    href="/edge/policy-reference/log-filter"
+  >
+    Learn all the ways to filter logs
+  </Card>
+  <Card
+    title="Log Transform"
+    icon="wand-magic-sparkles"
+    href="/edge/policy-reference/log-transform"
+  >
+    Redact and transform log data
+  </Card>
+  <Card title="Distributions" icon="cubes" href="/edge/distributions/datadog">
+    Configure for your specific backend
+  </Card>
+</CardGroup>
