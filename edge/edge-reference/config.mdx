@@ -1,5 +1,5 @@
 ---
-title: "Edge Config"
+title: "Config"
 description: "Complete configuration reference for Edge"
 ---
 
@@ -47,6 +47,12 @@ Edge uses a JSON configuration file. Pass the path as the first argument:
 ```
 
 ## Configuration Reference
+
+<Info>
+  The edge is configured to work with a maximum of 8k policies. Please open an
+  [issue on GitHub](https://github.com/usetero/edge/issues/new) if more are
+  needed.
+</Info>
 
 ### Server Settings
 
@@ -151,8 +157,8 @@ Policies are defined in a JSON file:
 }
 ```
 
-See the [Policies](/edge/reference/log-filter) section for detailed policy
-configuration.
+See the [Policies](/edge/policy-reference/log-filter) section for detailed
+policy configuration.
 
 ## Environment Variables
 
@@ -160,82 +166,17 @@ configuration.
 | ---------------- | --------------------------------- |
 | `TERO_LOG_LEVEL` | Override the configured log level |
 
-## Logging Output
-
-Edge outputs logs to stdout:
-
-```json
-2026-01-06T17:29:36.322Z [INFO] server.starting
-2026-01-06T17:29:36.322Z [INFO] configuration.loaded path="bench/scaling/configs/generated/edge-datadog-4000.json"
-2026-01-06T17:29:36.323Z [INFO] listen.address.configured address="127.0.0.1" port=8080
-2026-01-06T17:29:36.323Z [INFO] upstream.configured url="http://127.0.0.1:9999"
-2026-01-06T17:29:36.323Z [INFO] service.configured namespace="tero" name="tero-edge" instance_id="edge-1767720576323-6189588" version="latest"
-2026-01-06T17:29:36.323Z [INFO] policy.loader.starting provider_count=1
-2026-01-06T17:29:36.323Z [INFO] file.provider.configured path="/Users/jea/Code/tero/edge/bench/scaling/configs/generated/policies-4000.json"
-2026-01-06T17:29:36.324Z [INFO] policies.loading path="/Users/jea/Code/tero/edge/bench/scaling/configs/generated/policies-4000.json"
-2026-01-06T17:29:36.324Z [INFO] server.ready
-2026-01-06T17:29:36.324Z [INFO] shutdown.hint pid=2496
-2026-01-06T17:29:36.324Z [INFO] server.listening address="127.0.0.1" port=8080
-```
-
-### Log Levels
-
-| Level   | Description                          |
-| ------- | ------------------------------------ |
-| `debug` | Debugging information (very verbose) |
-| `info`  | Normal operation messages            |
-| `warn`  | Warning conditions                   |
-| `err`   | Error conditions                     |
-
-## Health Checks
-
-Edge exposes a health endpoint:
-
-```bash
-curl http://localhost:8080/_health
-```
-
-Returns `200 OK` when Edge is healthy and ready to process requests.
-
-## Graceful Shutdown
-
-Edge handles SIGINT and SIGTERM for graceful shutdown:
-
-1. Stops accepting new connections
-2. Waits for in-flight requests to complete
-3. Exits cleanly
-
-## Resource Requirements
-
-Recommended minimums:
-
-| Resource | Minimum | Recommended      |
-| -------- | ------- | ---------------- |
-| CPU      | .5 core | 1+ cores         |
-| Memory   | 10MB    | 100MB            |
-| Disk     | 10MB    | 100MB (for logs) |
-
-Memory usage scales with:
-
-- Number of policies loaded
-- Size of compiled regex databases
-- Request body sizes being processed
-
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card
-    title="Datadog Distribution"
-    icon="dog"
-    href="/edge/distributions/datadog"
-  >
-    Configure Edge for Datadog
+  <Card title="Operations" icon="server" href="/edge/edge-reference/operations">
+    Logging, health checks, and resource requirements
   </Card>
   <Card
-    title="OTLP Distribution"
-    icon="tower-broadcast"
-    href="/edge/distributions/otlp"
+    title="Log Filtering"
+    icon="filter"
+    href="/edge/policy-reference/log-filter"
   >
-    Configure Edge for OpenTelemetry
+    Configure log filtering policies
   </Card>
 </CardGroup>

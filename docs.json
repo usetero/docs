@@ -57,16 +57,19 @@
           },
           {
             "group": "Edge Reference",
-            "pages": ["edge/reference/config"]
+            "pages": [
+              "edge/edge-reference/config",
+              "edge/edge-reference/operations"
+            ]
           },
           {
             "group": "Policy Reference",
             "pages": [
-              "edge/reference/log-filter",
-              "edge/reference/log-transform",
-              "edge/reference/metric-filter",
-              "edge/reference/metric-transform",
-              "edge/reference/trace-filter"
+              "edge/policy-reference/log-filter",
+              "edge/policy-reference/log-transform",
+              "edge/policy-reference/metric-filter",
+              "edge/policy-reference/metric-transform",
+              "edge/policy-reference/trace-filter"
             ]
           }
         ]
