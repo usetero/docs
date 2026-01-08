@@ -32,21 +32,15 @@
       {
         "tab": "Tero",
         "icon": "robot",
+        "href": "introduction/what-is-tero",
         "groups": [
           {
             "group": "Introduction",
             "pages": [
               "introduction/what-is-tero",
               "introduction/how-it-works",
-              "introduction/tero-versus"
-            ]
-          },
-          {
-            "group": "Getting Started",
-            "pages": [
-              "getting-started/create-account",
-              "getting-started/connect-datadog",
-              "getting-started/ask-first-question"
+              "introduction/tero-versus",
+              "quickstart"
             ]
           },
           {

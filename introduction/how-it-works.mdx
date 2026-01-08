@@ -47,8 +47,8 @@ You ask questions. Tero answers using the context graph.
 
 Deploy policies to eliminate waste. Choose where and how they run.
 
-<AccordionGroup>
-  <Accordion title="Agentless" defaultOpen>
+<Tabs>
+  <Tab title="Agentless">
     <Frame>
       <img src="/images/how-it-works-4-agentless.svg" alt="Agentless enforcement via Datadog API" />
     </Frame>
@@ -56,9 +56,9 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **No deployment required**: Tero configures exclusion rules directly in Datadog.
     - **Immediate effect**: Waste stops flowing as soon as you approve.
     - **Fully reversible**: Remove rules anytime with zero risk.
-  </Accordion>
+  </Tab>
 
-  <Accordion title="Datadog Agent">
+  <Tab title="Datadog Agent">
     <Frame>
       <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
     </Frame>
@@ -66,9 +66,9 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **Drop-in replacement**: Our build of the Datadog Agent with Tero's policy engine.
     - **Same config, new capabilities**: Your existing setup plus policy enforcement.
     - **Filter at source**: Policies execute before data leaves your infrastructure.
-  </Accordion>
+  </Tab>
 
-  <Accordion title="OTel Collector">
+  <Tab title="OTel Collector">
     <Frame>
       <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
     </Frame>
@@ -76,8 +76,8 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **Drop-in replacement**: Our build of OTel Collector with Tero's policy engine.
     - **Same config, new capabilities**: Your existing setup plus policy enforcement.
     - **Filter at source**: Policies execute before data leaves your infrastructure.
-  </Accordion>
-</AccordionGroup>
+  </Tab>
+</Tabs>
 
 ---
 
