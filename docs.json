@@ -220,8 +220,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Sign In",
-      "href": "https://app.usetero.com"
+      "label": "Book a demo",
+      "href": "https://usetero.com/book-a-demo"
     }
   },
   "contextual": {

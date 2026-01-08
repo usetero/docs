@@ -5,7 +5,7 @@ icon: "gears"
 iconType: "duotone"
 ---
 
-Tero has two components: the **control plane** and the **edge**. They connect to your existing tools through **integrations**.
+Tero connects to your existing observability tools and works in four steps.
 
 ## 1. Connect
 
@@ -47,8 +47,8 @@ You ask questions. Tero answers using the context graph.
 
 Deploy policies to eliminate waste. Choose where and how they run.
 
-<Tabs>
-  <Tab title="Agentless">
+<AccordionGroup>
+  <Accordion title="Agentless" defaultOpen>
     <Frame>
       <img src="/images/how-it-works-4-agentless.svg" alt="Agentless enforcement via Datadog API" />
     </Frame>
@@ -56,9 +56,9 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **No deployment required**: Tero configures exclusion rules directly in Datadog.
     - **Immediate effect**: Waste stops flowing as soon as you approve.
     - **Fully reversible**: Remove rules anytime with zero risk.
-  </Tab>
+  </Accordion>
 
-  <Tab title="Datadog Agent">
+  <Accordion title="Datadog Agent">
     <Frame>
       <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
     </Frame>
@@ -66,9 +66,9 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **Drop-in replacement**: Our build of the Datadog Agent with Tero's policy engine.
     - **Same config, new capabilities**: Your existing setup plus policy enforcement.
     - **Filter at source**: Policies execute before data leaves your infrastructure.
-  </Tab>
+  </Accordion>
 
-  <Tab title="OTel Collector">
+  <Accordion title="OTel Collector">
     <Frame>
       <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
     </Frame>
@@ -76,9 +76,24 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **Drop-in replacement**: Our build of OTel Collector with Tero's policy engine.
     - **Same config, new capabilities**: Your existing setup plus policy enforcement.
     - **Filter at source**: Policies execute before data leaves your infrastructure.
-  </Tab>
-</Tabs>
+  </Accordion>
+</AccordionGroup>
 
 ---
 
-No rip-and-replace. Start read-only, prove value, expand from there.
+## The result
+
+<CardGroup cols={2}>
+  <Card title="40%+ lower costs" icon="percent">
+    The answer to the question no one else can answer.
+  </Card>
+  <Card title="Justify every dollar" icon="file-invoice-dollar">
+    When finance asks, you have a complete breakdown.
+  </Card>
+  <Card title="Engineers own their data" icon="users">
+    They see the cost, they make the call.
+  </Card>
+  <Card title="No more surprises" icon="bell-slash">
+    Catch problems before they blow the budget.
+  </Card>
+</CardGroup>
