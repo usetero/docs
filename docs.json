@@ -46,48 +46,9 @@
           {
             "group": "Questions",
             "pages": [
-              {
-                "group": "How much of my data is waste?",
-                "icon": "trash-can",
-                "pages": [
-                  "questions/waste/overview",
-                  {
-                    "group": "Understanding the Results",
-                    "pages": [
-                      "questions/waste/results/by-service",
-                      "questions/waste/results/by-log-event",
-                      "questions/waste/results/evaluating-quality"
-                    ]
-                  },
-                  {
-                    "group": "Taking Action",
-                    "pages": [
-                      "questions/waste/action/overview",
-                      "questions/waste/action/drop-in-provider",
-                      "questions/waste/action/deploy-to-infrastructure",
-                      "questions/waste/action/remove-from-code",
-                      "questions/waste/action/monitoring-impact"
-                    ]
-                  },
-                  {
-                    "group": "Managing Your Contract",
-                    "pages": [
-                      "questions/waste/contract/overview",
-                      "questions/waste/contract/renewal-planning",
-                      "questions/waste/contract/executive-reporting"
-                    ]
-                  },
-                  {
-                    "group": "Scaling Quality",
-                    "pages": [
-                      "questions/waste/scaling/overview",
-                      "questions/waste/scaling/starting-small",
-                      "questions/waste/scaling/automating-decisions",
-                      "questions/waste/scaling/team-ownership"
-                    ]
-                  }
-                ]
-              }
+              "questions/waste",
+              "questions/data-spikes",
+              "questions/pii"
             ]
           },
           {
@@ -100,34 +61,8 @@
             ]
           },
           {
-            "group": "Capabilities",
-            "pages": ["capabilities/overview"]
-          },
-          {
             "group": "Integrations",
             "pages": ["integrations/overview", "integrations/datadog"]
-          },
-          {
-            "group": "CLI",
-            "pages": ["cli/overview"]
-          }
-        ]
-      },
-      {
-        "tab": "Control Plane",
-        "icon": "server",
-        "groups": [
-          {
-            "group": "Control Plane",
-            "pages": ["control-plane/overview"]
-          },
-          {
-            "group": "Deployment",
-            "pages": ["control-plane/cloud", "control-plane/self-hosted"]
-          },
-          {
-            "group": "Configuration",
-            "pages": ["control-plane/bring-your-own-ai"]
           }
         ]
       },
@@ -168,6 +103,34 @@
               "edge/policy-reference/metric-transform",
               "edge/policy-reference/trace-filter"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI",
+        "icon": "rectangle-terminal",
+        "groups": [
+          {
+            "group": "CLI",
+            "pages": ["cli/overview"]
+          }
+        ]
+      },
+      {
+        "tab": "Control Plane",
+        "icon": "server",
+        "groups": [
+          {
+            "group": "Control Plane",
+            "pages": ["control-plane/overview"]
+          },
+          {
+            "group": "Deployment",
+            "pages": ["control-plane/cloud", "control-plane/self-hosted"]
+          },
+          {
+            "group": "Configuration",
+            "pages": ["control-plane/bring-your-own-ai"]
           }
         ]
       },

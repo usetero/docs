@@ -1,6 +1,6 @@
 ---
 title: "How it works"
-description: "Connect, understand, ask, enforce"
+description: "Connect, build context, ask questions, take action"
 icon: "gears"
 iconType: "duotone"
 ---
@@ -19,9 +19,9 @@ Tero connects to your observability tools in read-only mode, securely reading yo
 - **No infrastructure changes**: Your setup stays exactly as it is.
 - **Start read-only**: See what Tero finds before you change anything.
 
-## 2. Understand
+## 2. Build context
 
-The control plane analyzes your telemetry and builds the context graph. A semantic understanding of what your data means.
+Tero analyzes your telemetry and builds [context](/context/overview)—a semantic understanding of what your data means.
 
 <Frame>
   <img src="/images/how-it-works-2.svg" alt="Understand your data" />
@@ -31,21 +31,21 @@ The control plane analyzes your telemetry and builds the context graph. A semant
 - **Patterns discovered**: Relationships between services, errors, and signals mapped.
 - **Meaning attached**: Not just format. What each piece of data represents and when it matters.
 
-## 3. Ask
+## 3. Ask questions
 
-You ask questions. Tero answers using the context graph.
+You ask [questions](/questions/waste). Tero answers using the context it's built.
 
 <Frame>
   <img src="/images/how-it-works-3.svg" alt="Ask questions" />
 </Frame>
 
-- **Start with waste**: "How much of my data is waste?" is the first question Tero answers.
-- **Transparent analysis**: See exactly why each piece of data is classified the way it is.
-- **Full control**: Approve, adjust, or reject recommendations based on your context.
+- **[How much of my data is waste?](/questions/waste)**: Find and eliminate low-value data.
+- **[Are there data spikes?](/questions/data-spikes)**: Catch volume and cardinality explosions.
+- **[Is PII leaking?](/questions/pii)**: Find and redact sensitive data.
 
-## 4. Enforce
+## 4. Take action
 
-Deploy policies to eliminate waste. Choose where and how they run.
+Take action based on what you've learned. What you can do depends on which [integrations](/integrations/overview) you've connected.
 
 <Tabs>
   <Tab title="Agentless">
