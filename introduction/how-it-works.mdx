@@ -12,8 +12,7 @@ Tero has two components: the **control plane** and the **edge**. They connect to
 Tero connects to your observability tools in read-only mode, securely reading your telemetry data without disrupting your existing setup.
 
 <Frame>
-  <img className="block dark:hidden" src="/images/how-it-works-1-datadog-light.svg" alt="Connect to your tools" />
-  <img className="hidden dark:block" src="/images/how-it-works-1-datadog-dark.svg" alt="Connect to your tools" />
+  <img src="/images/how-it-works-1.svg" alt="Connect to your tools" />
 </Frame>
 
 - **Non-intrusive**: Connect via API using service accounts. No agents, no code changes.
@@ -25,8 +24,7 @@ Tero connects to your observability tools in read-only mode, securely reading yo
 The control plane analyzes your telemetry and builds the context graph. A semantic understanding of what your data means.
 
 <Frame>
-  <img className="block dark:hidden" src="/images/how-it-works-2-datadog-light.svg" alt="Understand your data" />
-  <img className="hidden dark:block" src="/images/how-it-works-2-datadog-dark.svg" alt="Understand your data" />
+  <img src="/images/how-it-works-2.svg" alt="Understand your data" />
 </Frame>
 
 - **Log events cataloged**: Billions of logs compressed into thousands of semantic events.
@@ -38,7 +36,7 @@ The control plane analyzes your telemetry and builds the context graph. A semant
 You ask questions. Tero answers using the context graph.
 
 <Frame>
-  <img src="/images/screenshot-coming-soon.png" alt="Ask questions" />
+  <img src="/images/how-it-works-3.svg" alt="Ask questions" />
 </Frame>
 
 - **Start with waste**: "How much of my data is waste?" is the first question Tero answers.
@@ -50,10 +48,9 @@ You ask questions. Tero answers using the context graph.
 Deploy policies to eliminate waste. Choose where and how they run.
 
 <Tabs>
-  <Tab title="Via Datadog API">
+  <Tab title="Agentless">
     <Frame>
-      <img className="block dark:hidden" src="/images/how-it-works-4-datadog-agent-light.svg" alt="Configure via Datadog API" />
-      <img className="hidden dark:block" src="/images/how-it-works-4-datadog-agent-dark.svg" alt="Configure via Datadog API" />
+      <img src="/images/how-it-works-4-agentless.svg" alt="Agentless enforcement via Datadog API" />
     </Frame>
 
     - **No deployment required**: Tero configures exclusion rules directly in Datadog.
@@ -61,25 +58,24 @@ Deploy policies to eliminate waste. Choose where and how they run.
     - **Fully reversible**: Remove rules anytime with zero risk.
   </Tab>
 
-  <Tab title="Edge Proxy">
+  <Tab title="Datadog Agent">
     <Frame>
-      <img className="block dark:hidden" src="/images/how-it-works-4-otel-collector-light.svg" alt="Edge proxy deployment" />
-      <img className="hidden dark:block" src="/images/how-it-works-4-otel-collector-dark.svg" alt="Edge proxy deployment" />
+      <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
     </Frame>
 
-    - **Deploy anywhere**: Sidecar, standalone, or Lambda function.
-    - **Line-rate enforcement**: Policies execute before data leaves your network.
-    - **Beyond exclusions**: Block, sample, redact PII, transform.
+    - **Drop-in replacement**: Our build of the Datadog Agent with Tero's policy engine.
+    - **Same config, new capabilities**: Your existing setup plus policy enforcement.
+    - **Filter at source**: Policies execute before data leaves your infrastructure.
   </Tab>
 
-  <Tab title="Collector Distributions">
+  <Tab title="OTel Collector">
     <Frame>
-      <img src="/images/how-it-works-4-datadog-forwarder.svg" alt="Collector distributions" />
+      <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
     </Frame>
 
-    - **Drop-in replacement**: Our builds of OTel Collector, Vector, Datadog Agent.
-    - **Same config, new capabilities**: Your existing setup plus Tero's policy engine.
-    - **Full compatibility**: Everything works as before, with policies on top.
+    - **Drop-in replacement**: Our build of OTel Collector with Tero's policy engine.
+    - **Same config, new capabilities**: Your existing setup plus policy enforcement.
+    - **Filter at source**: Policies execute before data leaves your infrastructure.
   </Tab>
 </Tabs>
 
