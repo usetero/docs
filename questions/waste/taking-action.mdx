@@ -8,10 +8,6 @@ iconType: "duotone"
 
 You've found waste. Now eliminate it.
 
-Every waste recommendation becomes a [policy](/edge/policy-reference/log-filter). Don't let the word intimidate you. Policies are just simple, atomic expressions of how to remove waste. Drop this event. Sample that one. Trim this attribute. Each policy does one thing.
-
-Why atomic? Because monolithic pipeline configurations break down at scale. We learned this building Vector.dev. Policies fix that. They're composable, auditable, and designed for thousands of rules.
-
 ## Review
 
 Every recommendation includes the reasoning: what the log event is, why it's classified as waste, what the impact would be. You can see exactly why Tero made the call.
@@ -20,7 +16,7 @@ If your context differs, adjust the classification. Tero learns from your feedba
 
 New waste surfaces as unreviewed so you're not re-evaluating the same things. As you review, you build a clear picture of what's valuable and what isn't.
 
-## Action
+## Act
 
 Once you've reviewed, choose what to do. Multiple options, not mutually exclusive. Start simple, expand as you build trust.
 
@@ -36,21 +32,31 @@ You don't have to use Tero's enforcement at all. Take the findings and act on th
 
 Tero observes your data volume. When the waste stops flowing, we notice and auto-resolve the recommendation. No manual curation required.
 
-This is a fine place to start. But a caution: when you can truly find all waste (and we mean all of it), you'll surface thousands of recommendations. Distracting engineers with thousands of cleanup tasks isn't a great use of their time. If Tero becomes "ugh, another waste ticket," you've lost. Consider automation for the obvious stuff.
+<Warning>
+When you can truly find all waste (and we mean all of it), you'll surface thousands of recommendations. Distracting engineers with thousands of cleanup tasks isn't a great use of their time. Consider automation for the obvious stuff.
+</Warning>
 
-### Agentless
+### Configure provider
 
 Push exclusion rules directly to your observability provider. Datadog, Splunk, others. Nothing to deploy, nothing to change in your infrastructure. Tero configures it via API.
 
-This is the fastest path to impact. But providers have limits. They weren't designed for thousands of exclusion rules at scale (that requires intentional design with something like Hyperscan). Good starting point, but you'll hit a ceiling.
+This is the fastest path to impact.
 
 <Frame>
-  <img src="/images/how-it-works-4-agentless.svg" alt="Agentless enforcement via provider API" />
+  <img src="/images/how-it-works-4-agentless.svg" alt="Configure exclusion rules via provider API" />
 </Frame>
 
-### Distributions
+<Warning>
+Providers have limits. They weren't designed for thousands of exclusion rules at scale (that requires intentional design with something like Hyperscan). Good starting point, but you'll hit a ceiling.
+</Warning>
 
-Our builds of popular tools with Tero's policy engine baked in. Always up to date with upstream. Same config you're already using, new capabilities. Swap it in, point it at your policies, done. Policies execute at the source, before data leaves your infrastructure.
+### Deploy policies
+
+For scale beyond what providers support, Tero generates [policies](/edge/policy-reference/log-filter). Don't let the word intimidate you. Policies are simple, atomic expressions of how to remove waste. Drop this event. Sample that one. Trim this attribute. Each policy does one thing.
+
+Why atomic? Because monolithic pipeline configurations break down at scale. We learned this building Vector.dev. Policies fix that. They're composable, auditable, and designed for thousands of rules.
+
+You choose where to run them:
 
 <Tabs>
   <Tab title="Datadog Agent">
@@ -58,7 +64,7 @@ Our builds of popular tools with Tero's policy engine baked in. Always up to dat
       <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
     </Frame>
 
-    Our build of the Datadog Agent with Tero's policy engine. Same config, new capabilities.
+    Our build of the Datadog Agent with Tero's policy engine. Same config, new capabilities. Always up to date with upstream.
   </Tab>
 
   <Tab title="OTel Collector">
@@ -66,7 +72,7 @@ Our builds of popular tools with Tero's policy engine baked in. Always up to dat
       <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
     </Frame>
 
-    Our build of OTel Collector with Tero's policy engine. Same config, new capabilities.
+    Our build of OTel Collector with Tero's policy engine. Same config, new capabilities. Always up to date with upstream.
   </Tab>
 
   <Tab title="Vector">
@@ -74,7 +80,7 @@ Our builds of popular tools with Tero's policy engine baked in. Always up to dat
       <img src="/images/how-it-works-4-vector.svg" alt="Vector distribution" />
     </Frame>
 
-    Our build of Vector with Tero's policy engine. Same config, new capabilities.
+    Our build of Vector with Tero's policy engine. Same config, new capabilities. Always up to date with upstream.
   </Tab>
 
   <Tab title="Fluent Bit">
@@ -82,43 +88,21 @@ Our builds of popular tools with Tero's policy engine baked in. Always up to dat
       <img src="/images/how-it-works-4-fluent-bit.svg" alt="Fluent Bit distribution" />
     </Frame>
 
-    Our build of Fluent Bit with Tero's policy engine. Same config, new capabilities.
+    Our build of Fluent Bit with Tero's policy engine. Same config, new capabilities. Always up to date with upstream.
+  </Tab>
+
+  <Tab title="Tero Edge">
+    <Frame>
+      <img src="/images/how-it-works-4-edge.svg" alt="Tero Edge" />
+    </Frame>
+
+    Purpose-built for policy execution at scale. A lightweight proxy that fits wherever makes sense for your architecture: at the host, in your pipeline, or in serverless environments. Thousands of policies, line-rate execution, no compromises.
+
+    <Card title="Tero Edge" icon="bolt" href="/edge/overview">
+      Learn about Edge architecture, deployment options, and performance.
+    </Card>
   </Tab>
 </Tabs>
-
-### Tero Edge
-
-Purpose-built for policy execution at scale. A lightweight proxy that fits wherever makes sense for your architecture. Thousands of policies, line-rate execution, no compromises.
-
-<Tabs>
-  <Tab title="Host">
-    <Frame>
-      <img src="/images/how-it-works-4-edge-host.svg" alt="Tero Edge at host level" />
-    </Frame>
-
-    Intercept at the host level, before logs leave the machine. Runs alongside your agents.
-  </Tab>
-
-  <Tab title="Pipeline">
-    <Frame>
-      <img src="/images/how-it-works-4-edge-pipeline.svg" alt="Tero Edge with pipeline" />
-    </Frame>
-
-    Sit in front of or behind your existing pipeline (Vector, OTel Collector, Fluent Bit). No need to swap tools out.
-  </Tab>
-
-  <Tab title="Serverless">
-    <Frame>
-      <img src="/images/how-it-works-4-edge-serverless.svg" alt="Tero Edge for serverless" />
-    </Frame>
-
-    Intercept logs from serverless functions before they hit your provider. Works with Lambda, Cloud Functions, Azure Functions.
-  </Tab>
-</Tabs>
-
-<Card title="Tero Edge" icon="bolt" href="/edge/overview">
-  Learn about Edge architecture, deployment options, and performance.
-</Card>
 
 ## Scale
 
