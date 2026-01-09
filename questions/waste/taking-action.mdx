@@ -1,0 +1,67 @@
+---
+title: "Taking action"
+description: "From insight to elimination"
+icon: "bolt"
+iconType: "duotone"
+---
+
+Once you've explored and understand your waste, it's time to act. This is the full workflow—from reviewing findings to tracking progress over time.
+
+## Review
+
+Before you eliminate anything, review what Tero found. Every recommendation includes the reasoning behind it—what the log event is, why it's classified as waste, and what the impact would be if you drop it.
+
+You can:
+- **Approve** — confirm the classification, add it to your action queue
+- **Adjust** — override the classification if your context differs
+- **Ignore** — skip it for now, revisit later
+
+Tero tracks what you've reviewed. New waste surfaces as "unreviewed" so you're not re-evaluating the same things.
+
+## Apply
+
+Once you've approved, choose how to apply. Tero recommends an approach based on your setup and the service, but you decide.
+
+<AccordionGroup>
+  <Accordion title="Remove from code" icon="code-pull-request">
+    The cleanest solution. Tero opens pull requests to remove wasteful instrumentation from your codebase. No more logs at the source.
+  </Accordion>
+  <Accordion title="Drop in provider" icon="filter">
+    Configure exclusion rules in your observability vendor. Logs still emit but don't reach your index. Works with Datadog, Splunk, and others through their native exclusion APIs.
+  </Accordion>
+  <Accordion title="Drop in infrastructure" icon="server">
+    Filter at the pipeline level—before logs leave your infrastructure. Use Tero Edge, or configure rules in your existing collectors (Vector, Fluent Bit, OTel Collector).
+  </Accordion>
+</AccordionGroup>
+
+## Track
+
+Eliminating waste once is a project. Tracking it continuously is a discipline.
+
+<AccordionGroup>
+  <Accordion title="Dashboards" icon="chart-pie">
+    See waste trends over time, by service, by team. Understand where you've improved and where new waste is emerging.
+  </Accordion>
+  <Accordion title="SLOs and targets" icon="bullseye">
+    Set goals—"reduce waste to X%" or "keep unreviewed waste under Y%." Track against them. Integrate with your existing SLO systems.
+  </Accordion>
+  <Accordion title="Alerts" icon="bell">
+    Get notified when waste spikes or when you regress. Catch new instrumentation that's producing junk before it accumulates.
+  </Accordion>
+  <Accordion title="Reports" icon="file-chart-column">
+    Share progress with leadership. Show cost reduction over time. Justify the work and the tooling.
+  </Accordion>
+</AccordionGroup>
+
+## Scale to teams
+
+This is optional, but powerful.
+
+Instead of a centralized team managing all waste, give engineers ownership of their own data. Each team sees their services, their waste, their costs. They make the call on what to drop.
+
+Tero supports this with:
+- **Team views** — scoped dashboards showing only what a team owns
+- **Ownership assignment** — tie services to teams, roll up waste by owner
+- **Review workflows** — engineers approve changes to their own services
+
+This shifts the conversation from "platform team says drop this" to "here's what your service costs, you decide."

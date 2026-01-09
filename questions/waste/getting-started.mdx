@@ -1,0 +1,68 @@
+---
+title: "Getting started"
+description: "Your first waste analysis"
+icon: "rocket"
+iconType: "duotone"
+---
+
+This is Tero's cost optimization domain. A complete set of tools for understanding, exploring, and eliminating waste across your telemetry.
+
+It starts with a simple question, but opens into everything you need: visibility into what's valuable and what isn't, the ability to drill into any service or team, collaboration tools so engineers can own their data quality, SLOs to track progress, and actions to eliminate waste at scale.
+
+Ask the question once, and you're in a workspace designed around driving up the value of your data while driving down the cost.
+
+<Steps>
+  <Step title="Ask the question">
+    ```
+    How much data is waste?
+    ```
+    
+    Tero answers with the number. What percentage is waste, what it costs annually, and a breakdown by service.
+    
+    <Tip>The percentage might be higher than you expect. That's okay. You'll start with the obvious stuff and expand as you build confidence.</Tip>
+  </Step>
+  
+  <Step title="Dig into a service">
+    ```
+    Show me the highest waste service
+    ```
+    
+    Tero maps every log event from that service. Classified, with cost attached. You'll see the full picture of what this service produces.
+  </Step>
+  
+  <Step title="See the categories">
+    ```
+    Break it down by category
+    ```
+    
+    Tero organizes the waste by type: junk, debug output, external probes, noisy signals, redundant attributes. Each category maps to an action. Drop, sample, or trim.
+    
+    <Note>Categories help you start conservative. Begin with obvious waste like junk and debug output. Expand as you build confidence.</Note>
+  </Step>
+  
+  <Step title="Start with the obvious">
+    ```
+    Show me the highest confidence waste
+    ```
+    
+    Tero shows you the safest starting point. Waste that's obvious, low risk, easy to verify. Something like debug output that should never have been in production.
+  </Step>
+  
+  <Step title="Understand the reasoning">
+    ```
+    Why is this waste?
+    ```
+    
+    Tero explains: severity level, whether it duplicates other data, query history, who owns it. You can verify this yourself.
+  </Step>
+  
+  <Step title="Take your first action">
+    ```
+    Drop it
+    ```
+    
+    Tero generates a policy and applies it. You just eliminated your first waste. 
+    
+    From here, you can review more recommendations one by one, or let Tero auto-enable categories you trust. See [Taking action](/questions/waste/taking-action) for the full workflow.
+  </Step>
+</Steps>

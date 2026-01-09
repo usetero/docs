@@ -86,6 +86,24 @@ Say who does what. Passive voice obscures and bores.
 
 **Bad:** "Logs are analyzed and waste is identified."
 
+### Second Person
+
+Always address the reader as "you." Never "the user" or "users" or "one."
+
+**Good:** "You can configure exclusion rules in your provider."
+
+**Bad:** "Users can configure exclusion rules in their provider."
+
+### Present Tense
+
+Describe what things do, not what they will do. Present tense is direct and confident.
+
+**Good:** "Tero compresses your logs into semantic events."
+
+**Bad:** "Tero will compress your logs into semantic events."
+
+Exception: Use future tense only when describing something that literally happens later in a sequence ("After you save, Tero will apply the rules").
+
 ### Short Paragraphs
 
 Dense walls of text are hard to scan. Keep paragraphs focused—one idea each.
@@ -158,6 +176,12 @@ The skeptical reader will test your claims. Better to under-promise and over-del
 ### Headings
 
 Use headings to organize thinking, not to compensate for unclear prose. If you need constant subheadings to make your point, you probably need clearer writing instead.
+
+For task-oriented page titles, use gerunds: "Connecting to Datadog", "Configuring Edge".
+
+For task-based section headings, use imperatives: "Create a policy", "Configure your integration".
+
+For conceptual or reference pages, use the product or feature name: "Tero Edge", "Log Events".
 
 ### Lists
 

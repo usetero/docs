@@ -112,7 +112,7 @@ Tero
 │   └── Ask Your First Question
 │
 ├── Questions
-│   └── How much of my data is waste?
+│   └── How much data is waste?
 │       ├── Overview
 │       ├── Understanding the Results
 │       │   ├── By Service

@@ -46,7 +46,15 @@
           {
             "group": "Questions",
             "pages": [
-              "questions/waste",
+              {
+                "group": "How much data is waste?",
+                "icon": "trash-can",
+                "pages": [
+                  "questions/waste/getting-started",
+                  "questions/waste/taking-action",
+                  "questions/waste/how-it-works"
+                ]
+              },
               "questions/data-spikes",
               "questions/pii"
             ]

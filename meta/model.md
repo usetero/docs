@@ -18,7 +18,7 @@ The product has four concepts that users need to understand:
 
 Questions are the interface to value. They're curated, QA'd use cases that Tero can answer.
 
-The first question is: **"How much of my data is waste?"** This is the hardest question in observability—it requires complete visibility and semantic understanding of every piece of data. Answering it proves Tero actually understands.
+The first question is: **"How much data is waste?"** This is the hardest question in observability—it requires complete visibility and semantic understanding of every piece of data. Answering it proves Tero actually understands.
 
 Each question is a first-class thing:
 - Announced when it launches
@@ -107,7 +107,7 @@ Integrations are how Tero becomes more valuable over time. Each one adds context
 │                             ▼                               │
 │   ┌─────────────────────────────────────────────────────┐  │
 │   │                     QUESTIONS                        │  │
-│   │        "How much of my data is waste?"              │  │
+│   │        "How much data is waste?"              │  │
 │   │        "Why is checkout broken?" (future)           │  │
 │   └─────────────────────────┬───────────────────────────┘  │
 │                             │                               │

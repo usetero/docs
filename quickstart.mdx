@@ -7,40 +7,42 @@ iconType: "duotone"
 
 Install the CLI, connect your Datadog account, and see what Tero finds.
 
-## Install
+<Steps>
+  <Step title="Install the CLI">
+    <CodeGroup>
+    ```bash curl
+    curl -sSfL https://sh.usetero.com | sh
+    ```
 
-<CodeGroup>
-```bash curl
-curl -sSfL https://sh.usetero.com | sh
-```
+    ```bash Homebrew
+    brew install usetero/tap/tero
+    ```
 
-```bash Homebrew
-brew install usetero/tap/tero
-```
+    ```bash Scoop (Windows)
+    scoop bucket add tero https://github.com/usetero/scoop-bucket
+    scoop install tero
+    ```
 
-```bash Scoop (Windows)
-scoop bucket add tero https://github.com/usetero/scoop-bucket
-scoop install tero
-```
+    ```bash Docker
+    docker pull usetero/tero
+    ```
+    </CodeGroup>
+  </Step>
 
-```bash Docker
-docker pull usetero/tero
-```
-</CodeGroup>
+  <Step title="Connect your account">
+    ```bash
+    tero
+    ```
 
-## Connect
+    On first run, Tero will:
+    1. Ask you to authenticate (or create an account)
+    2. Walk you through connecting your Datadog account (read-only API key)
+    3. Build context from your telemetry
+  </Step>
 
-```bash
-tero
-```
-
-On first run, Tero will:
-1. Ask you to authenticate (or create an account)
-2. Walk you through connecting your Datadog account (read-only API key)
-3. Analyze your data and show you what it found
-
-That's it. After setup, run `tero` anytime to explore waste, check status, or take action.
-
-## What's next
-
-Once analysis completes, Tero can answer your first question: [How much of my data is waste?](/questions/waste/overview)
+  <Step title="Ask your first question">
+    Once analysis completes, you're ready to ask: [How much data is waste?](/questions/waste/getting-started)
+    
+    That walkthrough will guide you through your first waste analysis, from seeing the number to taking your first action.
+  </Step>
+</Steps>
