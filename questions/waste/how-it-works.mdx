@@ -10,9 +10,9 @@ Chances are you've done manual waste analysis. Maybe before a renewal, or your b
 
 Maybe you wrote the code, or added the instrumentation. Maybe you just operate the service. Either way, you know the core functions, where it sits in the graph, which services it talks to, critical failure modes, common failure modes. Context accumulated over time.
 
-When you look at a log, you can say—with some confidence—whether it's waste. It's not binary; it's a gradient. Obvious waste requires little context. Nuanced waste requires understanding the service, the event, the situation where someone might need it.
+When you look at a log, you can say with some confidence whether it's waste. It's not binary; it's a gradient. Obvious waste requires little context. Nuanced waste requires understanding the service, the event, the situation where someone might need it.
 
-But this process is slow. Intensive. Manual. It has an opportunity cost. It's a concern you carry around, a distraction from net-positive work. Maybe you do it quarterly, but you're limited to the obvious stuff. How much is left? And what's the compounding cost of the waste you didn't catch—paid month after month until the next review?
+But this process is slow. Intensive. Manual. It has an opportunity cost. It's a concern you carry around, a distraction from net-positive work. Maybe you do it quarterly, but you're limited to the obvious stuff. How much is left? And what's the compounding cost of the waste you didn't catch, paid month after month until the next review?
 
 Tero takes this off your plate so you can focus on building product and being a great engineer.
 
@@ -22,9 +22,9 @@ How do you analyze billions of logs without missing a single one?
 
 We start by compressing raw logs into [semantic log events](/context/log-events). Each raw log maps to a single event. Billions of lines become thousands of events with rich meaning. Now evaluation is tractable.
 
-Each event inherits context from your [service catalog](/context/services): what the service does, where it sits in your architecture, which services depend on it, known failure modes. This is the same context you carry in your head—but explicit and always current.
+Each event inherits context from your [service catalog](/context/services): what the service does, where it sits in your architecture, which services depend on it, known failure modes. This is the same context you carry in your head, but explicit and always current.
 
-With this context, Tero evaluates each event the way you would—starting with the obvious and progressing to the nuanced.
+With this context, Tero evaluates each event the way you would. Starting with the obvious and progressing to the nuanced.
 
 ### Drop
 
@@ -38,7 +38,7 @@ We're conservative about dropping. These are logs that could never help an inves
     Debug markers, developer notes, breadcrumbs that shouldn't be in production. `GOT HERE!`, `TODO: remove this`, print statements left behind. Safe to eliminate entirely.
   </Accordion>
   <Accordion title="External probes" icon="heart-pulse">
-    Health checks, readiness probes, synthetic monitoring hitting your service from outside. Infrastructure talking to itself. Health check *failures* are different—those have investigative value.
+    Health checks, readiness probes, synthetic monitoring hitting your service from outside. Infrastructure talking to itself. Health check *failures* are different. Those have investigative value.
   </Accordion>
 </AccordionGroup>
 
@@ -47,7 +47,7 @@ We're conservative about dropping. These are logs that could never help an inves
 If this event fires 1000 times in a second, is that 1000 problems worth investigating, or 1000 data points about the same problem? When it's the same situation repeated, sample to reduce volume without losing visibility.
 
 <Note>
-Tero only recommends correlated sampling—by trace ID, request ID, or similar. All logs from the same request stay together or drop together. We never turn your logs into swiss cheese.
+Tero only recommends correlated sampling. By trace ID, request ID, or similar. All logs from the same request stay together or drop together. We never turn your logs into swiss cheese.
 </Note>
 
 <AccordionGroup>
@@ -84,7 +84,7 @@ Some logs would be better as something else.
 
 ### Keep
 
-Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems—keep all of them. Business events, customer-specific errors, state changes like deployments. Each instance is a distinct situation worth investigating.
+Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems. Keep all of them. Business events, customer-specific errors, state changes like deployments. Each instance is a distinct situation worth investigating.
 
 ## Continuous evaluation
 
@@ -92,6 +92,6 @@ This runs continuously. Not quarterly. Not when someone remembers. Every log, ev
 
 Even though Tero reasons independently about each event, every evaluation lands in a known category. Categories let you whitelist, blacklist, filter, and report. Start conservative: enable the obvious categories, review the results, expand as you build trust.
 
-Tero discovers new patterns as we improve. Those surface as "uncategorized"—reviewed by our engineers, visible to you, a bit more experimental. This keeps you in control without restricting how the analysis evolves.
+Tero discovers new patterns as we improve. Those surface as "uncategorized". Reviewed by our engineers, visible to you, a bit more experimental. This keeps you in control without restricting how the analysis evolves.
 
-Once you understand what Tero found and why, you're ready to [take action](/questions/waste/taking-action)—review recommendations, apply policies, and track progress over time.
+Once you understand what Tero found and why, you're ready to [take action](/questions/waste/taking-action). Review recommendations, apply policies, and track progress over time.
