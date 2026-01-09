@@ -7,7 +7,7 @@ iconType: "duotone"
 
 Chances are you've done manual waste analysis. Maybe before a renewal, or your boss wanted your service's log cost down. Why were you chosen? Probably because you have the deepest understanding of the service.
 
-You wrote the code. You added the instrumentation. You know the core functions, where the service sits in the graph, which services it talks to, critical failure modes, common failure modes. Context accumulated over years.
+Maybe you wrote the code, or added the instrumentation. Maybe you just operate the service. Either way, you know the core functions, where it sits in the graph, which services it talks to, critical failure modes, common failure modes. Context accumulated over time.
 
 When you look at a log, you can say—with some confidence—whether it's waste. It's not binary; it's a gradient. Obvious waste requires little context. Nuanced waste requires understanding the service, the event, the situation where someone might need it.
 
@@ -25,7 +25,7 @@ Each event inherits context from your [service catalog](/context/services): what
 
 With this context, Tero evaluates each event the way you would—starting with the obvious and progressing to the nuanced.
 
-### Drop: obvious waste
+### Drop
 
 We're conservative about dropping. These are logs that could never help an investigation.
 
@@ -41,7 +41,7 @@ We're conservative about dropping. These are logs that could never help an inves
   </Accordion>
 </AccordionGroup>
 
-### Sample: same situation, many data points
+### Sample
 
 If this event fires 1000 times in a second, is that 1000 problems worth investigating, or 1000 data points about the same problem? When it's the same situation repeated, sample to reduce volume without losing visibility.
 
@@ -58,7 +58,7 @@ Tero only recommends correlated sampling—by trace ID, request ID, or similar. 
   </Accordion>
 </AccordionGroup>
 
-### Trim: valuable logs with noisy attributes
+### Trim
 
 The log matters. Some attributes don't. Keep the event, remove the noise.
 
@@ -71,7 +71,7 @@ The log matters. Some attributes don't. Keep the event, remove the noise.
   </Accordion>
 </AccordionGroup>
 
-### Optimize: wrong telemetry type
+### Optimize
 
 Some logs would be better as something else.
 
@@ -81,14 +81,16 @@ Some logs would be better as something else.
   </Accordion>
 </AccordionGroup>
 
-### Keep all: unique situations
+### Keep
 
 Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems—keep all of them. Business events, customer-specific errors, state changes like deployments. Each instance is a distinct situation worth investigating.
 
----
+## Continuous evaluation
 
 This runs continuously. Not quarterly. Not when someone remembers. Every log, evaluated against the full context of your system.
 
 Even though Tero reasons independently about each event, every evaluation lands in a known category. Categories let you whitelist, blacklist, filter, and report. Start conservative: enable the obvious categories, review the results, expand as you build trust.
 
 Tero discovers new patterns as we improve. Those surface as "uncategorized"—reviewed by our engineers, visible to you, a bit more experimental. This keeps you in control without restricting how the analysis evolves.
+
+Once you understand what Tero found and why, you're ready to [take action](/questions/waste/taking-action)—review recommendations, apply policies, and track progress over time.
