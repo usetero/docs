@@ -2,96 +2,103 @@
 title: "How Tero evaluates waste"
 sidebarTitle: "How it works"
 description: "The method behind waste analysis"
-icon: "gear"
+icon: "microscope"
 iconType: "duotone"
 ---
 
-Chances are you've done manual waste analysis. Maybe before a renewal, or your boss wanted your service's log cost down. Why were you chosen? Probably because you have the deepest understanding of the service.
+Chances are you've done manual waste analysis. Maybe before a renewal, or your boss wanted a service's log costs down. Why were you chosen? Probably because you have the deepest understanding of the service.
 
-Maybe you wrote the code, or added the instrumentation. Maybe you just operate the service. Either way, you know the core functions, where it sits in the graph, which services it talks to, critical failure modes, common failure modes. Context accumulated over time.
+Maybe you wrote the code, or added the instrumentation. Maybe you just operate it. Either way, you know the context: core functions, where it sits in your architecture, which services depend on it, how it breaks. When you look at a log, you can assess whether it's waste. Not binary, a gradient. Obvious garbage is easy. Nuanced calls require understanding the service, the event, the situation where someone might actually need it.
 
-When you look at a log, you can say with some confidence whether it's waste. It's not binary; it's a gradient. Obvious waste requires little context. Nuanced waste requires understanding the service, the event, the situation where someone might need it.
+But the process is slow, manual, and has opportunity cost. You do it quarterly at best, limited to the obvious stuff. The rest keeps costing you, month after month.
 
-But this process is slow. Intensive. Manual. It has an opportunity cost. It's a concern you carry around, a distraction from net-positive work. Maybe you do it quarterly, but you're limited to the obvious stuff. How much is left? And what's the compounding cost of the waste you didn't catch, paid month after month until the next review?
+## How Tero does it
 
-Tero takes this off your plate so you can focus on building product and being a great engineer.
+You can't evaluate billions of raw logs. Neither can we. So we start by compressing them.
 
-## Logs
+Every raw log maps to a [semantic log event](/context/log-events). Billions of lines become thousands of events with meaning attached. Each event inherits context from your [service catalog](/context/services): what the service does, where it sits in your architecture, which services depend on it, known failure modes. The same context you carry in your head, but explicit, complete, and always current.
 
-How do you analyze billions of logs without missing a single one?
+Then we pressure test each event through the Tero Gauntlet.
 
-We start by compressing raw logs into [semantic log events](/context/log-events). Each raw log maps to a single event. Billions of lines become thousands of events with rich meaning. Now evaluation is tractable.
+### The Tero Gauntlet
 
-Each event inherits context from your [service catalog](/context/services): what the service does, where it sits in your architecture, which services depend on it, known failure modes. This is the same context you carry in your head, but explicit and always current.
+A series of increasingly nuanced evaluations. Each stage isn't a simple check, it's reasoned analysis against everything we know about this event, this service, and your system. Fail early and you're out. Survive and we keep testing.
 
-With this context, Tero evaluates each event the way you would. Starting with the obvious and progressing to the nuanced.
+<Steps>
+  <Step title="Garbage">
+    Is this obviously worthless? Malformed data, binary blobs, debug markers left in production. If it conveys nothing, drop it.
+  </Step>
+  <Step title="Intrinsic value">
+    Does this log carry meaningful information on its own? A payment failure tells you something. A cache hit might not. No intrinsic value? Drop it.
+  </Step>
+  <Step title="Extrinsic value">
+    Does it contribute to the story of the transaction it's part of? A log in isolation might seem low-value, but in context of the trace, it might be the missing piece. We evaluate logs within their correlated set, not in isolation.
+  </Step>
+  <Step title="Failure scenarios">
+    For each known failure mode of this service, would this log help investigate it? We test against a [catalog of failure scenarios](/context/services) per service. If it wouldn't help any investigation, drop it.
+  </Step>
+  <Step title="Signal or noise">
+    If this fires 1000 times, is that 1000 distinct situations or 1000 repetitions of one problem? Repetition gets sampled, but correlated sampling, by trace ID or request ID. All logs from the same request stay together or drop together.
+  </Step>
+  <Step title="Attribute analysis">
+    For logs we keep, we analyze attributes. Duplicate values, static metadata, low-value fields. Trim the noise, keep the event.
+  </Step>
+</Steps>
 
-### Drop
+This is excessive by design. Your manual analysis can't do this at scale. Ours runs continuously, across every log event, all the time.
 
-We're conservative about dropping. These are logs that could never help an investigation.
+<Note>
+#### What about security and compliance?
+
+The same gauntlet, different lens. A log that's waste for observability might be critical for security investigations or audit requirements. Tero can evaluate purposes separately (your security team analyzing logs independently from your platform team) or combined, applying different policies at different points in your data path. Filter what goes to your SIEM differently from what goes to Datadog.
+</Note>
+
+## Categories
+
+After analyzing billions of logs, patterns emerge. Certain types of waste keep showing up. We call these categories, but they're not limits. We don't start with categories, we observe them after analysis completes.
+
+The reasoning is unconstrained. Categories are how we organize the output so you can understand it, control it, and build trust incrementally.
 
 <AccordionGroup>
   <Accordion title="Junk" icon="file-circle-xmark">
-    Malformed data, binary blobs, accidental output. `fdsfdsfdseef`. Logs that convey nothing useful. Safe to eliminate entirely.
+    Malformed data, binary blobs, accidental output. `fdsfdsfdseef`. Logs that convey nothing useful. Safe to drop entirely.
   </Accordion>
   <Accordion title="Debug output" icon="bug">
-    Debug markers, developer notes, breadcrumbs that shouldn't be in production. `GOT HERE!`, `TODO: remove this`, print statements left behind. Safe to eliminate entirely.
+    Developer markers that shouldn't be in production. `GOT HERE!`, `TODO: remove this`, print statements left behind. Safe to drop entirely.
   </Accordion>
   <Accordion title="External probes" icon="heart-pulse">
-    Health checks, readiness probes, synthetic monitoring hitting your service from outside. Infrastructure talking to itself. Health check *failures* are different. Those have investigative value.
+    Health checks, readiness probes, synthetic monitoring hitting your service from outside. Infrastructure talking to itself. Safe to drop. (Health check *failures* are different, those have investigative value.)
   </Accordion>
-</AccordionGroup>
-
-### Sample
-
-If this event fires 1000 times in a second, is that 1000 problems worth investigating, or 1000 data points about the same problem? When it's the same situation repeated, sample to reduce volume without losing visibility.
-
-<Note>
-Tero only recommends correlated sampling. By trace ID, request ID, or similar. All logs from the same request stay together or drop together. We never turn your logs into swiss cheese.
-</Note>
-
-<AccordionGroup>
   <Accordion title="Noisy signals" icon="volume-high">
-    High volume, low variance. Cache hits, heartbeats, routine operations. 1000 cache hits means the cache works—that's one situation, not 1000 investigations. Keep a sample for proof-of-life.
+    High volume, low variance. Cache hits, heartbeats, routine operations. 1000 cache hits means the cache works. One situation, not 1000 investigations. Sample to reduce volume without losing visibility.
   </Accordion>
-  <Accordion title="System errors during outages" icon="server">
-    A database timeout during an outage? A thousand requests hitting that timeout are symptoms of one problem, not a thousand separate incidents. Sample to capture the pattern without the flood.
+  <Accordion title="Correlated errors" icon="server">
+    A thousand timeout errors during an outage are symptoms of one problem, not a thousand separate incidents. Sample to capture the pattern without the flood.
   </Accordion>
-</AccordionGroup>
-
-### Trim
-
-The log matters. Some attributes don't. Keep the event, remove the noise.
-
-<AccordionGroup>
   <Accordion title="Redundant attributes" icon="copy">
-    Same information exists elsewhere in the event. Stack traces when the error code is sufficient. Full request bodies when the endpoint tells the story. Keep the log, remove the redundant attribute.
+    The log matters, some attributes don't. Stack traces when the error code tells the story. Full request bodies when the endpoint is enough. Trim the attribute, keep the event.
   </Accordion>
   <Accordion title="Static metadata" icon="tag">
-    SDK versions, infrastructure plumbing, values that never change and never help debugging. Keep the log, remove the noise.
+    SDK versions, infrastructure plumbing, values that never change and never help debugging. Trim the attribute, keep the event.
   </Accordion>
-</AccordionGroup>
-
-### Optimize
-
-Some logs would be better as something else.
-
-<AccordionGroup>
   <Accordion title="Metric-shaped logs" icon="chart-line">
     Logs created for graphing or counting. Counters, gauges, aggregations. You're paying log prices for metric data. Convert to actual metrics.
   </Accordion>
+  <Accordion title="Uncategorized" icon="question">
+    Novel patterns that don't fit existing categories. Reviewed by our team, visible to you, a bit more experimental. As patterns become common, they graduate to named categories.
+  </Accordion>
 </AccordionGroup>
 
-### Keep
+Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems. Keep all of them. Business events, customer-specific errors, state changes. Each instance is a distinct situation worth investigating. Tero identifies these and leaves them alone.
 
-Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems. Keep all of them. Business events, customer-specific errors, state changes like deployments. Each instance is a distinct situation worth investigating.
+### Building trust
 
-## Continuous evaluation
+You don't have to engage with all of this complexity. Categories map to confidence levels. Junk and debug output are high confidence, safe starting points. Sampling and trimming require more judgment.
 
-This runs continuously. Not quarterly. Not when someone remembers. Every log, evaluated against the full context of your system.
+Start with the obvious. As you build trust, automate categories you're confident in. Push this to your teams so they own their own data quality. Set quality SLOs now that you can actually quantify them. Watch your data quality improve over time.
 
-Even though Tero reasons independently about each event, every evaluation lands in a known category. Categories let you whitelist, blacklist, filter, and report. Start conservative: enable the obvious categories, review the results, expand as you build trust.
+## Continuous
 
-Tero discovers new patterns as we improve. Those surface as "uncategorized". Reviewed by our engineers, visible to you, a bit more experimental. This keeps you in control without restricting how the analysis evolves.
+This runs all the time. Not when someone remembers. Not before a renewal panic. Every log, evaluated against the full context of your system, continuously.
 
-Once you understand what Tero found and why, you're ready to [take action](/questions/waste/taking-action). Review recommendations, apply policies, and track progress over time.
+When you're ready to act on what Tero found, see [Taking action](/questions/waste/taking-action).

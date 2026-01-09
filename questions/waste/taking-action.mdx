@@ -6,63 +6,157 @@ icon: "bolt"
 iconType: "duotone"
 ---
 
-Once you've explored and understand your waste, it's time to act. This is the full workflow—from reviewing findings to tracking progress over time.
+You've found waste. Now eliminate it.
+
+Every waste recommendation becomes a [policy](/edge/policy-reference/log-filter). Don't let the word intimidate you. Policies are just simple, atomic expressions of how to remove waste. Drop this event. Sample that one. Trim this attribute. Each policy does one thing.
+
+Why atomic? Because monolithic pipeline configurations break down at scale. We learned this building Vector.dev. Policies fix that. They're composable, auditable, and designed for thousands of rules.
 
 ## Review
 
-Before you eliminate anything, review what Tero found. Every recommendation includes the reasoning behind it—what the log event is, why it's classified as waste, and what the impact would be if you drop it.
+Every recommendation includes the reasoning: what the log event is, why it's classified as waste, what the impact would be. You can see exactly why Tero made the call.
 
-You can:
-- **Approve** — confirm the classification, add it to your action queue
-- **Adjust** — override the classification if your context differs
-- **Ignore** — skip it for now, revisit later
+If your context differs, adjust the classification. Tero learns from your feedback.
 
-Tero tracks what you've reviewed. New waste surfaces as "unreviewed" so you're not re-evaluating the same things.
+New waste surfaces as unreviewed so you're not re-evaluating the same things. As you review, you build a clear picture of what's valuable and what isn't.
 
-## Apply
+## Action
 
-Once you've approved, choose how to apply. Tero recommends an approach based on your setup and the service, but you decide.
+Once you've reviewed, choose what to do. Multiple options, not mutually exclusive. Start simple, expand as you build trust.
 
-<AccordionGroup>
-  <Accordion title="Remove from code" icon="code-pull-request">
-    The cleanest solution. Tero opens pull requests to remove wasteful instrumentation from your codebase. No more logs at the source.
-  </Accordion>
-  <Accordion title="Drop in provider" icon="filter">
-    Configure exclusion rules in your observability vendor. Logs still emit but don't reach your index. Works with Datadog, Splunk, and others through their native exclusion APIs.
-  </Accordion>
-  <Accordion title="Drop in infrastructure" icon="server">
-    Filter at the pipeline level—before logs leave your infrastructure. Use Tero Edge, or configure rules in your existing collectors (Vector, Fluent Bit, OTel Collector).
-  </Accordion>
-</AccordionGroup>
+### Ignore
 
-## Track
+Skip it. Maybe you disagree with the classification. Maybe it's not the right time. Maybe you want to watch it for a while first.
 
-Eliminating waste once is a project. Tracking it continuously is a discipline.
+That's fine. Tero won't nag you. Ignored recommendations stay ignored until you revisit them.
 
-<AccordionGroup>
-  <Accordion title="Dashboards" icon="chart-pie">
-    See waste trends over time, by service, by team. Understand where you've improved and where new waste is emerging.
-  </Accordion>
-  <Accordion title="SLOs and targets" icon="bullseye">
-    Set goals—"reduce waste to X%" or "keep unreviewed waste under Y%." Track against them. Integrate with your existing SLO systems.
-  </Accordion>
-  <Accordion title="Alerts" icon="bell">
-    Get notified when waste spikes or when you regress. Catch new instrumentation that's producing junk before it accumulates.
-  </Accordion>
-  <Accordion title="Reports" icon="file-chart-column">
-    Share progress with leadership. Show cost reduction over time. Justify the work and the tooling.
-  </Accordion>
-</AccordionGroup>
+### Do it yourself
 
-## Scale to teams
+You don't have to use Tero's enforcement at all. Take the findings and act on them however you want: remove the instrumentation from your code, configure your existing tools, update your OTel Collector config, open a ticket for the owning team.
 
-This is optional, but powerful.
+Tero observes your data volume. When the waste stops flowing, we notice and auto-resolve the recommendation. No manual curation required.
 
-Instead of a centralized team managing all waste, give engineers ownership of their own data. Each team sees their services, their waste, their costs. They make the call on what to drop.
+This is a fine place to start. But a caution: when you can truly find all waste (and we mean all of it), you'll surface thousands of recommendations. Distracting engineers with thousands of cleanup tasks isn't a great use of their time. If Tero becomes "ugh, another waste ticket," you've lost. Consider automation for the obvious stuff.
 
-Tero supports this with:
-- **Team views** — scoped dashboards showing only what a team owns
-- **Ownership assignment** — tie services to teams, roll up waste by owner
-- **Review workflows** — engineers approve changes to their own services
+### Agentless
+
+Push exclusion rules directly to your observability provider. Datadog, Splunk, others. Nothing to deploy, nothing to change in your infrastructure. Tero configures it via API.
+
+This is the fastest path to impact. But providers have limits. They weren't designed for thousands of exclusion rules at scale (that requires intentional design with something like Hyperscan). Good starting point, but you'll hit a ceiling.
+
+<Frame>
+  <img src="/images/how-it-works-4-agentless.svg" alt="Agentless enforcement via provider API" />
+</Frame>
+
+### Distributions
+
+Our builds of popular tools with Tero's policy engine baked in. Always up to date with upstream. Same config you're already using, new capabilities. Swap it in, point it at your policies, done. Policies execute at the source, before data leaves your infrastructure.
+
+<Tabs>
+  <Tab title="Datadog Agent">
+    <Frame>
+      <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
+    </Frame>
+
+    Our build of the Datadog Agent with Tero's policy engine. Same config, new capabilities.
+  </Tab>
+
+  <Tab title="OTel Collector">
+    <Frame>
+      <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
+    </Frame>
+
+    Our build of OTel Collector with Tero's policy engine. Same config, new capabilities.
+  </Tab>
+
+  <Tab title="Vector">
+    <Frame>
+      <img src="/images/how-it-works-4-vector.svg" alt="Vector distribution" />
+    </Frame>
+
+    Our build of Vector with Tero's policy engine. Same config, new capabilities.
+  </Tab>
+
+  <Tab title="Fluent Bit">
+    <Frame>
+      <img src="/images/how-it-works-4-fluent-bit.svg" alt="Fluent Bit distribution" />
+    </Frame>
+
+    Our build of Fluent Bit with Tero's policy engine. Same config, new capabilities.
+  </Tab>
+</Tabs>
+
+### Tero Edge
+
+Purpose-built for policy execution at scale. A lightweight proxy that fits wherever makes sense for your architecture. Thousands of policies, line-rate execution, no compromises.
+
+<Tabs>
+  <Tab title="Host">
+    <Frame>
+      <img src="/images/how-it-works-4-edge-host.svg" alt="Tero Edge at host level" />
+    </Frame>
+
+    Intercept at the host level, before logs leave the machine. Runs alongside your agents.
+  </Tab>
+
+  <Tab title="Pipeline">
+    <Frame>
+      <img src="/images/how-it-works-4-edge-pipeline.svg" alt="Tero Edge with pipeline" />
+    </Frame>
+
+    Sit in front of or behind your existing pipeline (Vector, OTel Collector, Fluent Bit). No need to swap tools out.
+  </Tab>
+
+  <Tab title="Serverless">
+    <Frame>
+      <img src="/images/how-it-works-4-edge-serverless.svg" alt="Tero Edge for serverless" />
+    </Frame>
+
+    Intercept logs from serverless functions before they hit your provider. Works with Lambda, Cloud Functions, Azure Functions.
+  </Tab>
+</Tabs>
+
+<Card title="Tero Edge" icon="bolt" href="/edge/overview">
+  Learn about Edge architecture, deployment options, and performance.
+</Card>
+
+## Scale
+
+Taking action yourself is fine for getting started. But this needs to scale beyond you.
+
+### Sync to git
+
+Policies can sync to a git repository. Push to a folder, open pull requests, merge to main. PRs can be the approval flow itself if that fits your workflow.
+
+Version control, audit history, review before apply. Integrate with your existing CI/CD.
+
+### Automate by category
+
+Not every recommendation needs manual review. Categories map to confidence levels. Configure automation per category:
+
+- **Auto-apply** for categories you trust (junk, debug output). No review, immediate enforcement.
+- **Require approval** for categories that need judgment (sampling, trimming).
+- **Route to teams** for categories that should be owned by service owners.
+
+Start conservative. As you build trust, dial up automation.
+
+### Push to teams
+
+You don't want to be the gatekeeper. And you can't just remove other engineers' data without their input.
+
+Push ownership to service teams:
+- **Team views** show each team their services, their waste, their costs
+- **Ownership assignment** ties services to teams, rolls up waste by owner
+- **Review workflows** let engineers approve changes to their own services
 
 This shifts the conversation from "platform team says drop this" to "here's what your service costs, you decide."
+
+### Set quality SLOs
+
+Now that you can quantify waste, you can set standards. Integrate with your SLO systems. Set targets per service, per team, org-wide.
+
+This is cultural change. You're not chasing engineers with cleanup requests. You're setting the standard and giving them the tools to meet it. Waste becomes a metric like any other, something teams own and improve.
+
+---
+
+Once you're taking action and scaling, you'll want to track progress. See [Tracking progress](/questions/waste/tracking-progress) for dashboards, reports, and showing value to leadership.
