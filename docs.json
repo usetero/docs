@@ -38,7 +38,7 @@
             "group": "Introduction",
             "pages": [
               "introduction/what-is-tero",
-              "introduction/how-it-works",
+              "introduction/how-tero-works",
               "introduction/tero-versus",
               "quickstart"
             ]
