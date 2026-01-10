@@ -1,22 +1,91 @@
 ---
-title: "Log events"
-description: "Semantic abstractions of your logs"
+title: "Log Events"
+description: "How Tero turns billions of logs into something you can reason about"
 icon: "file-lines"
 iconType: "duotone"
 ---
 
-## What it is
+A log event isn't a log line. It's a pattern that represents thousands or millions of logs that mean the same thing. Tero discovers these patterns from your [integrations](/integrations) and turns them into something you can reason about.
 
-{/* The concept - log events, not log lines */}
+## Example
+
+Here's what a log event looks like:
+
+```yaml
+name: payment_declined_insufficient_funds
+service: checkout
+description: A payment was declined because the card had insufficient funds.
+
+matches:
+  - "Payment for order ORD-12345 declined: insufficient funds"
+  - "Payment for order ORD-98765 declined: insufficient funds"
+  - "Payment for order ORD-54321 declined: insufficient funds"
+  # ... 47,000 more
+```
+
+One log event, 47,000 logs. Each log has different order IDs, timestamps, amounts. But they all mean the same thing: a payment failed due to insufficient funds. That's the event.
 
 ## What Tero knows
 
-{/* Semantic understanding, relationships, value signals */}
+Tero analyzes your logs to build semantic understanding of each event.
 
-## Where it comes from
+<Expandable title="Fields">
+  <ResponseField name="name" type="string">
+    A descriptive identifier like `payment_declined_insufficient_funds` or `kafka_offset_committed`. Unique within the service.
+  </ResponseField>
+  <ResponseField name="description" type="string">
+    What this event represents and when it fires.
+  </ResponseField>
+  <ResponseField name="service" type="string">
+    The service that produces this event.
+  </ResponseField>
+  <ResponseField name="matchers" type="array">
+    Rules that identify which raw logs belong to this event. Combinations of body patterns and attribute conditions.
+  </ResponseField>
+  <ResponseField name="attributes" type="array">
+    Fields that vary per instance: order IDs, user IDs, amounts, durations. The data inside each log.
+  </ResponseField>
+  <ResponseField name="classification" type="string">
+    Whether this event is valuable, should be sampled, or is waste. With reasoning.
+  </ResponseField>
+</Expandable>
 
-{/* Which integrations bring this context */}
+### Classification
 
-## How to explore it
+Every log event gets a classification: is it worth keeping?
 
-{/* Navigating, drilling in, adjusting classifications */}
+- **Keep all**: Each instance is a unique situation worth investigating. Payment failures, order creations, errors where a customer has a problem.
+- **Sample**: Instances are evidence of the same situation. Connection timeouts during an outage are symptoms of one problem, not a thousand investigations. Cache hits prove the cache works.
+- **Drop**: No investigative value. Health check successes, debug breadcrumbs.
+
+Tero explains its reasoning. A `kafka_offset_committed` event might be classified as "sample at 1/minute" with reasoning: "Proof-of-life for the consumer. You need to know it's working, not every commit."
+
+You can reclassify events when Tero gets it wrong.
+
+## Exploring log events
+
+Open any log event to see what Tero learned: the description, matchers, sample logs, classification reasoning. You can browse by service or search across all events.
+
+Drill into the matchers to understand exactly which logs this event captures. See sample instances to verify the pattern makes sense.
+
+## Using in chat
+
+Reference a log event with `@` to focus your questions:
+
+```
+@payment_declined_insufficient_funds how often does this happen?
+@database_connection_timeout what services are affected?
+@order_created what's the typical latency?
+```
+
+Tero pulls in the event's context: which service owns it, what attributes it has, how it relates to other events. Your question gets answered with that full picture.
+
+## Improving context
+
+Tero classifies events automatically, but you know your systems better:
+
+- **Reclassify** events that Tero misjudged. That "debug" log might actually matter.
+- **Edit descriptions** to add context Tero couldn't infer.
+- **Adjust matchers** if an event is capturing the wrong logs.
+
+Every correction improves future classifications.

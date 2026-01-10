@@ -1,22 +1,81 @@
 ---
 title: "Metrics"
-description: "Understanding your metrics semantically"
+description: "What Tero knows about your metrics"
 icon: "chart-line"
 iconType: "duotone"
 ---
 
-## What it is
-
-{/* The concept - metrics with meaning attached */}
+Tero discovers metrics from your [integrations](/integrations). Each one gets context: what it measures, which service owns it, whether it's worth keeping, and which tags are helping or hurting.
 
 ## What Tero knows
 
-{/* Semantic understanding, relationships */}
+Tero builds context around each metric and evaluates whether it's worth keeping.
 
-## Where it comes from
+<Expandable title="Fields">
+  <ResponseField name="name" type="string">
+    The metric name as it appears in your telemetry.
+  </ResponseField>
+  <ResponseField name="description" type="string">
+    What this metric measures and when it matters.
+  </ResponseField>
+  <ResponseField name="service" type="string">
+    The service that produces this metric.
+  </ResponseField>
+  <ResponseField name="type" type="string">
+    Counter, gauge, histogram, or summary.
+  </ResponseField>
+  <ResponseField name="tags" type="array">
+    Dimensions that segment the metric, with recommendations for normalization or removal.
+  </ResponseField>
+  <ResponseField name="classification" type="string">
+    Whether this metric is valuable, redundant, or waste. With reasoning.
+  </ResponseField>
+</Expandable>
 
-{/* Which integrations bring this context */}
+### Classification
 
-## How to explore it
+Every metric gets evaluated:
 
-{/* Navigating, drilling in, adjusting */}
+- **Valuable**: Core signals you actually query. Request rate, error rate, latency.
+- **Redundant**: Duplicates something another metric already measures.
+- **Waste**: Never queried, no clear purpose, or so noisy it's not actionable.
+
+Tero also flags tag problems: high-cardinality values that explode time series, inconsistent naming that fragments what should be one metric, tags that add no queryable value.
+
+### Relationships
+
+Metrics connect to the rest of the graph:
+
+- **Services**: `http_request_duration_seconds` measures latency for the checkout service
+- **Log events**: `kafka_consumer_lag` spikes correlate with `message_processing_timeout` events
+- **Other metrics**: `error_rate` moves inversely with `cache_hit_ratio`
+
+These connections help Tero answer questions that span signals.
+
+## Exploring metrics
+
+Open any metric to see what Tero learned: description, type, tags, classification reasoning. Browse by service or search across all metrics.
+
+See which tags are flagged as problems, which services produce the metric, how it connects to the broader system.
+
+## Using in chat
+
+Reference a metric with `@` to focus your questions:
+
+```
+@http_request_duration_seconds why is p99 latency elevated?
+@kafka_consumer_lag which services are affected?
+@error_rate what changed in the last hour?
+```
+
+Tero pulls in the metric's context: what it measures, which service owns it, related log events. Your question gets answered with that full picture.
+
+## Improving context
+
+Tero infers what metrics measure, but you can refine:
+
+- **Edit descriptions** to clarify what the metric represents
+- **Reclassify** metrics that Tero misjudged
+- **Confirm tag recommendations** to normalize or drop problematic tags
+
+Every refinement improves how Tero uses metrics in future answers.
