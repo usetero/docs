@@ -46,39 +46,71 @@ You ask [questions](/questions/waste). Tero answers using the context it's built
 
 ## 4. Take action
 
-Take action based on what you've learned. What you can do depends on which [integrations](/integrations/overview) you've connected.
+Once Tero identifies the problem and explains why, you decide what to do. Multiple options, not mutually exclusive.
 
-<Tabs>
-  <Tab title="Agentless">
+<AccordionGroup>
+  <Accordion title="In your provider" defaultOpen>
     <Frame>
-      <img src="/images/how-it-works-4-agentless.svg" alt="Agentless enforcement via Datadog API" />
+      <img src="/images/how-it-works-4-agentless.svg" alt="Configure provider exclusion rules" />
     </Frame>
 
-    - **No deployment required**: Tero configures exclusion rules directly in Datadog.
-    - **Immediate effect**: Waste stops flowing as soon as you approve.
+    - **No deployment required**: Configure exclusion rules directly in your provider.
+    - **Immediate effect**: Waste stops being indexed as soon as you apply the rule.
     - **Fully reversible**: Remove rules anytime with zero risk.
-  </Tab>
+  </Accordion>
 
-  <Tab title="Datadog Agent">
+  <Accordion title="In your code">
     <Frame>
-      <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
+      <img src="/images/how-it-works-4-code.svg" alt="Fix it in your code" />
     </Frame>
 
-    - **Drop-in replacement**: Our build of the Datadog Agent with Tero's policy engine.
-    - **Same config, new capabilities**: Your existing setup plus policy enforcement.
-    - **Filter at source**: Policies execute before data leaves your infrastructure.
-  </Tab>
+    - **Open a PR**: Tero generates the fix, you review and merge.
+    - **Guide developers**: Use Tero's MCP so developers understand what to change.
+    - **Do it yourself**: Use Tero's analysis to make changes manually.
+  </Accordion>
 
-  <Tab title="OTel Collector">
-    <Frame>
-      <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
-    </Frame>
+  <Accordion title="In your infrastructure">
+    <Tabs>
+      <Tab title="Datadog Agent">
+        <Frame>
+          <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent with Tero policy engine" />
+        </Frame>
 
-    - **Drop-in replacement**: Our build of OTel Collector with Tero's policy engine.
-    - **Same config, new capabilities**: Your existing setup plus policy enforcement.
-    - **Filter at source**: Policies execute before data leaves your infrastructure.
-  </Tab>
-</Tabs>
+        - **Drop-in replacement**: Our build of the Datadog Agent with Tero's policy engine.
+        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
+        - **Filter at source**: Policies execute before data leaves your infrastructure.
+      </Tab>
+      <Tab title="OTel Collector">
+        <Frame>
+          <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector with Tero policy engine" />
+        </Frame>
+
+        - **Drop-in replacement**: Our build of the OTel Collector with Tero's policy engine.
+        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
+        - **Filter at source**: Policies execute before data leaves your infrastructure.
+      </Tab>
+      <Tab title="Vector">
+        - **Drop-in replacement**: Our build of Vector with Tero's policy engine.
+        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
+        - **Filter at source**: Policies execute before data leaves your infrastructure.
+      </Tab>
+      <Tab title="Fluent Bit">
+        - **Drop-in replacement**: Our build of Fluent Bit with Tero's policy engine.
+        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
+        - **Filter at source**: Policies execute before data leaves your infrastructure.
+      </Tab>
+      <Tab title="Tero Edge">
+        <Frame>
+          <img src="/images/how-it-works-4-tero-edge.svg" alt="Tero Edge as a proxy" />
+        </Frame>
+
+        - **Purpose-built for policies**: Our agent, designed specifically for policy execution.
+        - **Deploy as a proxy**: Runs alongside your existing agent. No replacement needed.
+        - **Full policy engine**: Every policy type, every transformation.
+      </Tab>
+    </Tabs>
+  </Accordion>
+</AccordionGroup>
 
 ---
 
