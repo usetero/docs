@@ -2372,14 +2372,14 @@ export const ContextGraph = () => {
       serviceToCategory[s.id] = i;
     });
 
-    // Sample log events (max 5 per service)
+    // Group log events by service (max 30 per service for visual clarity)
     const logEventsByService = {};
     contextData.log_events.forEach((le) => {
       if (!serviceIds.has(le.service_id)) return;
       if (!logEventsByService[le.service_id]) {
         logEventsByService[le.service_id] = [];
       }
-      if (logEventsByService[le.service_id].length < 5) {
+      if (logEventsByService[le.service_id].length < 30) {
         logEventsByService[le.service_id].push(le);
       }
     });
@@ -2390,27 +2390,29 @@ export const ContextGraph = () => {
     const nodes = [];
     const links = [];
 
-    // Service nodes (larger)
+    // Service nodes (scaled down)
     services.forEach((s) => {
       const eventCount = logEventsByService[s.id]?.length || 0;
       const hasDeps = s.dependencies && s.dependencies.length > 0;
+      const baseSize = 18 + eventCount * 0.5 + (hasDeps ? 4 : 0);
+      const cappedSize = Math.min(baseSize, 40);
       nodes.push({
         id: s.id,
         name: s.name,
-        symbolSize: 30 + eventCount * 4 + (hasDeps ? 10 : 0),
+        symbolSize: cappedSize,
         category: serviceToCategory[s.id],
-        label: { show: true, fontSize: 12 },
+        label: { show: true, fontSize: 11 },
       });
     });
 
-    // Log event nodes (smaller, same category as parent)
+    // Log event nodes (smaller, no labels - tooltip only)
     logEvents.forEach((le) => {
       nodes.push({
         id: le.id,
         name: le.name.replace(/_/g, " "),
-        symbolSize: 10,
+        symbolSize: 6,
         category: serviceToCategory[le.service_id],
-        label: { show: true, fontSize: 9 },
+        label: { show: false },
       });
       // Link to parent service
       links.push({
@@ -2442,6 +2444,7 @@ export const ContextGraph = () => {
         borderColor: "#3f3f46",
         borderWidth: 1,
         padding: [8, 12],
+        extraCssText: "max-width: 280px; white-space: normal;",
         textStyle: {
           color: "#e4e4e7",
           fontSize: 12,
@@ -2450,7 +2453,7 @@ export const ContextGraph = () => {
           if (params.dataType === "node") {
             const service = services.find((s) => s.id === params.data.id);
             if (service) {
-              return `<div style="max-width:280px"><strong style="color:#fff">${service.name}</strong><br/><span style="font-size:11px;color:#a1a1aa;line-height:1.4">${service.description}</span></div>`;
+              return `<strong style="color:#fff">${service.name}</strong><br/><span style="font-size:11px;color:#a1a1aa;line-height:1.4;display:block;margin-top:4px">${service.description}</span>`;
             }
             return `<strong style="color:#fff">${params.data.name}</strong>`;
           }
@@ -2482,24 +2485,20 @@ export const ContextGraph = () => {
             formatter: "{b}",
             color: "#e4e4e7",
           },
-          labelLayout: {
-            hideOverlap: true,
-          },
           scaleLimit: {
             min: 0.3,
-            max: 2,
+            max: 3,
           },
-          zoom: 0.6,
+          zoom: 1,
           lineStyle: {
             color: "source",
             curveness: 0.15,
-            opacity: 0.5,
+            opacity: 0.4,
           },
           force: {
-            repulsion: 400,
-            gravity: 0.08,
-            edgeLength: [60, 180],
-            friction: 0.6,
+            edgeLength: 35,
+            repulsion: 60,
+            gravity: 0.12,
           },
           emphasis: {
             focus: "adjacency",
