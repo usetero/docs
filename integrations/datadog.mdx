@@ -49,91 +49,34 @@ Tero pulls usage data from Datadog to project your spend against your contract. 
 
 ## Connect
 
-<Tabs>
-  <Tab title="UI">
-    <Steps>
-      <Step title="Sign up for Tero">
-        [Sign up](https://app.usetero.com/signup) and create your account if you haven't already.
-      </Step>
-      <Step title="Create a service account in Datadog">
-        Open Datadog's [Service Accounts page](https://app.datadoghq.com/organization-settings/service-accounts) and click **New Service Account**.
+Install the CLI and run `tero`. The CLI walks you through each step.
 
-        - **Name**: Tero
-        - **Role**: Datadog Standard Role (see [Data & permissions](#data--permissions) for options)
-
-        Click **Create**.
-      </Step>
-      <Step title="Generate an application key">
-        Select the Tero service account from the list. In the panel that opens, click **New Key** under Application Keys.
-
-        - **Name**: Tero Integration
-
-        Save and copy the generated key.
-      </Step>
-      <Step title="Connect in Tero">
-        Return to Tero, paste the application key when prompted, and click **Connect**.
-      </Step>
-      <Step title="Wait for analysis">
-        Tero analyzes your Datadog environment. This takes a few minutes. You'll see progress in the dashboard and can start asking questions once context is built.
-      </Step>
-    </Steps>
-  </Tab>
-  <Tab title="CLI">
-    <Steps>
-      <Step title="Install the CLI">
-        ```bash
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.usetero.com | sh
-        ```
-      </Step>
-      <Step title="Run setup">
-        ```bash
-        tero setup
-        ```
-
-        The CLI walks you through creating the service account and connecting.
-      </Step>
-      <Step title="Wait for analysis">
-        The CLI shows progress while Tero analyzes your Datadog environment.
-      </Step>
-    </Steps>
-  </Tab>
-  <Tab title="Terraform">
-    <Steps>
-      <Step title="Add the Tero module">
-        ```hcl
-        module "tero" {
-          source          = "github.com/usetero/terraform-datadog"
-          datadog_api_key = var.datadog_api_key
-          datadog_app_key = var.datadog_app_key
-        }
-        ```
-
-        Store keys securely. Never commit them in plain text.
-      </Step>
-      <Step title="Apply">
-        ```bash
-        terraform apply
-        ```
-
-        Review and confirm when prompted.
-      </Step>
-      <Step title="Verify in Tero">
-        Open the Tero dashboard to see analysis progress.
-      </Step>
-    </Steps>
-  </Tab>
-</Tabs>
-
-### Verify
-
-Once connected, you should see:
-- Your Datadog organization listed in Tero's integrations
-- Services appearing in your context graph
-- The ability to ask questions like "How much of my data is waste?"
-
-<Tip>
-If something's wrong, check that the service account has the right role and the application key is valid.
-</Tip>
+<Steps>
+  <Step title="Select your Datadog region">
+    The CLI asks for your Datadog region. You can find this in your Datadog URL (e.g., `app.datadoghq.com` is US1, `app.datadoghq.eu` is EU).
+  </Step>
+  <Step title="Create an API key">
+    The CLI asks for an API key. In Datadog, go to [API Keys](https://app.datadoghq.com/organization-settings/api-keys) and create a new key for Tero.
+  </Step>
+  <Step title="Create a service account">
+    The CLI asks for an application key from a service account. In Datadog:
+    
+    1. Go to [Service Accounts](https://app.datadoghq.com/organization-settings/service-accounts)
+    2. Click **New Service Account**
+    3. Name it "Tero" and assign a role (see [Roles](#roles) below)
+    4. Click **Create**
+    5. Select the Tero service account from the list
+    6. Under Application Keys, click **New Key**
+    7. Copy the key and paste it into the CLI
+    
+    <Note>
+    If you want a custom role, create it first so it appears in the role dropdown. See [Custom role permissions](#custom-role-permissions).
+    </Note>
+  </Step>
+  <Step title="Wait for analysis">
+    Tero verifies the connection and analyzes your environment. This takes a minute or two, even with billions of logs.
+  </Step>
+</Steps>
 
 ## Data & permissions
 
@@ -148,14 +91,14 @@ If data leaving your network is a concern, Tero's control plane can be [self-hos
 Datadog has three [managed roles](https://docs.datadoghq.com/account_management/rbac/permissions/#managed-roles). Choose based on how you want to use Tero.
 
 <AccordionGroup>
-  <Accordion title="Standard" icon="check" defaultOpen>
-    **Recommended.** Read and write access. Tero can analyze your data and take action directly in Datadog.
+  <Accordion title="Standard (recommended)" icon="check" defaultOpen>
+    Read and write access. Tero can analyze your data and take action directly in Datadog.
   </Accordion>
   <Accordion title="Read-Only" icon="eye">
-    **Minimal.** Tero analyzes your data. You take action through Edge, code, or manual configuration.
+    Tero analyzes your data. You take action through Edge, code, or manual configuration.
   </Accordion>
   <Accordion title="Custom" icon="sliders">
-    **Fine-grained.** Create a role with exactly the permissions you want Tero to have. See the [permissions list](https://docs.datadoghq.com/account_management/rbac/permissions/#permissions-list) in Datadog's docs.
+    Create a role with exactly the permissions you want Tero to have. See the [permissions list](https://docs.datadoghq.com/account_management/rbac/permissions/#permissions-list) in Datadog's docs.
   </Accordion>
 </AccordionGroup>
 
@@ -163,9 +106,9 @@ Datadog has three [managed roles](https://docs.datadoghq.com/account_management/
 
 If you need fine-grained control, create a custom role in Datadog with specific permissions. See [Datadog's permissions reference](https://docs.datadoghq.com/account_management/rbac/permissions/) for the full list.
 
-<Info>
+<Warning>
 At minimum, Tero needs read access to your telemetry: `logs_read_data`, `logs_read_index_data`, `metrics_read`, and `apm_read`. Everything else enhances context or enables specific features.
-</Info>
+</Warning>
 
 #### Logs
 
