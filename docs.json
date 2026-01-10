@@ -51,9 +51,17 @@
                 "icon": "trash-can",
                 "pages": [
                   "questions/waste/getting-started",
-                  "questions/waste/taking-action",
-                  "questions/waste/tracking-progress",
-                  "questions/waste/how-it-works"
+                  "questions/waste/how-it-works",
+                  "questions/waste/taking-action"
+                ]
+              },
+              {
+                "group": "How is my renewal looking?",
+                "icon": "file-contract",
+                "pages": [
+                  "questions/renewal/getting-started",
+                  "questions/renewal/how-it-works",
+                  "questions/renewal/the-renewal-conversation"
                 ]
               },
               "questions/data-spikes",

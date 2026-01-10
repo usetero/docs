@@ -1,55 +1,51 @@
 ---
 title: "How Tero compares"
 sidebarTitle: "Tero versus"
-description: "How Tero compares to what you're already using"
+description: "Where Tero fits in your stack"
 icon: "code-compare"
 iconType: "duotone"
 ---
 
-Tero isn't competing with your observability stack. It's a new layer that makes everything you already have better.
+Tero is an intelligence layer. It sits above your existing tools and makes them better. It doesn't replace anything.
 
-## vs Observability Platforms
+## Observability platforms
 
 **Datadog, Splunk, New Relic, Grafana**
 
-They store your data and let you query it. We understand it.
+These are where your data lives. They store it, query it, visualize it. Tero connects to them via API and builds understanding on top.
 
-Your platform sees bytes: log lines, metric values, trace spans. Tero sees meaning. We know which logs matter during incidents, which metrics are never queried, which data is waste.
+Your platform knows the format of your data. Tero knows the meaning: which logs matter during incidents, which metrics are never queried, what's waste and what's valuable. That understanding helps you get more out of what you're already paying for.
 
-We're not a replacement. We connect to your platform via API, build understanding on top of it, and help you get more value from what you're already paying for.
+You can swap platforms, add new ones, run multiple. Tero works across all of them. The intelligence is portable.
 
-## vs Pipelines
+## Pipelines
 
-**Cribl, Vector, Fluent**
+**Cribl, Vector, Fluent Bit, OTel Collector**
 
-They move data. We understand it.
+Pipelines move data. They route, transform, filter. They're infrastructure.
 
-Pipelines are powerful infrastructure. They route, transform, filter. But they do what you tell them. You write the rules. When your systems change, your rules break.
+The challenge with pipelines is knowing what rules to write. You're guessing at what's safe to drop, maintaining regex lists that break when systems change, becoming a bottleneck for every filtering decision.
 
-Tero tells you what rules to write. We analyze your data, identify what's valuable and what's waste, and generate policies. Then you choose how to execute them:
+Tero tells you what rules to write. We analyze your data, identify what's valuable and what's waste, and generate policies. You choose where to execute them:
 
-- **Distributions** — drop-in replacements for tools you already run (Datadog Agent, Vector, OTel Collector, Fluentbit) with Tero's policy engine baked in. Same config, new capabilities. Stays up to date with upstream.
-- **[Tero Edge](/edge/overview)** — a lightweight proxy that intercepts traffic. No tool changes required.
-- **Agentless** — configure rules directly in your vendor via API.
+- **Distributions**: drop-in replacements for tools you already run (Datadog Agent, Vector, OTel Collector, Fluent Bit) with Tero's policy engine built in. Same config, new capabilities.
+- **[Tero Edge](/edge/overview)**: a lightweight proxy that intercepts traffic. No tool changes required.
+- **Agentless**: configure rules directly in your provider via API. No infrastructure at all.
 
-The intelligence is ours. The execution is wherever makes sense for you.
+If you don't have a pipeline, you might not need one. Tero can work agentlessly or with Edge. If you do have a pipeline, Tero makes it smarter.
 
-## vs Cost Tools
+## Cost tools
 
 **CloudZero, Vantage**
 
-They show you what you're spending. We fix it.
+Cost visibility tools show you what you're spending. Dashboards, reports, breakdowns by team or service. Useful for understanding the bill.
 
-Cost visibility tools give you dashboards and reports. You see the bill, maybe broken down by team or service. But knowing you're spending too much doesn't tell you what to do about it.
+Tero goes further. We don't just show you the cost, we show you what's causing it and how to fix it. Which data is waste, why it's waste, and how to eliminate it. The goal isn't a better dashboard. It's a smaller bill.
 
-Tero gives you action. Here's the waste, here's why it's waste, here's how to eliminate it. The bill goes down, not just the dashboard.
+## AI observability tools
 
-## vs AI Observability
+There's a lot of AI-washing in observability right now. "AI-powered root cause analysis." "AI-driven insights." Most of it is surface-level.
 
-**The "AI SRE" products**
+Here's a simple test: ask them what percentage of your data is waste. They can't answer it. That question requires complete visibility and genuine semantic understanding of every piece of data.
 
-We prove we understand your data. They claim to.
-
-There's a lot of AI-washing in observability right now. "AI-powered root cause analysis." "AI-driven insights." Ask them a simple question: what percentage of my data is waste? They can't answer it.
-
-We can. That question requires complete visibility and genuine semantic understanding. Answering it is our proof. Everything else we do builds on that same foundation.
+We can answer it. That's our proof point. Everything else Tero does builds on that same foundation of understanding.

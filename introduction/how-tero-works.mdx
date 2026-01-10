@@ -10,39 +10,27 @@ Tero connects to your existing observability tools and works in four steps.
 
 ## 1. Connect
 
-Tero connects to your observability tools in read-only mode, securely reading your telemetry data without disrupting your existing setup.
-
 <Frame>
   <img src="/images/how-it-works-1.svg" alt="Connect to your tools" />
 </Frame>
 
-- **Non-intrusive**: Connect via API using service accounts. No agents, no code changes.
-- **No infrastructure changes**: Your setup stays exactly as it is.
-- **Start read-only**: See what Tero finds before you change anything.
+Tero connects to your observability tools via API using service accounts. Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
 
 ## 2. Build context
-
-Tero analyzes your telemetry and builds [context](/context/overview)—a semantic understanding of what your data means.
 
 <Frame>
   <img src="/images/how-it-works-2.svg" alt="Understand your data" />
 </Frame>
 
-- **Log events cataloged**: Billions of logs compressed into thousands of semantic events.
-- **Patterns discovered**: Relationships between services, errors, and signals mapped.
-- **Meaning attached**: Not just format. What each piece of data represents and when it matters.
+Tero analyzes your telemetry and builds [context](/context/overview): a semantic understanding of what your data means. Billions of logs compress into thousands of meaningful events. Relationships between services, errors, and signals get mapped. Each piece of data gets meaning attached, not just format, but what it represents and when it matters.
 
 ## 3. Ask questions
-
-You ask [questions](/questions/waste). Tero answers using the context it's built.
 
 <Frame>
   <img src="/images/how-it-works-3.svg" alt="Ask questions" />
 </Frame>
 
-- **[How much data is waste?](/questions/waste)**: Find and eliminate low-value data.
-- **[Are there data spikes?](/questions/data-spikes)**: Catch volume and cardinality explosions.
-- **[Is PII leaking?](/questions/pii)**: Find and redact sensitive data.
+You ask [questions](/questions/waste), Tero answers using the context it's built. [How much data is waste?](/questions/waste) [Are there data spikes?](/questions/data-spikes) [Is PII leaking?](/questions/pii) The context powers the answers.
 
 ## 4. Take action
 
@@ -54,9 +42,7 @@ Once Tero identifies the problem and explains why, you decide what to do. Multip
       <img src="/images/how-it-works-4-agentless.svg" alt="Configure provider exclusion rules" />
     </Frame>
 
-    - **No deployment required**: Configure exclusion rules directly in your provider.
-    - **Immediate effect**: Waste stops being indexed as soon as you apply the rule.
-    - **Fully reversible**: Remove rules anytime with zero risk.
+    No deployment required. Tero configures exclusion rules directly in your provider. Waste stops being indexed as soon as you apply the rule. Fully reversible.
   </Accordion>
 
   <Accordion title="In your code">
@@ -64,9 +50,7 @@ Once Tero identifies the problem and explains why, you decide what to do. Multip
       <img src="/images/how-it-works-4-code.svg" alt="Fix it in your code" />
     </Frame>
 
-    - **Open a PR**: Tero generates the fix, you review and merge.
-    - **Guide developers**: Use Tero's MCP so developers understand what to change.
-    - **Do it yourself**: Use Tero's analysis to make changes manually.
+    Tero can open a PR with the fix for you to review and merge. Or use Tero as an MCP so developers understand what to change. Or just use the analysis to make changes yourself.
   </Accordion>
 
   <Accordion title="In your infrastructure">
@@ -76,57 +60,28 @@ Once Tero identifies the problem and explains why, you decide what to do. Multip
           <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent with Tero policy engine" />
         </Frame>
 
-        - **Drop-in replacement**: Our build of the Datadog Agent with Tero's policy engine.
-        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
-        - **Filter at source**: Policies execute before data leaves your infrastructure.
+        Our build of the Datadog Agent with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
       </Tab>
       <Tab title="OTel Collector">
         <Frame>
           <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector with Tero policy engine" />
         </Frame>
 
-        - **Drop-in replacement**: Our build of the OTel Collector with Tero's policy engine.
-        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
-        - **Filter at source**: Policies execute before data leaves your infrastructure.
+        Our build of the OTel Collector with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
       </Tab>
       <Tab title="Vector">
-        - **Drop-in replacement**: Our build of Vector with Tero's policy engine.
-        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
-        - **Filter at source**: Policies execute before data leaves your infrastructure.
+        Our build of Vector with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
       </Tab>
       <Tab title="Fluent Bit">
-        - **Drop-in replacement**: Our build of Fluent Bit with Tero's policy engine.
-        - **Same config, new capabilities**: Your existing setup plus policy enforcement.
-        - **Filter at source**: Policies execute before data leaves your infrastructure.
+        Our build of Fluent Bit with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
       </Tab>
       <Tab title="Tero Edge">
         <Frame>
           <img src="/images/how-it-works-4-tero-edge.svg" alt="Tero Edge as a proxy" />
         </Frame>
 
-        - **Purpose-built for policies**: Our agent, designed specifically for policy execution.
-        - **Deploy as a proxy**: Runs alongside your existing agent. No replacement needed.
-        - **Full policy engine**: Every policy type, every transformation.
+        Our agent, purpose-built for policy execution. Deploy as a proxy alongside your existing agent. No replacement needed.
       </Tab>
     </Tabs>
   </Accordion>
 </AccordionGroup>
-
----
-
-## The result
-
-<CardGroup cols={2}>
-  <Card title="40%+ lower costs" icon="percent">
-    The answer to the question no one else can answer.
-  </Card>
-  <Card title="Justify every dollar" icon="file-invoice-dollar">
-    When finance asks, you have a complete breakdown.
-  </Card>
-  <Card title="Engineers own their data" icon="users">
-    They see the cost, they make the call.
-  </Card>
-  <Card title="No more surprises" icon="bell-slash">
-    Catch problems before they blow the budget.
-  </Card>
-</CardGroup>

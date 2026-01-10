@@ -6,11 +6,9 @@ icon: "microscope"
 iconType: "duotone"
 ---
 
-Chances are you've done manual waste analysis. Maybe before a renewal, or your boss wanted a service's log costs down. Why were you chosen? Probably because you have the deepest understanding of the service.
+You've probably done manual waste analysis. Before a renewal, or when your boss wanted a service's log costs down. You got picked because you understand the service: what it does, where it sits in your architecture, which services depend on it, how it breaks. When you look at a log, you can assess whether it's waste. Not binary. A gradient. Obvious garbage is easy. Nuanced calls require understanding the service, the event, the situation where someone might actually need it.
 
-Maybe you wrote the code, or added the instrumentation. Maybe you just operate it. Either way, you know the context: core functions, where it sits in your architecture, which services depend on it, how it breaks. When you look at a log, you can assess whether it's waste. Not binary, a gradient. Obvious garbage is easy. Nuanced calls require understanding the service, the event, the situation where someone might actually need it.
-
-But the process is slow, manual, and has opportunity cost. You do it quarterly at best, limited to the obvious stuff. The rest keeps costing you, month after month.
+But it's slow, manual, and has opportunity cost. You do it quarterly at best, limited to the obvious stuff. The rest keeps costing you.
 
 ## How Tero does it
 
@@ -45,7 +43,7 @@ A series of increasingly nuanced evaluations. Each stage isn't a simple check, i
   </Step>
 </Steps>
 
-This is excessive by design. Your manual analysis can't do this at scale. Ours runs continuously, across every log event, all the time.
+This is deliberate. Your manual analysis can't do this at scale. Ours runs continuously, across every log event.
 
 <Note>
 #### What about security and compliance?
@@ -55,9 +53,7 @@ The same gauntlet, different lens. A log that's waste for observability might be
 
 ## Categories
 
-After analyzing billions of logs, patterns emerge. Certain types of waste keep showing up. We call these categories, but they're not limits. We don't start with categories, we observe them after analysis completes.
-
-The reasoning is unconstrained. Categories are how we organize the output so you can understand it, control it, and build trust incrementally.
+After analyzing billions of logs, patterns emerge. Certain types of waste keep showing up. We call these categories, but they're not limits. We don't start with categories. We observe them after analysis completes. Categories are how we organize the output so you can understand it, control it, and build trust incrementally.
 
 <AccordionGroup>
   <Accordion title="Junk" icon="file-circle-xmark">
@@ -89,7 +85,7 @@ The reasoning is unconstrained. Categories are how we organize the output so you
   </Accordion>
 </AccordionGroup>
 
-Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems. Keep all of them. Business events, customer-specific errors, state changes. Each instance is a distinct situation worth investigating. Tero identifies these and leaves them alone.
+Not everything is waste. A payment failure with a different user each time? 1000 customers with 1000 problems. Keep all of them. Business events, customer-specific errors, state changes. Each instance is distinct. Tero identifies these and leaves them alone.
 
 ### Building trust
 
@@ -100,5 +96,3 @@ Start with the obvious. As you build trust, automate categories you're confident
 ## Continuous
 
 This runs all the time. Not when someone remembers. Not before a renewal panic. Every log, evaluated against the full context of your system, continuously.
-
-When you're ready to act on what Tero found, see [Taking action](/questions/waste/taking-action).
