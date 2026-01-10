@@ -8,7 +8,7 @@ iconType: "duotone"
 
 import { ContextGraph } from '/snippets/context-graph.jsx'
 
-You've [connected an integration](/integrations/datadog) and [asked your first question](/questions/waste/getting-started). Tero answered using context—a semantic graph of everything it knows about your systems.
+You've [connected an integration](/integrations/datadog) and [asked your first question](/questions/waste/getting-started). Tero answered using context, a semantic graph of everything it knows about your systems.
 
 This is what makes Tero useful. Not a data catalog. Not a list of schemas. A graph where each node has meaning attached and each edge represents a real relationship. When you @ reference a service in a chat, you're pulling in that node and everything connected to it.
 
@@ -18,50 +18,42 @@ Your systems produce billions of data points. Tero compresses them into somethin
 
 <ContextGraph />
 
-Billions of log lines become thousands of [log events](/context/log-events). Each event has meaning: what it represents, when it matters, which service produces it. [Metrics](/context/metrics) get the same treatment—not just names and tags, but what they measure and why you'd care. [Services](/context/services) tie it together: what they do, what they depend on, how they fail.
+Billions of log lines become thousands of [log events](/context/log-events). Each event has meaning: what it represents, when it matters, which service produces it. [Metrics](/context/metrics) get the same treatment. Not just names and tags, but what they measure and why you'd care. [Services](/context/services) tie it together: what they do, what they depend on, how they fail.
 
 The graph captures relationships. This error in checkout often follows that timeout in payments. This log event spikes when that metric drops. These three services always fail together. Patterns that live in your team's heads become explicit and queryable.
 
-This is what lets Tero answer questions. When you ask about waste, Tero doesn't pattern-match on log text. It evaluates each event against everything it knows—the service context, the failure scenarios, the transaction patterns, the relationships. Understanding, not just parsing.
+This is what lets Tero answer questions. When you ask about waste, Tero doesn't pattern-match on log text. It evaluates each event against everything it knows: the service context, the failure scenarios, the transaction patterns, the relationships. Understanding, not just parsing.
 
 ## Transparent by design
 
-You can see everything Tero knows. Drill into any service, examine any log event, trace any relationship. When Tero makes a judgment—this log is waste, this metric matters—you can see why.
+You can see everything Tero knows. Drill into any service, examine any log event, trace any relationship. When Tero makes a judgment (this log is waste, this metric matters) you can see why.
 
 This isn't a black box that produces answers. It's a system you can inspect, question, and correct. If Tero misclassifies something, fix it. If context is missing, add it. If a relationship is wrong, adjust it.
 
-The goal is a system that feels like yours. You understand how it works. You can get your hands in when needed. You're not trusting magic—you're working with a tool you understand.
+The goal is a system that feels like yours. You understand how it works. You can get your hands in when needed. You're not trusting magic. You're working with a tool you understand.
 
 ## How context grows
 
-Context comes from three places.
+<Steps>
+  <Step title="Integrations bring it">
+    Connect an integration and Tero discovers your services, catalogs your log events, maps your metrics. Each integration adds nodes and edges to the graph. The more you connect, the richer the picture.
+  </Step>
+  <Step title="Tero enriches it">
+    Background processing adds context you didn't provide. Tero detects that a service is a Rails app and enriches it with known failure patterns. It identifies common error signatures and links them to debugging approaches. It notices transaction patterns, groups of log events that appear together when processing a request.
+  </Step>
+  <Step title="Conversations refine it">
+    When you chat with Tero, you're not just getting answers. You're teaching it. Correct a misclassification and it learns. Explain why a log matters and that knowledge persists. Every interaction sharpens the graph.
+  </Step>
+</Steps>
 
-**Integrations bring it.** Connect Datadog and Tero discovers your services, catalogs your log events, maps your metrics. Each integration adds nodes and edges to the graph. The more you connect, the richer the picture.
-
-**Conversations refine it.** When you chat with Tero, you're not just getting answers—you're teaching it. Correct a misclassification and it learns. Explain why a log matters and that knowledge persists. Every interaction can sharpen the graph.
-
-**Tero enriches it.** Background processing adds context you didn't provide. Tero detects that a service is a Rails app and enriches it with known failure patterns. It identifies common error signatures and links them to debugging approaches. It notices transaction patterns—groups of log events that appear together when processing a request.
-
-And context compounds. Each successful investigation strengthens the pathways that led to it. The relationships that helped answer one question become more prominent for the next. Like neural pathways, connections that prove useful get reinforced.
+Context compounds. Each successful investigation strengthens the pathways that led to it. The relationships that helped answer one question become more prominent for the next. Connections that prove useful get reinforced.
 
 ## Working with context
 
-The primary interface is @ references. In any chat, type `@` and reference a service, log event, metric, or past conversation. That context—and everything connected to it—becomes available.
+The primary interface is @ references. In any chat, type `@` and reference a service, log event, metric, or past conversation. That context, and everything connected to it, becomes available.
 
 This is the graph in action. Reference a service and you get its description, its dependencies, its failure scenarios, its log events. Reference a log event and you get its attributes, its transaction patterns, which service owns it. The connections come along automatically.
 
 You can also explore context directly. Browse services, drill into their log events, trace relationships. See what Tero knows about any piece of your infrastructure. Adjust what's wrong. Fill in what's missing.
 
 The more you use context, the more useful it becomes. Not because you're configuring things, but because every interaction adds signal about what matters and how things connect.
-
-<CardGroup cols={1}>
-  <Card title="Services" icon="server" href="/context/services">
-    Your services with meaning attached—descriptions, dependencies, failure scenarios.
-  </Card>
-  <Card title="Log events" icon="file-lines" href="/context/log-events">
-    Semantic events, not raw lines. Patterns, attributes, transaction relationships.
-  </Card>
-  <Card title="Metrics" icon="chart-line" href="/context/metrics">
-    Metrics with context—what they measure, why they matter, how they connect.
-  </Card>
-</CardGroup>
