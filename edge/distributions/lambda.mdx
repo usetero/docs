@@ -1,0 +1,644 @@
+---
+title: "Lambda Extension"
+description:
+  "Filter, sample, and transform Lambda telemetry at the edge with Tero policies"
+---
+
+This guide explains how to integrate the Tero policy engine with your AWS Lambda
+functions to enable dynamic filtering, sampling, and transformation of logs and
+traces.
+
+## Overview
+
+The policy engine allows you to:
+
+- **Drop** unwanted telemetry (e.g., debug logs in production)
+- **Sample** high-volume telemetry (e.g., keep 10% of health check logs)
+- **Rate limit** noisy sources (e.g., max 100 logs/second from a specific
+  service)
+- **Transform** sensitive data (redact PII, rename fields)
+
+Policies are evaluated in real-time at the edge, reducing data transfer costs
+and improving signal-to-noise ratio before telemetry reaches your observability
+backend.
+
+## Quick Start
+
+<Tabs>
+  <Tab title="Tero Control Plane">
+    The recommended approach is to connect your Lambda extension to the Tero control
+    plane, which provides centralized policy management with instant propagation.
+
+    Set these environment variables on your Lambda function:
+
+    ```bash
+    DD_POLICY_ENABLED=true
+    DD_POLICY_PROVIDERS='[{"id":"tero","type":"http","url":"https://api.tero.dev/v1/policies/sync","headers":[{"name":"Authorization","value":"Bearer YOUR_API_KEY"}],"poll_interval_secs":60}]'
+    ```
+
+  </Tab>
+  <Tab title="Local Policy Files">
+    For testing or air-gapped environments, you can bundle policy files with your
+    Lambda deployment:
+
+    ```bash
+    DD_POLICY_ENABLED=true
+    DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.json"}]'
+    ```
+
+    Place your `policies.json` file in your Lambda deployment package root.
+
+  </Tab>
+</Tabs>
+
+## Configuration Reference
+
+### Environment Variables
+
+| Variable              | Type       | Default | Description                            |
+| --------------------- | ---------- | ------- | -------------------------------------- |
+| `DD_POLICY_ENABLED`   | boolean    | `false` | Enable policy-based filtering          |
+| `DD_POLICY_PROVIDERS` | JSON array | `null`  | List of policy provider configurations |
+
+### Provider Configuration
+
+<AccordionGroup>
+  <Accordion title="HTTP Provider (Tero Control Plane)">
+    ```json
+    {
+      "id": "tero",
+      "type": "http",
+      "url": "https://api.tero.dev/v1/policies/sync",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer YOUR_API_KEY" },
+        { "name": "X-Tero-Org-Id", "value": "your-org-id" }
+      ],
+      "poll_interval_secs": 60
+    }
+    ```
+
+    | Field                | Required | Description                                  |
+    | -------------------- | -------- | -------------------------------------------- |
+    | `id`                 | Yes      | Unique identifier for this provider          |
+    | `type`               | Yes      | Must be `"http"`                             |
+    | `url`                | Yes      | Tero sync endpoint URL                       |
+    | `headers`            | No       | HTTP headers for authentication              |
+    | `poll_interval_secs` | No       | How often to check for updates (default: 60) |
+
+  </Accordion>
+  <Accordion title="File Provider (Local Policies)">
+    ```json
+    {
+      "id": "local",
+      "type": "file",
+      "path": "/var/task/policies.json"
+    }
+    ```
+
+    | Field  | Required | Description                           |
+    | ------ | -------- | ------------------------------------- |
+    | `id`   | Yes      | Unique identifier for this provider   |
+    | `type` | Yes      | Must be `"file"`                      |
+    | `path` | Yes      | Absolute path to the policy JSON file |
+
+  </Accordion>
+</AccordionGroup>
+
+### Multiple Providers
+
+You can configure multiple providers. Policies from all providers are merged,
+with the most restrictive policy winning when multiple policies match:
+
+```json
+[
+  { "id": "local", "type": "file", "path": "/var/task/policies.json" },
+  {
+    "id": "tero",
+    "type": "http",
+    "url": "https://api.tero.dev/v1/policies/sync",
+    "headers": [{ "name": "Authorization", "value": "Bearer KEY" }]
+  }
+]
+```
+
+## Policy Format
+
+Policies are defined in JSON format. Each policy specifies:
+
+1. **Matchers** - Which telemetry items to target
+2. **Actions** - What to do with matching items (keep, drop, sample, rate-limit)
+3. **Transforms** - Optional modifications to apply
+
+### Basic Structure
+
+```json
+{
+  "policies": [
+    {
+      "id": "unique-policy-id",
+      "name": "Human-readable name",
+      "description": "What this policy does",
+      "enabled": true,
+      "target": {
+        "log": {
+          "match": [...],
+          "keep": "all|none|N%|N/s|N/m",
+          "transform": {...}
+        }
+      }
+    }
+  ]
+}
+```
+
+### Matchable Fields for Logs
+
+When writing policies for Lambda logs, you can match on these fields:
+
+| Field Type          | Field Name                | Description              | Example Value                                           |
+| ------------------- | ------------------------- | ------------------------ | ------------------------------------------------------- |
+| `logField`          | `LOG_FIELD_BODY`          | The log message content  | `"User login successful"`                               |
+| `logField`          | `LOG_FIELD_SEVERITY_TEXT` | Log level/status         | `"info"`, `"error"`, `"debug"`                          |
+| `resourceAttribute` | `service`                 | Service name             | `"my-api"`                                              |
+| `resourceAttribute` | `hostname`                | Lambda function hostname | `"ip-10-0-1-5"`                                         |
+| `resourceAttribute` | `source`                  | Log source identifier    | `"lambda"`                                              |
+| `resourceAttribute` | `arn`                     | Full Lambda ARN          | `"arn:aws:lambda:us-east-1:123456789:function:my-func"` |
+| `resourceAttribute` | `request_id`              | Lambda request ID        | `"abc-123-def-456"`                                     |
+
+### Matchable Fields for Traces
+
+When writing policies for Lambda traces, you can match on these fields:
+
+| Field Type          | Field Name       | Description         | Example Value    |
+| ------------------- | ---------------- | ------------------- | ---------------- |
+| `logField`          | `LOG_FIELD_BODY` | Span resource name  | `"/api/users"`   |
+| `resourceAttribute` | `service`        | Service name        | `"my-api"`       |
+| `resourceAttribute` | `name`           | Span operation name | `"http.request"` |
+| `resourceAttribute` | `resource`       | Span resource       | `"GET /users"`   |
+| `resourceAttribute` | `type`           | Span type           | `"web"`, `"sql"` |
+| `logAttribute`      | `*`              | Any span meta tag   | Custom values    |
+
+## Policy Examples
+
+<AccordionGroup>
+  <Accordion title="Drop Debug Logs in Production">
+    Drop all logs with severity "debug":
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "drop-debug-logs",
+          "name": "Drop Debug Logs",
+          "description": "Remove debug-level logs to reduce noise",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "logField": "LOG_FIELD_SEVERITY_TEXT",
+                  "exact": "debug"
+                }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Drop Logs by Pattern">
+    Drop logs containing "health check" or "heartbeat":
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "drop-health-checks",
+          "name": "Drop Health Check Logs",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "logField": "LOG_FIELD_BODY",
+                  "regex": "health.?check|heartbeat"
+                }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Sample High-Volume Logs">
+    Keep only 10% of logs from a noisy service:
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "sample-noisy-service",
+          "name": "Sample Noisy Service",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "resourceAttribute": "service",
+                  "exact": "high-volume-service"
+                }
+              ],
+              "keep": "10%"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Rate Limit Logs">
+    Limit a service to 100 logs per second:
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "rate-limit-chatty-service",
+          "name": "Rate Limit Chatty Service",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "resourceAttribute": "service",
+                  "exact": "chatty-service"
+                }
+              ],
+              "keep": "100/s"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Filter by Lambda ARN Pattern">
+    Drop logs from development Lambda functions:
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "drop-dev-lambdas",
+          "name": "Drop Dev Lambda Logs",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "resourceAttribute": "arn",
+                  "regex": ":function:dev-"
+                }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Multiple Matchers (AND Logic)">
+    Drop error logs from a specific service (both conditions must match):
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "drop-known-errors",
+          "name": "Drop Known Service Errors",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "resourceAttribute": "service",
+                  "exact": "legacy-service"
+                },
+                {
+                  "logField": "LOG_FIELD_BODY",
+                  "regex": "Expected timeout"
+                }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Keep Only Errors">
+    Drop everything except error logs:
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "keep-only-errors",
+          "name": "Keep Only Errors",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "logField": "LOG_FIELD_SEVERITY_TEXT",
+                  "exact": "error",
+                  "negate": true
+                }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Filter Specific HTTP Status Codes">
+    Drop logs containing 4xx/5xx HTTP errors from traces:
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "filter-http-errors",
+          "name": "Drop HTTP Error Logs",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                {
+                  "logField": "LOG_FIELD_BODY",
+                  "regex": "HTTP[/ ][45][0-9][0-9]"
+                }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+## AWS Lambda Deployment
+
+<Tabs>
+  <Tab title="SAM">
+    ```yaml
+    AWSTemplateFormatVersion: "2010-09-09"
+    Transform: AWS::Serverless-2016-10-31
+
+    Resources:
+      MyFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+          Handler: index.handler
+          Runtime: nodejs18.x
+          Layers:
+            - !Sub arn:aws:lambda:${AWS::Region}:464622532012:layer:Datadog-Extension:latest
+          Environment:
+            Variables:
+              DD_POLICY_ENABLED: "true"
+              DD_POLICY_PROVIDERS: |
+                [{"id":"tero","type":"http","url":"https://api.tero.dev/v1/policies/sync","headers":[{"name":"Authorization","value":"{{resolve:secretsmanager:tero-api-key}}"}],"poll_interval_secs":60}]
+    ```
+
+  </Tab>
+  <Tab title="Serverless Framework">
+    ```yaml
+    service: my-service
+
+    provider:
+      name: aws
+      runtime: nodejs18.x
+
+    functions:
+      hello:
+        handler: handler.hello
+        layers:
+          - arn:aws:lambda:${aws:region}:464622532012:layer:Datadog-Extension:latest
+        environment:
+          DD_POLICY_ENABLED: "true"
+          DD_POLICY_PROVIDERS: '[{"id":"tero","type":"http","url":"https://api.tero.dev/v1/policies/sync","headers":[{"name":"Authorization","value":"${ssm:/tero/api-key}"}],"poll_interval_secs":60}]'
+    ```
+
+  </Tab>
+  <Tab title="Terraform">
+    ```hcl
+    resource "aws_lambda_function" "example" {
+      function_name = "my-function"
+      handler       = "index.handler"
+      runtime       = "nodejs18.x"
+
+      layers = [
+        "arn:aws:lambda:${var.region}:464622532012:layer:Datadog-Extension:latest"
+      ]
+
+      environment {
+        variables = {
+          DD_POLICY_ENABLED = "true"
+          DD_POLICY_PROVIDERS = jsonencode([
+            {
+              id   = "tero"
+              type = "http"
+              url  = "https://api.tero.dev/v1/policies/sync"
+              headers = [
+                {
+                  name  = "Authorization"
+                  value = "Bearer ${data.aws_secretsmanager_secret_version.tero_key.secret_string}"
+                }
+              ]
+              poll_interval_secs = 60
+            }
+          ])
+        }
+      }
+    }
+    ```
+
+  </Tab>
+</Tabs>
+
+### Using Local Policy Files
+
+To bundle policies with your Lambda:
+
+<Steps>
+  <Step title="Create policies.json">
+    Create a `policies.json` file in your project root:
+
+    ```json
+    {
+      "policies": [
+        {
+          "id": "drop-debug",
+          "name": "Drop Debug Logs",
+          "enabled": true,
+          "target": {
+            "log": {
+              "match": [
+                { "logField": "LOG_FIELD_SEVERITY_TEXT", "exact": "debug" }
+              ],
+              "keep": "none"
+            }
+          }
+        }
+      ]
+    }
+    ```
+
+  </Step>
+  <Step title="Configure the file provider">
+    Include the file in your deployment package and set the environment variables:
+
+    ```bash
+    DD_POLICY_ENABLED=true
+    DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.json"}]'
+    ```
+
+  </Step>
+</Steps>
+
+## Regex Pattern Guidelines
+
+The policy engine uses Vectorscan (Hyperscan) for high-performance regex
+matching. Keep these guidelines in mind:
+
+### Supported Patterns
+
+| Pattern           | Example                  | Description                      |
+| ----------------- | ------------------------ | -------------------------------- |
+| Literals          | `error`                  | Exact substring match            |
+| Alternation       | `error\|fatal\|critical` | Match any of multiple patterns   |
+| Character classes | `[a-z]`, `[0-9]`         | Match character ranges           |
+| Anchors           | `^START`, `completed$`   | Match start/end of string        |
+| Word boundaries   | `\bword\b`               | Match whole words only           |
+| Escaped chars     | `\.`, `\[`, `\]`         | Match literal special characters |
+
+### Patterns to Avoid
+
+| Pattern   | Issue                          | Alternative                    |
+| --------- | ------------------------------ | ------------------------------ |
+| `.*`      | Can match empty strings        | Use `.+` or literal patterns   |
+| `.+`      | May not work reliably          | Use explicit character classes |
+| `{n,m}`   | Bounded quantifiers unreliable | Use explicit repetition        |
+| `(?=...)` | Lookaheads not supported       | Restructure pattern            |
+
+### Examples of Good Patterns
+
+```
+# Match IP addresses (use explicit pattern)
+192\.168\.
+
+# Match error levels
+error|warn|fatal
+
+# Match HTTP errors
+HTTP[/ ][45][0-9][0-9]
+
+# Match UUIDs
+[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-
+
+# Match Lambda ARN pattern
+:function:dev-|:function:test-
+```
+
+## Observability
+
+### Policy Evaluation Metrics
+
+When policies are enabled, the following metrics are emitted:
+
+| Metric                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `policy.evaluated`    | Number of telemetry items evaluated      |
+| `policy.matched`      | Number of items matching a policy        |
+| `policy.dropped`      | Number of items dropped                  |
+| `policy.sampled_out`  | Number of items removed by sampling      |
+| `policy.rate_limited` | Number of items removed by rate limiting |
+
+### Debugging
+
+Enable debug logging to see policy evaluation details:
+
+```bash
+DD_LOG_LEVEL=debug
+```
+
+Look for log messages prefixed with `POLICY |` to trace policy decisions.
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Start with monitoring mode">
+    Create policies with `"keep": "all"` first to see what would match without
+    dropping data.
+  </Card>
+  <Card title="Use specific matchers">
+    Prefer exact matches over broad regex patterns to avoid unexpected drops.
+  </Card>
+  <Card title="Test locally first">
+    Use the file provider to test policies before deploying to the control
+    plane.
+  </Card>
+  <Card title="Set reasonable poll intervals">
+    For production, 60 seconds is a good balance between responsiveness and
+    efficiency.
+  </Card>
+  <Card title="Use multiple policies">
+    Break complex rules into multiple focused policies for easier management.
+  </Card>
+  <Card title="Monitor policy metrics">
+    Watch the policy evaluation metrics to ensure policies behave as expected.
+  </Card>
+  <Card title="Keep regex simple">
+    Complex regex patterns can impact performance. Use literals and alternation
+    where possible.
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Policies Not Being Applied">
+    1. Verify `DD_POLICY_ENABLED=true` is set 2. Check that
+    `DD_POLICY_PROVIDERS` is valid JSON 3. Ensure the policy file path is
+    correct (for file provider) 4. Verify authentication headers (for HTTP
+    provider) 5. Check Lambda logs for policy-related errors
+  </Accordion>
+  <Accordion title="High Latency">
+    1. Reduce regex complexity 2. Use exact matches instead of regex where
+    possible 3. Decrease the number of policies 4. Ensure policies are specific
+    to avoid evaluating all telemetry
+  </Accordion>
+  <Accordion title="Unexpected Drops">
+    1. Enable debug logging to see which policy matched 2. Check for overly
+    broad regex patterns 3. Verify matcher logic (multiple matchers use AND
+    logic) 4. Test policies in isolation with the file provider
+  </Accordion>
+</AccordionGroup>

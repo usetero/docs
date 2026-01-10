@@ -1,9 +1,108 @@
 ---
-title: "Edge"
-sidebarTitle: "Overview"
-description: "Policy execution in your infrastructure"
-icon: "bolt"
-iconType: "duotone"
+title: "Overview"
+description:
+  "A lightweight telemetry proxy for policy-based filtering and transformation"
 ---
 
-{/* TODO: Your engineer has this content */}
+Edge is a high-performance telemetry proxy that applies policies to your
+observability data before it reaches your backends. It sits between your
+applications and observability platforms, filtering noise, redacting sensitive
+data, and transforming telemetry in real-time.
+
+## Why Edge?
+
+Observability platforms charge by volume. As your infrastructure grows, so does
+the noise—debug logs, health checks, internal metrics. You're paying to store
+data you'll never query.
+
+Edge solves this by processing telemetry in your environment:
+
+- **Filter noise** before it leaves your infrastructure
+- **Redact sensitive data** to meet compliance requirements
+- **Transform fields** to normalize across services
+- **Sample high-volume events** to control costs
+
+All without changing application code.
+
+## How It Works
+
+Edge operates as a proxy between your telemetry sources and destinations:
+
+```
+Applications → Edge → Observability Platform
+                  ↓
+              Policies
+```
+
+1. **Receive** telemetry via standard protocols (OTLP, Datadog API)
+2. **Evaluate** policies against each log, metric, or trace
+3. **Apply** actions: drop, sample, transform, or pass through
+4. **Forward** surviving telemetry to your backend
+
+Policies are evaluated in parallel for each piece of telemetry. There's no
+sequential pipeline—matching policies contribute their actions, and the most
+restrictive action wins.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Policy-Based Processing" icon="filter">
+    Define rules that match specific telemetry and apply actions. Policies are
+    atomic and independent—no dependencies between them.
+  </Card>
+  <Card title="Hot Reload" icon="rotate">
+    Update policies without restarting. Edge watches for changes and applies
+    them instantly with zero downtime.
+  </Card>
+  <Card title="Fail-Open" icon="shield-check">
+    If a policy fails to evaluate, telemetry passes through unchanged. Edge
+    prioritizes availability over strict filtering.
+  </Card>
+  <Card title="High Performance" icon="bolt">
+    Built in Zig with lock-free reads and Vectorscan regex matching. Handles
+    thousands of policies with sub-millisecond overhead.
+  </Card>
+</CardGroup>
+
+## Distributions
+
+Edge ships as focused distributions, each optimized for specific protocols:
+
+| Distribution                                | Protocols                     | Use Case                          |
+| ------------------------------------------- | ----------------------------- | --------------------------------- |
+| [Edge](/edge/distributions/all)             | All protocols                 | Multi-vendor environments         |
+| [Edge Datadog](/edge/distributions/datadog) | Datadog Logs API, Metrics API | Datadog-native environments       |
+| [Edge OTLP](/edge/distributions/otlp)       | OpenTelemetry Protocol        | OpenTelemetry-native environments |
+
+Choose the distribution that matches your telemetry stack.
+
+## Comparisons to Other Solutions
+
+The Edge proxy is not designed to replace other telemetry pipelines like the
+OpenTelemetry Collector, Datadog Agent, or Vector. Instead, it complements these
+solutions by providing an incredibly performant, policy-driven approach to
+processing telemetry in your environment.
+
+### Reach for the Edge if:
+
+- You need to filter noise before it leaves your infrastructure.
+- You need to redact sensitive data to meet compliance requirements.
+- You need to process telemetry in your environment.
+- You struggle with latency or throughput issues.
+- You want zero-downtime, sub-millisecond remote configuration.
+
+### Rely on Telemetry Pipelines for:
+
+- Routing telemetry data to external systems.
+- Translating telemetry data formats.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Concepts" icon="lightbulb" href="/edge/concepts">
+    Understand the core ideas behind Edge
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/edge/quickstart">
+    Get Edge running in 5 minutes
+  </Card>
+</CardGroup>

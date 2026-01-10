@@ -93,6 +93,7 @@
             "pages": [
               "edge/distributions/datadog",
               "edge/distributions/otlp",
+              "edge/distributions/lambda",
               "edge/distributions/all"
             ]
           },
