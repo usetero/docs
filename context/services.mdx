@@ -5,18 +5,55 @@ icon: "server"
 iconType: "duotone"
 ---
 
-## What it is
-
-{/* The concept - services with meaning attached */}
+Tero discovers services from your [integrations](/integrations). Each one becomes a hub in the context graph, owning [log events](/context/log-events), connecting to [metrics](/context/metrics), and relating to other services through dependencies.
 
 ## What Tero knows
 
-{/* Semantic understanding, relationships */}
+Tero doesn't just import names. It analyzes logs and traces to understand what each service does, what technologies it uses, and how it relates to other services.
 
-## Where it comes from
+<Expandable title="Fields">
+  <ResponseField name="name" type="string">
+    The service identifier as it appears in your telemetry.
+  </ResponseField>
+  <ResponseField name="description" type="string">
+    What the service does, generated from observed behavior.
+  </ResponseField>
+  <ResponseField name="technologies" type="array">
+    Languages, frameworks, databases. Inferred from logs and traces.
+  </ResponseField>
+  <ResponseField name="dependencies" type="array">
+    Other services this one calls or relies on.
+  </ResponseField>
+  <ResponseField name="failure_scenarios" type="array">
+    Known ways the service fails and what causes them.
+  </ResponseField>
+  <ResponseField name="ownership" type="string">
+    Team or individual responsible (when available).
+  </ResponseField>
+</Expandable>
 
-{/* Which integrations bring this context */}
+## Exploring a service
 
-## How to explore it
+Open any service to see what Tero figured out: description, technologies, dependencies, failure scenarios, and log events. Everything connected to that service in the graph.
 
-{/* Navigating, drilling in, adjusting */}
+## Using in chat
+
+Reference a service with `@` to scope your questions:
+
+```
+@checkout why are we seeing elevated error rates?
+@payment what are the common failure modes?
+@kafka what log events does this produce?
+```
+
+Tero pulls in everything connected: the service's description, dependencies, failure scenarios, log events. Your question gets answered in that full context.
+
+## Improving context
+
+Tero generates descriptions and infers technologies, but you can refine what it knows:
+
+- **Edit descriptions** to add detail Tero couldn't infer
+- **Add failure scenarios** your team knows about
+- **Note ownership** so Tero knows who to reference
+
+The more you refine, the better Tero's answers become.
