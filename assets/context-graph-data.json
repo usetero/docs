@@ -2100,5 +2100,47 @@
       "datadog_account_id": "019b00e2-a6ac-731c-a960-61f33f15f7ac"
     }
   ],
-  "edge_instances": null
+  "edge_instances": null,
+  "event_correlations": [
+    {
+      "source": "019b947b-d4c9-7d10-bb25-1d3090e1f635",
+      "target": "019b947b-f852-7d10-acbe-c649713148d9",
+      "description": "checkout kafka_message_written -> fraud-detection order_record_consumed"
+    },
+    {
+      "source": "019b947b-d4d5-7d10-ae74-a7648a041273",
+      "target": "019b947c-b491-7ec1-89b6-ab39cd3b59eb",
+      "description": "checkout payment_processed -> payment transaction_completed"
+    },
+    {
+      "source": "019b947c-e0a5-7ec1-86c9-cf71ace47e43",
+      "target": "019b947c-e1cb-7ec1-828f-91fa80fcbe5a",
+      "description": "shipping quote_requested -> quote quote_calculated"
+    },
+    {
+      "source": "019b947b-d4d2-7d10-bc7b-ed4c024bd9aa",
+      "target": "019b947c-e0a9-7ec1-bdba-91bfcfcbe1cc",
+      "description": "checkout order_placed -> shipping tracking_id_created"
+    },
+    {
+      "source": "019b947b-d4c5-7d10-93ca-07e4af9b3658",
+      "target": "019b947c-76dd-7e32-a15f-97ced62ea0bf",
+      "description": "checkout place_order_invoked -> cart cart_emptied"
+    },
+    {
+      "source": "019b947b-bff3-7d10-b841-047010d3b147",
+      "target": "019b947c-3e9a-7da1-8bae-5e34cc06816b",
+      "description": "load-generator user_requested_recommendations -> recommendation list_recommendations_request_received"
+    },
+    {
+      "source": "019b947b-bff0-7d10-b0f1-a5a57237b375",
+      "target": "019b947b-66c5-7d10-85c0-b4bbbf623aa8",
+      "description": "load-generator user_requested_ads -> ad ad_request_received"
+    },
+    {
+      "source": "019b947b-d4d2-7d10-bc7b-ed4c024bd9aa",
+      "target": "019b947b-b2e8-7d10-88be-c6b83f380364",
+      "description": "checkout order_placed -> accounting order_details_logged"
+    }
+  ]
 }

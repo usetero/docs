@@ -2322,6 +2322,52 @@ export const ContextGraph = () => {
       },
     ],
     edge_instances: null,
+    event_correlations: [
+      {
+        source: "019b947b-d4c9-7d10-bb25-1d3090e1f635",
+        target: "019b947b-f852-7d10-acbe-c649713148d9",
+        description:
+          "checkout kafka_message_written -> fraud-detection order_record_consumed",
+      },
+      {
+        source: "019b947b-d4d5-7d10-ae74-a7648a041273",
+        target: "019b947c-b491-7ec1-89b6-ab39cd3b59eb",
+        description:
+          "checkout payment_processed -> payment transaction_completed",
+      },
+      {
+        source: "019b947c-e0a5-7ec1-86c9-cf71ace47e43",
+        target: "019b947c-e1cb-7ec1-828f-91fa80fcbe5a",
+        description: "shipping quote_requested -> quote quote_calculated",
+      },
+      {
+        source: "019b947b-d4d2-7d10-bc7b-ed4c024bd9aa",
+        target: "019b947c-e0a9-7ec1-bdba-91bfcfcbe1cc",
+        description: "checkout order_placed -> shipping tracking_id_created",
+      },
+      {
+        source: "019b947b-d4c5-7d10-93ca-07e4af9b3658",
+        target: "019b947c-76dd-7e32-a15f-97ced62ea0bf",
+        description: "checkout place_order_invoked -> cart cart_emptied",
+      },
+      {
+        source: "019b947b-bff3-7d10-b841-047010d3b147",
+        target: "019b947c-3e9a-7da1-8bae-5e34cc06816b",
+        description:
+          "load-generator user_requested_recommendations -> recommendation list_recommendations_request_received",
+      },
+      {
+        source: "019b947b-bff0-7d10-b0f1-a5a57237b375",
+        target: "019b947b-66c5-7d10-85c0-b4bbbf623aa8",
+        description:
+          "load-generator user_requested_ads -> ad ad_request_received",
+      },
+      {
+        source: "019b947b-d4d2-7d10-bc7b-ed4c024bd9aa",
+        target: "019b947b-b2e8-7d10-88be-c6b83f380364",
+        description: "checkout order_placed -> accounting order_details_logged",
+      },
+    ],
   };
   // Tailwind colors for categories
   const colors = [
@@ -2372,14 +2418,14 @@ export const ContextGraph = () => {
       serviceToCategory[s.id] = i;
     });
 
-    // Group log events by service (max 30 per service for visual clarity)
+    // Group log events by service (max 75 per service for visual clarity)
     const logEventsByService = {};
     contextData.log_events.forEach((le) => {
       if (!serviceIds.has(le.service_id)) return;
       if (!logEventsByService[le.service_id]) {
         logEventsByService[le.service_id] = [];
       }
-      if (logEventsByService[le.service_id].length < 30) {
+      if (logEventsByService[le.service_id].length < 75) {
         logEventsByService[le.service_id].push(le);
       }
     });
@@ -2436,6 +2482,20 @@ export const ContextGraph = () => {
       }
     });
 
+    // Event-to-event correlation links (cross-service patterns)
+    const logEventIds = new Set(logEvents.map((le) => le.id));
+    if (contextData.event_correlations) {
+      contextData.event_correlations.forEach((corr) => {
+        if (logEventIds.has(corr.source) && logEventIds.has(corr.target)) {
+          links.push({
+            source: corr.source,
+            target: corr.target,
+            lineStyle: { width: 1.5, opacity: 0.7, type: "dashed" },
+          });
+        }
+      });
+    }
+
     const chart = window.echarts.init(chartRef.current);
 
     chart.setOption({
@@ -2489,7 +2549,7 @@ export const ContextGraph = () => {
             min: 0.3,
             max: 3,
           },
-          zoom: 1,
+          zoom: 0.85,
           lineStyle: {
             color: "source",
             curveness: 0.15,
