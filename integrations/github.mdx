@@ -1,0 +1,81 @@
+---
+title: "GitHub"
+description: "Connect Tero to your GitHub repositories"
+icon: "github"
+iconType: "brands"
+---
+
+Connect GitHub to let Tero open pull requests, create issues, and sync policies to your repositories.
+
+## Connect
+
+<Tabs>
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Run tero">
+        Open your terminal and run:
+
+        ```bash
+        tero
+        ```
+
+        This opens the Tero TUI, which guides you through setup.
+
+        <Note>
+        Don't have the CLI installed? See the [quickstart](/quickstart).
+        </Note>
+      </Step>
+
+      <Step title="Log in to Tero">
+        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
+      </Step>
+
+      <Step title="Select GitHub">
+        The TUI asks which integration you want to connect. Select GitHub.
+      </Step>
+
+      <Step title="Install the GitHub App">
+        The TUI opens your browser to [install the Tero GitHub App](https://github.com/apps/tero). Select which repositories Tero can access — you can grant access to all repositories or select specific ones.
+      </Step>
+
+      <Step title="Authorize">
+        GitHub asks you to authorize the app. Review the permissions and approve. You're redirected back to Tero.
+      </Step>
+
+      <Step title="Done">
+        Tero confirms the connection. You can now open PRs, create issues, and sync policies to your repositories.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Actions
+
+With GitHub connected, Tero can take action directly in your repositories:
+
+<CardGroup cols={1}>
+  <Card title="Pull requests" icon="code-pull-request" iconType="duotone" horizontal>
+    Tero opens PRs to fix instrumentation issues — removing debug output, cleaning up excessive logging, fixing waste at the source.
+  </Card>
+  <Card title="Issues" icon="circle-dot" iconType="duotone" horizontal>
+    Tero creates issues for waste your team should review. Assigned to the right team based on your service catalog.
+  </Card>
+  <Card title="Policy sync" icon="rotate" iconType="duotone" horizontal>
+    Tero syncs policies to a git repository. Version control, audit history, review before apply.
+  </Card>
+</CardGroup>
+
+## Permissions
+
+The Tero GitHub App requests these permissions:
+
+| Permission | Access | Why |
+|------------|--------|-----|
+| **Contents** | Read & Write | Read code to find instrumentation, create branches, push commits |
+| **Pull requests** | Read & Write | Open PRs, track PR status |
+| **Issues** | Read & Write | Create issues for teams to review |
+| **Metadata** | Read | Basic repository information |
+
+<Note>
+You can limit Tero to specific repositories during installation. Update repository access anytime in your [GitHub App settings](https://github.com/settings/installations).
+</Note>

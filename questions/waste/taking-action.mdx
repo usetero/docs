@@ -55,11 +55,15 @@ Tero opens PRs directly against your repo. It knows which service produces the w
 
 Changes are batched by [category](/questions/waste/how-it-works#categories). You're not getting one PR per log event — that would be noise. Instead, Tero groups related fixes: all the debug output in a service, all the leftover instrumentation from a specific feature. PRs route to owning teams based on your [service catalog](/context/services), so the right people review the right changes.
 
+[Connect GitHub](/integrations/github) to enable pull requests.
+
 ### Tickets
 
 Some teams prefer to schedule work themselves rather than receive PRs. Tero can create issues in Jira, Linear, or GitHub instead. Same information — what the waste is, why it matters, what to change — but the team decides when to address it.
 
 This works well when you want visibility into waste without forcing immediate action. Teams see the cost, prioritize against other work, and fix when ready.
+
+[Connect GitHub](/integrations/github) to enable issues.
 
 ### CLI
 

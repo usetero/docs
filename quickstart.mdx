@@ -5,37 +5,41 @@ icon: "rocket"
 iconType: "duotone"
 ---
 
-<Steps>
-  <Step title="Install the CLI">
-    <CodeGroup>
-    ```bash curl
-    curl -sSfL https://sh.usetero.com | sh
-    ```
+<Tabs>
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Install the CLI">
+        <CodeGroup>
+        ```bash curl
+        curl -sSfL https://sh.usetero.com | sh
+        ```
 
-    ```bash Homebrew
-    brew install usetero/tap/tero
-    ```
+        ```bash Homebrew
+        brew install usetero/tap/tero
+        ```
 
-    ```bash Scoop (Windows)
-    scoop bucket add tero https://github.com/usetero/scoop-bucket
-    scoop install tero
-    ```
+        ```bash Scoop (Windows)
+        scoop bucket add tero https://github.com/usetero/scoop-bucket
+        scoop install tero
+        ```
 
-    ```bash Docker
-    docker pull usetero/tero
-    ```
-    </CodeGroup>
-  </Step>
+        ```bash Docker
+        docker pull usetero/tero
+        ```
+        </CodeGroup>
+      </Step>
 
-  <Step title="Connect Datadog">
-    ```bash
-    tero
-    ```
+      <Step title="Connect Datadog">
+        ```bash
+        tero
+        ```
 
-    On first run, Tero walks you through authentication and connecting your Datadog account with a read-only API key. Once connected, Tero starts building context from your telemetry.
-  </Step>
+        On first run, Tero walks you through authentication and connecting your Datadog account with a read-only API key. Once connected, Tero starts building context from your telemetry.
+      </Step>
 
-  <Step title="Ask your first question">
-    Once context is built, you're ready to ask: [How much data is waste?](/questions/waste/getting-started)
-  </Step>
-</Steps>
+      <Step title="Ask your first question">
+        Once context is built, you're ready to ask: [How much data is waste?](/questions/waste/getting-started)
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>

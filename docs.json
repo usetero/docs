@@ -83,7 +83,8 @@
             "pages": [
               "integrations/overview",
               "integrations/datadog",
-              "integrations/splunk"
+              "integrations/splunk",
+              "integrations/github"
             ]
           }
         ]
