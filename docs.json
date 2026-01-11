@@ -74,12 +74,17 @@
               "context/overview",
               "context/services",
               "context/log-events",
-              "context/metrics"
+              "context/metrics",
+              "context/trace-spans"
             ]
           },
           {
             "group": "Integrations",
-            "pages": ["integrations/overview", "integrations/datadog"]
+            "pages": [
+              "integrations/overview",
+              "integrations/datadog",
+              "integrations/splunk"
+            ]
           }
         ]
       },

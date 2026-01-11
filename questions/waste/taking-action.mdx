@@ -6,114 +6,137 @@ icon: "bolt"
 iconType: "duotone"
 ---
 
-Tero shows you what's waste and why. This page covers how to act on it.
+Tero shows you what's waste and why. Now you need to eliminate it.
 
-## Review
+You have three options: filter in your provider, fix in code, or drop in your infrastructure. They're not mutually exclusive. Most teams use all three, depending on what the waste is and how permanent they want the fix to be.
 
-Every recommendation includes the reasoning: what the log event is, why it's classified as waste, the cost, query history, who owns the service. You see exactly why Tero made the call.
-
-If you disagree, adjust the classification. Tero learns from your feedback. New waste surfaces as unreviewed so you're not re-evaluating the same things.
-
-## Act
-
-Once you've reviewed, choose how to eliminate it. These options aren't mutually exclusive. Start simple, expand as you build trust.
-
-### Do it yourself
-
-Take the findings and act however you want. Remove the instrumentation from your code, configure your existing tools, open a ticket for the owning team. Tero observes your data volume. When the waste stops flowing, the recommendation auto-resolves.
-
-<Frame>
-  <img src="/images/how-it-works-4-code.svg" alt="Adjust instrumentation in your code" />
-</Frame>
-
-### Configure your provider
-
-Push exclusion rules directly to Datadog, Splunk, or other providers via API. Nothing to deploy, nothing to change in your infrastructure. This is the fastest path to impact.
-
-<Frame>
-  <img src="/images/how-it-works-4-agentless.svg" alt="Configure exclusion rules via provider API" />
-</Frame>
-
-Providers have limits on exclusion rules. Good starting point, but you may hit a ceiling at scale.
-
-### Deploy policies
-
-For scale beyond what providers support, Tero generates [policies](/edge/policy-reference/log-filter). Policies are simple, atomic rules: drop this event, sample that one, trim this attribute. Each policy does one thing.
-
-Why atomic? Because monolithic pipeline configurations break down at scale. Policies are composable, auditable, and designed for thousands of rules.
-
-You choose where to run them:
+## In your provider
 
 <Tabs>
-  <Tab title="Datadog Agent">
+  <Tab title="Datadog">
     <Frame>
-      <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent distribution" />
+      <img src="/images/how-it-works-datadog-4-in-provider.svg" alt="Tero configuring Datadog" />
     </Frame>
 
-    Our build of the Datadog Agent with Tero's policy engine built in.
+    Tero configures [exclusion filters](https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters) to prevent waste from being indexed, and modifies [pipelines](https://docs.datadoghq.com/logs/log_configuration/pipelines/) to change how logs are parsed and routed. See [Datadog integration →](/integrations/datadog#actions)
+
+    <Warning>
+    Exclusion filters prevent indexing but not ingestion. You still pay ingestion fees. To avoid those, [filter in your infrastructure](#in-your-infrastructure).
+    </Warning>
   </Tab>
-
-  <Tab title="OTel Collector">
+  <Tab title="Splunk">
     <Frame>
-      <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector distribution" />
+      <img src="/images/how-it-works-splunk-4-in-provider.svg" alt="Tero configuring Splunk" />
     </Frame>
 
-    Our build of OTel Collector with Tero's policy engine built in.
-  </Tab>
-
-  <Tab title="Vector">
-    <Frame>
-      <img src="/images/how-it-works-4-vector.svg" alt="Vector distribution" />
-    </Frame>
-
-    Our build of Vector with Tero's policy engine built in.
-  </Tab>
-
-  <Tab title="Fluent Bit">
-    <Frame>
-      <img src="/images/how-it-works-4-fluent-bit.svg" alt="Fluent Bit distribution" />
-    </Frame>
-
-    Our build of Fluent Bit with Tero's policy engine built in.
-  </Tab>
-
-  <Tab title="Tero Edge">
-    <Frame>
-      <img src="/images/how-it-works-4-edge.svg" alt="Tero Edge" />
-    </Frame>
-
-    Purpose-built for policy execution. A lightweight proxy that fits wherever makes sense: at the host, in your pipeline, or in serverless environments.
-
-    <Card title="Tero Edge" icon="bolt" href="/edge/overview">
-      Learn about Edge architecture and deployment.
-    </Card>
+    Tero configures [Ingest Actions](https://docs.splunk.com/Documentation/SplunkCloud/latest/Data/DataIngest) to filter waste before indexing. See [Splunk integration →](/integrations/splunk#actions)
   </Tab>
 </Tabs>
 
-## Scale
+The fastest path to savings. No deploys, no code changes, no waiting for the next release cycle. Tero configures your provider directly via API. You identify waste, apply the filter, and it stops being indexed immediately. Fully reversible — if you made a mistake, undo it just as fast.
 
-Acting yourself is fine for getting started. But this needs to scale beyond you.
+This is a good starting point. You prove value quickly, build confidence in the analysis, and see savings in your next bill. But providers have limits. Datadog caps exclusion filters per index. Splunk caps ingest action rulesets. At some point you hit a ceiling. And there's lock-in — if you switch providers, your filters don't come with you. For scale, you'll want to move filtering into your infrastructure.
+
+## In your code
+
+<Frame>
+  <img src="/images/how-it-works-generic-4-in-code.svg" alt="Fix waste in your code" />
+</Frame>
+
+Some waste shouldn't exist at all. Debug statements that made it to production. Verbose logging someone added during an incident and forgot to remove. Instrumentation that made sense during development but serves no purpose now.
+
+For this kind of waste, the right fix is at the source. Remove the code that produces it. No filtering, no sampling — just stop emitting it.
+
+Tero can help you get there in a few ways.
+
+### Pull requests
+
+Tero opens PRs directly against your repo. It knows which service produces the waste, which repo that maps to, and what code needs to change. You review and merge.
+
+Changes are batched by [category](/questions/waste/how-it-works#categories). You're not getting one PR per log event — that would be noise. Instead, Tero groups related fixes: all the debug output in a service, all the leftover instrumentation from a specific feature. PRs route to owning teams based on your [service catalog](/context/services), so the right people review the right changes.
+
+### Tickets
+
+Some teams prefer to schedule work themselves rather than receive PRs. Tero can create issues in Jira, Linear, or GitHub instead. Same information — what the waste is, why it matters, what to change — but the team decides when to address it.
+
+This works well when you want visibility into waste without forcing immediate action. Teams see the cost, prioritize against other work, and fix when ready.
+
+### CLI
+
+```bash
+tero fix
+```
+
+Sometimes you want to make the change yourself. The CLI shows you Tero's recommendations interactively. You see what it suggests, understand the reasoning, and apply what makes sense. Useful when you're already in the code and want to clean things up as you go.
+
+### MCP
+
+Tero works as an MCP server. If you're using an AI assistant for development, it sees Tero's recommendations in context. Debug output gets flagged before it ships. Excessive logging gets caught during code review. The waste never makes it to production in the first place.
+
+## In your infrastructure
+
+<Tabs>
+  <Tab title="Datadog">
+    <Frame>
+      <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Tero in your infrastructure" />
+    </Frame>
+  </Tab>
+  <Tab title="Splunk">
+    <Frame>
+      <img src="/images/how-it-works-splunk-4-in-infrastructure.svg" alt="Tero in your infrastructure" />
+    </Frame>
+  </Tab>
+  <Tab title="OpenTelemetry">
+    <Frame>
+      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="Tero in your infrastructure" />
+    </Frame>
+  </Tab>
+</Tabs>
+
+This is where you scale without limits. Instead of configuring your provider, you run Tero's policy engine in your own infrastructure. [Policies](/edge/policy-reference/log-filter) execute before data leaves your network. Drop, sample, trim — whatever you need, applied at the source.
+
+Policies are atomic rules. Each one does one thing: drop this event, sample that one, trim this attribute. Why atomic? Because monolithic pipeline configurations break down at scale. Policies are composable, auditable, and designed for thousands of rules. No limits.
+
+You choose where to run them. [Tero Edge](/edge/overview) is purpose-built for policy execution — a lightweight proxy that fits at the host, in your pipeline, or in serverless environments. Or use our drop-in replacements for the Datadog Agent, OTel Collector, Vector, or Fluent Bit. Same config you already have, new capabilities.
+
+The policies are yours. They're portable. If you switch providers tomorrow, your filtering logic comes with you.
 
 ### Sync to git
 
-Policies can sync to a git repository. Push to a folder, open pull requests, merge to main. Version control, audit history, review before apply.
+Policies can sync to a git repository. You push to a folder, open pull requests, merge to main. Version control, audit history, review before apply.
 
-### Automate by category
+This matters when you have multiple teams, compliance requirements, or just want to know who changed what and when. Policies become code, managed like code.
 
-Not every recommendation needs manual review. Categories map to confidence levels:
+## Let categories guide you
 
-- **Auto-apply** for categories you trust (junk, debug output). No review, immediate enforcement.
-- **Require approval** for categories that need judgment (sampling, trimming).
-- **Route to teams** for categories that should be owned by service owners.
+You don't have to decide manually every time. Categories map to where fixes typically belong.
 
-Start conservative. Dial up automation as you build trust.
+| Category | Where it usually lives |
+|----------|----------------------|
+| Junk, debug output | Code — shouldn't exist |
+| External probes | Infrastructure — filter |
+| Noisy signals | Infrastructure — sample |
+| Correlated errors | Infrastructure — sample |
+| Redundant attributes | Infrastructure — trim |
 
-### Push to teams
+Junk and debug output are code problems. The fix is to stop emitting them. Probes, noisy signals, and correlated errors are fine to emit — you just don't need to store all of them. Filter or sample in your infrastructure.
 
-You don't want to be the gatekeeper. And you can't remove other engineers' data without their input.
+You can configure Tero to route automatically. Junk and debug open PRs. Probes and noisy signals push policies. You review what needs judgment, the obvious stuff flows without intervention.
 
-Push ownership to service teams. Team views show each team their services, their waste, their costs. Engineers approve changes to their own services. The conversation shifts from "platform says drop this" to "here's what your service costs, you decide."
+## Push to teams
 
-### Set quality SLOs
+At some point, you don't want to be the person approving every change.
 
-Now that you can quantify waste, you can set standards. Set targets per service, per team, org-wide. Waste becomes a metric like any other, something teams own and improve.
+And you can't just remove other engineers' data without asking. That log you think is waste? Maybe they added it after an incident and it's saved them twice since. You don't have that context. They do.
+
+Push ownership to service teams. Tero's team views show each team their services, their waste, their costs. Engineers approve changes to their own services. They see the impact, understand the trade-offs, make the call.
+
+The conversation shifts. It's not "platform says drop this" — it's "here's what your service costs, you decide." Teams own their data quality the same way they own their uptime.
+
+## Set quality SLOs
+
+Now that you can quantify waste, you can set standards.
+
+Before Tero, waste was vague. You knew it existed but couldn't measure it. Now you have numbers: percentage of waste per service, cost per team, trends over time.
+
+That makes it manageable. Set targets per service, per team, org-wide. Waste becomes a metric like any other — something teams own and improve. Not a quarterly panic before renewal. A continuous quality standard.

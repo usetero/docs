@@ -1,0 +1,92 @@
+---
+title: "Trace Spans"
+description: "How Tero understands the operations that make up your requests"
+icon: "diagram-subtask"
+iconType: "duotone"
+---
+
+A trace span represents an operation in a distributed request. An HTTP call, a database query, a message publish. Tero discovers span patterns from your [integrations](/integrations) and builds semantic understanding of what each operation does, how long it takes, and whether it's worth keeping.
+
+## Example
+
+Here's a raw span:
+
+```yaml
+name: "POST"
+span_kind: client
+attributes:
+  http.method: "POST"
+  url.full: "https://api.stripe.com/v1/charges"
+  http.status_code: 200
+  duration_ms: 234
+```
+
+Tero turns it into a span pattern:
+
+```yaml
+name: http_call_payment_gateway_charge
+service: checkout
+span_kind: client
+description: Checkout service calling the payment gateway to process a charge.
+
+matchers:
+  - field_type: span_attribute
+    field_name: http.method
+    match_type: exact
+    match_value: "POST"
+  - field_type: span_attribute
+    field_name: url.full
+    match_type: starts_with
+    match_value: "https://api.stripe.com/v1/charges"
+```
+
+These matchers identify 180,000 spans. Each span has different trace IDs, durations, response codes. But they all match the same pattern: checkout calling Stripe to charge a card. That's the span pattern.
+
+<Expandable title="All fields">
+  <ResponseField name="name" type="string">
+    A descriptive identifier like `http_call_payment_gateway_charge` or `postgres_query_select_orders`. Unique within the service.
+  </ResponseField>
+  <ResponseField name="description" type="string">
+    What this operation does and when it's invoked.
+  </ResponseField>
+  <ResponseField name="service" type="string">
+    The service that produces this span.
+  </ResponseField>
+  <ResponseField name="span_kind" type="string">
+    Whether this is a client, server, producer, consumer, or internal span.
+  </ResponseField>
+  <ResponseField name="matchers" type="array">
+    Rules that identify which raw spans belong to this pattern. Combinations of attribute conditions.
+  </ResponseField>
+  <ResponseField name="attributes" type="array">
+    Fields that vary per instance: query parameters, response codes, durations.
+  </ResponseField>
+</Expandable>
+
+## Exploring trace spans
+
+Open any span pattern to see what Tero learned: the description, operation, sample spans, classification reasoning. Browse by service or search across all span patterns.
+
+Drill into sample spans to see actual traces. Understand the typical duration, common error codes, which parent spans invoke this operation.
+
+## Using in chat
+
+Reference a span pattern with `@` to focus your questions:
+
+```
+@postgres_query_select_orders why is this slow?
+@http_call_payment_gateway what's the error rate?
+@kafka_publish_order_created which services produce this?
+```
+
+Tero pulls in the span's context: which service owns it, what the operation does, how it connects to other signals. Your question gets answered with that full picture.
+
+## Improving context
+
+Tero classifies spans automatically, but you know your systems better:
+
+- **Reclassify** span patterns that Tero misjudged. That "noise" span might actually matter for debugging.
+- **Edit descriptions** to add context Tero couldn't infer.
+- **Adjust normalization** if an operation is being split into too many patterns or merged incorrectly.
+
+Every correction improves future classifications.

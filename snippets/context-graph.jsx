@@ -2549,7 +2549,7 @@ export const ContextGraph = () => {
             min: 0.3,
             max: 3,
           },
-          zoom: 0.85,
+          zoom: 0.7,
           lineStyle: {
             color: "source",
             curveness: 0.15,

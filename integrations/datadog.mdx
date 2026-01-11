@@ -1,157 +1,115 @@
 ---
 title: "Datadog"
 description: "Connect Tero to your Datadog account"
-icon: "database"
+icon: "dog"
 iconType: "duotone"
 ---
 
-Datadog is Tero's primary integration. Connect it and Tero understands your observability data, answers questions about waste and renewals, and can take action directly in your Datadog account.
+import { DatadogConnectSteps } from '/snippets/datadog-connect-steps.jsx';
 
-## What you get
-
-### Context
-
-Tero pulls from Datadog to build your [context graph](/context/overview):
-
-<CardGroup cols={1}>
-  <Card title="Services" icon="sitemap" href="/context/services" horizontal>
-    From your Service Catalog, APM, and infrastructure
-  </Card>
-  <Card title="Log events" icon="file-lines" href="/context/log-events" horizontal>
-    Mapped from your log patterns and pipelines
-  </Card>
-  <Card title="Metrics" icon="chart-line" href="/context/metrics" horizontal>
-    Including custom metrics and their cardinality
-  </Card>
-</CardGroup>
-
-Tero also reads dashboards and monitors to understand what you're tracking and alerting on.
-
-### Questions unlocked
-
-#### How much data is waste?
-
-Tero analyzes your Datadog logs, metrics, and traces to identify waste. It maps billions of raw events to semantic patterns, classifies them, and shows you what's safe to drop.
-
-With write permissions, Tero can configure exclusion filters directly in Datadog to stop waste at ingestion. Without them, you take action through [Edge](/edge/overview), code changes, or manual configuration.
-
-<Card title="How much data is waste?" icon="trash-can" href="/questions/waste/getting-started" horizontal>
-  Start your first waste analysis
-</Card>
-
-#### How is my renewal looking?
-
-Tero pulls usage data from Datadog to project your spend against your contract. You see burn rate, runway, and whether you're on track. With billing permissions, Tero can also pull contract details automatically.
-
-<Card title="How is my renewal looking?" icon="file-contract" href="/questions/renewal/getting-started" horizontal>
-  Set up contract tracking
-</Card>
+Connect Datadog to give Tero context and enable actions directly in your account.
 
 ## Connect
 
-Install the CLI and run `tero`. The CLI walks you through each step.
+Select your Datadog region, then follow the steps.
 
-<Steps>
-  <Step title="Select your Datadog region">
-    The CLI asks for your Datadog region. You can find this in your Datadog URL (e.g., `app.datadoghq.com` is US1, `app.datadoghq.eu` is EU).
-  </Step>
-  <Step title="Create an API key">
-    The CLI asks for an API key. In Datadog, go to [API Keys](https://app.datadoghq.com/organization-settings/api-keys) and create a new key for Tero.
-  </Step>
-  <Step title="Create a service account">
-    The CLI asks for an application key from a service account. In Datadog:
-    
-    1. Go to [Service Accounts](https://app.datadoghq.com/organization-settings/service-accounts)
-    2. Click **New Service Account**
-    3. Name it "Tero" and assign a role (see [Roles](#roles) below)
-    4. Click **Create**
-    5. Select the Tero service account from the list
-    6. Under Application Keys, click **New Key**
-    7. Copy the key and paste it into the CLI
-    
-    <Note>
-    If you want a custom role, create it first so it appears in the role dropdown. See [Custom role permissions](#custom-role-permissions).
-    </Note>
-  </Step>
-  <Step title="Wait for analysis">
-    Tero verifies the connection and analyzes your environment. This takes a minute or two, even with billions of logs.
-  </Step>
-</Steps>
+<Tabs>
+  <Tab title="US1">
+    <DatadogConnectSteps region="US1" host="app.datadoghq.com" />
+  </Tab>
+  <Tab title="US3">
+    <DatadogConnectSteps region="US3" host="us3.datadoghq.com" />
+  </Tab>
+  <Tab title="US5">
+    <DatadogConnectSteps region="US5" host="us5.datadoghq.com" />
+  </Tab>
+  <Tab title="EU">
+    <DatadogConnectSteps region="EU" host="app.datadoghq.eu" />
+  </Tab>
+  <Tab title="AP1">
+    <DatadogConnectSteps region="AP1" host="ap1.datadoghq.com" />
+  </Tab>
+  <Tab title="US1-FED">
+    <DatadogConnectSteps region="US1-FED" host="app.ddog-gov.com" />
+  </Tab>
+</Tabs>
 
-## Data & permissions
+## Context
 
-Tero reads metadata and samples from your Datadog account to build context. We analyze log patterns, not raw log content. For the full picture on what we access, store, and how we protect it, see the [Trust Center](/trust/overview).
+When you connect Datadog, Tero adds to your [context graph](/context/overview). Your logs, metrics, traces, and services become connected and understood.
 
-<Note>
-If data leaving your network is a concern, Tero's control plane can be [self-hosted](/control-plane/self-hosted). Analysis happens in your infrastructure.
-</Note>
+<CardGroup cols={1}>
+  <Card title="Services" icon="circle-nodes" iconType="duotone" href="/context/services" horizontal>
+    Your services, their dependencies, and who owns them.
+  </Card>
+  <Card title="Log Events" icon="file-lines" iconType="duotone" href="/context/log-events" horizontal>
+    Your logs compressed into semantic events Tero can reason about.
+  </Card>
+  <Card title="Metrics" icon="chart-line" iconType="duotone" href="/context/metrics" horizontal>
+    Your custom metrics, their cardinality, and usage patterns.
+  </Card>
+  <Card title="Trace Spans" icon="diagram-subtask" iconType="duotone" href="/context/trace-spans" horizontal>
+    Your request flows mapped to services and operations.
+  </Card>
+</CardGroup>
 
-### Roles
+## Actions
 
-Datadog has three [managed roles](https://docs.datadoghq.com/account_management/rbac/permissions/#managed-roles). Choose based on how you want to use Tero.
+With write access, Tero can take action directly in Datadog:
 
-<AccordionGroup>
-  <Accordion title="Standard (recommended)" icon="check" defaultOpen>
-    Read and write access. Tero can analyze your data and take action directly in Datadog.
-  </Accordion>
-  <Accordion title="Read-Only" icon="eye">
-    Tero analyzes your data. You take action through Edge, code, or manual configuration.
-  </Accordion>
-  <Accordion title="Custom" icon="sliders">
-    Create a role with exactly the permissions you want Tero to have. See the [permissions list](https://docs.datadoghq.com/account_management/rbac/permissions/#permissions-list) in Datadog's docs.
-  </Accordion>
-</AccordionGroup>
+<Frame>
+  <img src="/images/how-it-works-datadog-4-in-provider.svg" alt="Tero configuring Datadog" />
+</Frame>
+
+<CardGroup cols={1}>
+  <Card title="Exclusion filters" icon="filter" iconType="duotone" href="https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters" horizontal>
+    Tero configures filters to prevent waste logs from being indexed.
+  </Card>
+  <Card title="Pipelines" icon="pipe-section" iconType="duotone" href="https://docs.datadoghq.com/logs/log_configuration/pipelines/" horizontal>
+    Tero modifies pipelines to change how logs are parsed and routed.
+  </Card>
+</CardGroup>
+
+These are Datadog-specific. You can always take action other ways — deploy policies to your infrastructure with [Edge](/edge/overview), adjust instrumentation in your code, or configure Datadog manually. See [Taking action](/questions/waste/taking-action) for all options.
+
+## Permissions
+
+Datadog has three [managed roles](https://docs.datadoghq.com/account_management/rbac/#datadog-default-roles). Pick one when creating your service account.
+
+| Role | What it gives Tero |
+|------|-------------------|
+| **Standard** | Full context and actions |
+| **Read-Only** | Context only — you take action elsewhere |
+| **Custom** | You decide — see below |
 
 ### Custom role permissions
 
-If you need fine-grained control, create a custom role in Datadog with specific permissions. See [Datadog's permissions reference](https://docs.datadoghq.com/account_management/rbac/permissions/) for the full list.
+Create a custom role if you need fine-grained control.
 
-<Warning>
-At minimum, Tero needs read access to your telemetry: `logs_read_data`, `logs_read_index_data`, `metrics_read`, and `apm_read`. Everything else enhances context or enables specific features.
-</Warning>
+<AccordionGroup>
+  <Accordion title="Context (read)">
+    | Permission | What Tero can do |
+    |------------|------------------|
+    | `logs_read_data` | Read your logs |
+    | `logs_read_index_data` | Read index configuration |
+    | `metrics_read` | Read your metrics |
+    | `apm_read` | Read your traces |
+    | `service_catalog_read` | Read your services |
+    | `dashboards_read` | Read your dashboards |
+    | `monitors_read` | Read your monitors |
+    | `usage_read` | Read usage data |
+    | `billing_read` | Read billing data |
+  </Accordion>
 
-#### Logs
-
-| Permission | What it enables |
-|------------|-----------------|
-| `logs_read_data` | Read log data for waste analysis |
-| `logs_read_index_data` | Read log index configuration |
-| `logs_write_exclusion_filters` | Configure exclusion filters |
-| `logs_write_pipelines` | Modify log pipelines |
-
-#### Metrics
-
-| Permission | What it enables |
-|------------|-----------------|
-| `metrics_read` | Read metrics and cardinality |
-
-#### Traces
-
-| Permission | What it enables |
-|------------|-----------------|
-| `apm_read` | Read traces and spans |
-| `apm_generate_metrics` | Configure trace-based metrics |
-
-#### Service Catalog
-
-| Permission | What it enables |
-|------------|-----------------|
-| `service_catalog_read` | Map data to services and owners |
-
-#### Dashboards & Monitors
-
-| Permission | What it enables |
-|------------|-----------------|
-| `dashboards_read` | See which metrics and logs power dashboards |
-| `monitors_read` | Understand what you're alerting on |
-
-#### Billing & Usage
-
-| Permission | What it enables |
-|------------|-----------------|
-| `usage_read` | Usage data for renewal projections |
-| `billing_read` | Contract details for renewal tracking |
+  <Accordion title="Actions (write)">
+    | Permission | What Tero can do |
+    |------------|------------------|
+    | `logs_write_exclusion_filters` | Configure exclusion filters |
+    | `logs_write_pipelines` | Modify pipelines |
+    | `apm_generate_metrics` | Create trace-based metrics |
+  </Accordion>
+</AccordionGroup>
 
 <Note>
-You can start minimal and add permissions later. Update the service account's role in Datadog and Tero picks up the changes automatically.
+Start minimal and add permissions later. Update the service account's role in Datadog and Tero picks up the changes automatically.
 </Note>

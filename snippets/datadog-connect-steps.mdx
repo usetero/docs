@@ -1,0 +1,55 @@
+<Steps>
+  <Step title="Run tero">
+    Open your terminal and run:
+
+    ```bash
+    tero
+    ```
+
+    This opens the Tero TUI, which guides you through setup.
+
+    <Note>
+    Don't have the CLI installed? See the [quickstart](/quickstart).
+    </Note>
+  </Step>
+
+  <Step title="Log in to Tero">
+    The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
+  </Step>
+
+  <Step title="Select Datadog">
+    The TUI asks which integration you want to connect. Select Datadog.
+  </Step>
+
+  <Step title="Select your region">
+    Pick your Datadog region. Select **{region}**.
+  </Step>
+
+  <Step title="Create an API key">
+    The TUI asks for an API key. Datadog uses this to authenticate requests.
+
+    In Datadog, go to [Organization Settings → API Keys](https://{host}/organization-settings/api-keys). Click **New Key**, name it "Tero", and paste the key into the TUI.
+  </Step>
+
+  <Step title="Create a service account">
+    The TUI asks for an application key. This controls what Tero can access.
+
+    We recommend creating a service account instead of using your personal account. This keeps Tero's access separate and makes it easier to manage permissions.
+
+    In Datadog, go to [Organization Settings → Service Accounts](https://{host}/organization-settings/service-accounts). Click **New Service Account** and name it "Tero".
+
+    Assign a role to the service account. **Standard** gives Tero full functionality — it can analyze your data and take action directly in Datadog. **Read-Only** works too, but you'll need to take action through [Edge](/edge/overview) or code changes instead.
+
+    See [Roles](#roles) for details on what each role enables.
+  </Step>
+
+  <Step title="Create an application key">
+    After creating the service account, click on it in the list. Under **Application Keys**, click **New Key**. Copy the key and paste it into the TUI.
+  </Step>
+
+  <Step title="Done">
+    Tero validates your credentials and starts analyzing your environment. You'll see a progress bar — analysis usually takes a couple of minutes, even with billions of logs.
+
+    Once it's done, you're ready to ask your first question.
+  </Step>
+</Steps>

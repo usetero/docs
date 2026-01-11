@@ -1,0 +1,45 @@
+## 1. Connect
+
+<Frame>
+  <img src="/images/how-it-works-otel-1.svg" alt="Connect to your OTel provider" />
+</Frame>
+
+Tero connects to your observability backend via API. Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
+
+## 2. Build context
+
+<Frame>
+  <img src="/images/how-it-works-otel-2.svg" alt="Understand your data" />
+</Frame>
+
+Tero analyzes your telemetry and builds [context](/context/overview). Billions of logs compress into thousands of [log events](/context/log-events). Millions of spans become [trace span patterns](/context/trace-spans). Each is understood: what it represents, when it matters, which service produces it. Services, metrics, failure scenarios, dependencies get connected into a graph.
+
+## 3. Ask questions
+
+<Frame>
+  <img src="/images/how-it-works-otel-3.svg" alt="Ask questions" />
+</Frame>
+
+You ask questions, Tero answers. [How much data is waste?](/questions/waste) [Are there data spikes?](/questions/data-spikes) [Is PII leaking?](/questions/pii)
+
+## 4. Take action
+
+Once Tero identifies a problem, you decide what to do.
+
+<AccordionGroup>
+  <Accordion title="In your code" defaultOpen>
+    <Frame>
+      <img src="/images/how-it-works-otel-4-in-code.svg" alt="Fix it in your code" />
+    </Frame>
+
+    Tero can open a PR with the fix for you to review and merge. Or use Tero as an MCP so developers understand what to change. Or just use the analysis to make changes yourself.
+  </Accordion>
+
+  <Accordion title="In your infrastructure">
+    <Frame>
+      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="OTel Collector with Tero policy engine" />
+    </Frame>
+
+    Deploy Tero's policy engine in your infrastructure. Drop-in replacement for the [OTel Collector](https://opentelemetry.io/docs/collector/). Same config, new capabilities. Policies execute before data leaves your network.
+  </Accordion>
+</AccordionGroup>

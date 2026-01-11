@@ -18,7 +18,7 @@ Your systems produce billions of data points. Tero compresses them into somethin
 
 <ContextGraph />
 
-Billions of log lines become thousands of [log events](/context/log-events). Each event has meaning: what it represents, when it matters, which service produces it. [Metrics](/context/metrics) get the same treatment. Not just names and tags, but what they measure and why you'd care. [Services](/context/services) tie it together: what they do, what they depend on, how they fail.
+Billions of log lines become thousands of [log events](/context/log-events). Millions of spans become [trace span patterns](/context/trace-spans). Each has meaning: what it represents, when it matters, which service produces it. [Metrics](/context/metrics) get the same treatment. Not just names and tags, but what they measure and why you'd care. [Services](/context/services) tie it together: what they do, what they depend on, how they fail.
 
 Relationships are earned, not assumed. The graph starts clean: services own their log events, metrics connect to what they measure, dependencies come from traces. As you investigate issues, successful paths prove new connections. That error you traced from checkout to payments? Now a relationship. The pattern your team discovered? Captured. Every edge in the graph exists because something proved it.
 
@@ -36,7 +36,7 @@ The goal is a system that feels like yours. You understand how it works. You can
 
 <Steps>
   <Step title="Integrations bring it">
-    Connect an integration and Tero discovers your services, catalogs your log events, maps your metrics. Each integration adds nodes and edges to the graph. The more you connect, the richer the picture.
+    Connect an integration and Tero discovers your services, catalogs your log events, identifies trace span patterns, maps your metrics. Each integration adds nodes and edges to the graph. The more you connect, the richer the picture.
   </Step>
   <Step title="Tero enriches it">
     Background processing adds context you didn't provide. Tero detects that a service is a Rails app and enriches it with known failure patterns. It identifies common error signatures and links them to debugging approaches. It notices transaction patterns, groups of log events that appear together when processing a request.

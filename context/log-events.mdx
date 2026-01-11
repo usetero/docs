@@ -9,29 +9,40 @@ A log event isn't a log line. It's a pattern that represents thousands or millio
 
 ## Example
 
-Here's what a log event looks like:
+Here's a raw log:
 
 ```yaml
-name: payment_declined_insufficient_funds
-service: checkout
-description: A payment was declined because the card had insufficient funds.
-
-matches:
-  - "Payment for order ORD-12345 declined: insufficient funds"
-  - "Payment for order ORD-98765 declined: insufficient funds"
-  - "Payment for order ORD-54321 declined: insufficient funds"
-  # ... 47,000 more
+body: "Payment declined: insufficient funds"
+severity: ERROR
+attributes:
+  order_id: "ORD-12345"
+  error_code: "card_declined"
+  decline_reason: "insufficient_funds"
 ```
 
-One log event, 47,000 logs. Each log has different order IDs, timestamps, amounts. But they all mean the same thing: a payment failed due to insufficient funds. That's the event.
+Tero turns it into a log event:
 
-## What Tero knows
+```yaml
+name: card_declined_insufficient_funds
+service: checkout
+description: A card payment was declined due to insufficient funds.
 
-Tero analyzes your logs to build semantic understanding of each event.
+matchers:
+  - field_type: log_attribute
+    field_name: error_code
+    match_type: exact
+    match_value: "card_declined"
+  - field_type: log_attribute
+    field_name: decline_reason
+    match_type: exact
+    match_value: "insufficient_funds"
+```
 
-<Expandable title="Fields">
+These matchers identify 47,000 logs. Each log has different order IDs, timestamps, amounts. But they all match the same attributes: `error_code: card_declined` and `decline_reason: insufficient_funds`. That's the event.
+
+<Expandable title="All fields">
   <ResponseField name="name" type="string">
-    A descriptive identifier like `payment_declined_insufficient_funds` or `kafka_offset_committed`. Unique within the service.
+    A descriptive identifier like `card_declined_insufficient_funds` or `kafka_offset_committed`. Unique within the service.
   </ResponseField>
   <ResponseField name="description" type="string">
     What this event represents and when it fires.
@@ -45,22 +56,7 @@ Tero analyzes your logs to build semantic understanding of each event.
   <ResponseField name="attributes" type="array">
     Fields that vary per instance: order IDs, user IDs, amounts, durations. The data inside each log.
   </ResponseField>
-  <ResponseField name="classification" type="string">
-    Whether this event is valuable, should be sampled, or is waste. With reasoning.
-  </ResponseField>
 </Expandable>
-
-### Classification
-
-Every log event gets a classification: is it worth keeping?
-
-- **Keep all**: Each instance is a unique situation worth investigating. Payment failures, order creations, errors where a customer has a problem.
-- **Sample**: Instances are evidence of the same situation. Connection timeouts during an outage are symptoms of one problem, not a thousand investigations. Cache hits prove the cache works.
-- **Drop**: No investigative value. Health check successes, debug breadcrumbs.
-
-Tero explains its reasoning. A `kafka_offset_committed` event might be classified as "sample at 1/minute" with reasoning: "Proof-of-life for the consumer. You need to know it's working, not every commit."
-
-You can reclassify events when Tero gets it wrong.
 
 ## Exploring log events
 

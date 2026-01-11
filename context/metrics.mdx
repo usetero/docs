@@ -5,13 +5,46 @@ icon: "chart-line"
 iconType: "duotone"
 ---
 
-Tero discovers metrics from your [integrations](/integrations). Each one gets context: what it measures, which service owns it, whether it's worth keeping, and which tags are helping or hurting.
+Tero discovers metrics from your [integrations](/integrations) and builds semantic understanding of what each one measures and whether it's worth keeping.
 
-## What Tero knows
+## Example
 
-Tero builds context around each metric and evaluates whether it's worth keeping.
+Here's a raw metric:
 
-<Expandable title="Fields">
+```yaml
+name: http_request_duration_seconds
+type: histogram
+tags:
+  service: checkout
+  method: POST
+  endpoint: /api/orders
+  status_code: 200
+  instance_id: i-0a1b2c3d4e5f
+```
+
+Tero turns it into a metric with context:
+
+```yaml
+name: http_request_duration_seconds
+service: checkout
+type: histogram
+description: Measures HTTP request latency for the checkout service.
+
+tags:
+  - name: method
+    status: keep
+  - name: endpoint
+    status: keep
+  - name: status_code
+    status: keep
+  - name: instance_id
+    status: drop
+    reason: High cardinality, no query value. Use service tag instead.
+```
+
+Tero identifies which tags are useful and which are causing cardinality problems.
+
+<Expandable title="All fields">
   <ResponseField name="name" type="string">
     The metric name as it appears in your telemetry.
   </ResponseField>
@@ -27,30 +60,7 @@ Tero builds context around each metric and evaluates whether it's worth keeping.
   <ResponseField name="tags" type="array">
     Dimensions that segment the metric, with recommendations for normalization or removal.
   </ResponseField>
-  <ResponseField name="classification" type="string">
-    Whether this metric is valuable, redundant, or waste. With reasoning.
-  </ResponseField>
 </Expandable>
-
-### Classification
-
-Every metric gets evaluated:
-
-- **Valuable**: Core signals you actually query. Request rate, error rate, latency.
-- **Redundant**: Duplicates something another metric already measures.
-- **Waste**: Never queried, no clear purpose, or so noisy it's not actionable.
-
-Tero also flags tag problems: high-cardinality values that explode time series, inconsistent naming that fragments what should be one metric, tags that add no queryable value.
-
-### Relationships
-
-Metrics connect to the rest of the graph:
-
-- **Services**: `http_request_duration_seconds` measures latency for the checkout service
-- **Log events**: `kafka_consumer_lag` spikes correlate with `message_processing_timeout` events
-- **Other metrics**: `error_rate` moves inversely with `cache_hit_ratio`
-
-These connections help Tero answer questions that span signals.
 
 ## Exploring metrics
 

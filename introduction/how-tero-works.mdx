@@ -6,82 +6,24 @@ icon: "gears"
 iconType: "duotone"
 ---
 
-Tero connects to your existing observability tools and works in four steps.
+import HowItWorksDatadog from '/snippets/how-it-works-datadog.mdx';
+import HowItWorksSplunk from '/snippets/how-it-works-splunk.mdx';
+import HowItWorksOtel from '/snippets/how-it-works-otel.mdx';
 
-## 1. Connect
+Tero connects to your existing observability tools.
 
-<Frame>
-  <img src="/images/how-it-works-1.svg" alt="Connect to your tools" />
-</Frame>
+<Tabs>
+  <Tab title="Datadog">
+    <HowItWorksDatadog />
+  </Tab>
+  <Tab title="Splunk">
+    <HowItWorksSplunk />
+  </Tab>
+  <Tab title="OpenTelemetry">
+    <HowItWorksOtel />
+  </Tab>
+</Tabs>
 
-Tero connects to your observability tools via API using service accounts. Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
-
-## 2. Build context
-
-<Frame>
-  <img src="/images/how-it-works-2.svg" alt="Understand your data" />
-</Frame>
-
-Tero analyzes your telemetry and builds [context](/context/overview): a semantic understanding of what your data means. Billions of logs compress into thousands of meaningful events. Relationships between services, errors, and signals get mapped. Each piece of data gets meaning attached, not just format, but what it represents and when it matters.
-
-## 3. Ask questions
-
-<Frame>
-  <img src="/images/how-it-works-3.svg" alt="Ask questions" />
-</Frame>
-
-You ask [questions](/questions/waste), Tero answers using the context it's built. [How much data is waste?](/questions/waste) [Are there data spikes?](/questions/data-spikes) [Is PII leaking?](/questions/pii) The context powers the answers.
-
-## 4. Take action
-
-Once Tero identifies the problem and explains why, you decide what to do. Multiple options, not mutually exclusive.
-
-<AccordionGroup>
-  <Accordion title="In your provider" defaultOpen>
-    <Frame>
-      <img src="/images/how-it-works-4-agentless.svg" alt="Configure provider exclusion rules" />
-    </Frame>
-
-    No deployment required. Tero configures exclusion rules directly in your provider. Waste stops being indexed as soon as you apply the rule. Fully reversible.
-  </Accordion>
-
-  <Accordion title="In your code">
-    <Frame>
-      <img src="/images/how-it-works-4-code.svg" alt="Fix it in your code" />
-    </Frame>
-
-    Tero can open a PR with the fix for you to review and merge. Or use Tero as an MCP so developers understand what to change. Or just use the analysis to make changes yourself.
-  </Accordion>
-
-  <Accordion title="In your infrastructure">
-    <Tabs>
-      <Tab title="Datadog Agent">
-        <Frame>
-          <img src="/images/how-it-works-4-datadog-agent.svg" alt="Datadog Agent with Tero policy engine" />
-        </Frame>
-
-        Our build of the Datadog Agent with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
-      </Tab>
-      <Tab title="OTel Collector">
-        <Frame>
-          <img src="/images/how-it-works-4-otel-collector.svg" alt="OTel Collector with Tero policy engine" />
-        </Frame>
-
-        Our build of the OTel Collector with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
-      </Tab>
-      <Tab title="Vector">
-        Our build of Vector with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
-      </Tab>
-      <Tab title="Fluent Bit">
-        Our build of Fluent Bit with Tero's policy engine. Same config, new capabilities. Policies execute before data leaves your infrastructure.
-      </Tab>
-      <Tab title="Tero Edge">
-        <Frame>
-          <img src="/images/how-it-works-4-tero-edge.svg" alt="Tero Edge as a proxy" />
-        </Frame>
-
-        Our agent, purpose-built for policy execution. Deploy as a proxy alongside your existing agent. No replacement needed.
-      </Tab>
-    </Tabs>
-  </Accordion>
-</AccordionGroup>
+<Note>
+See [Integrations](/integrations/overview) for provider-specific details.
+</Note>

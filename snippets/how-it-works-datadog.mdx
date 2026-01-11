@@ -1,0 +1,70 @@
+## 1. Connect
+
+<Frame>
+  <img src="/images/how-it-works-datadog-1.svg" alt="Connect to Datadog" />
+</Frame>
+
+Tero connects to Datadog via API using a [service account](https://docs.datadoghq.com/account_management/org_settings/service_accounts/). Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
+
+## 2. Build context
+
+<Frame>
+  <img src="/images/how-it-works-datadog-2.svg" alt="Understand your data" />
+</Frame>
+
+Tero analyzes your telemetry and builds [context](/context/overview). Billions of logs compress into thousands of [log events](/context/log-events). Millions of spans become [trace span patterns](/context/trace-spans). Each is understood: what it represents, when it matters, which service produces it. Services, metrics, failure scenarios, dependencies get connected into a graph.
+
+## 3. Ask questions
+
+<Frame>
+  <img src="/images/how-it-works-datadog-3.svg" alt="Ask questions" />
+</Frame>
+
+You ask questions, Tero answers. [How much data is waste?](/questions/waste) [Are there data spikes?](/questions/data-spikes) [Is PII leaking?](/questions/pii)
+
+## 4. Take action
+
+Once Tero identifies a problem, you decide what to do.
+
+<AccordionGroup>
+  <Accordion title="In Datadog" defaultOpen>
+    <Frame>
+      <img src="/images/how-it-works-datadog-4-in-provider.svg" alt="Configure Datadog exclusion filters" />
+    </Frame>
+
+    No deployment required. Tero configures [exclusion filters](https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters) directly in Datadog. Waste stops being indexed as soon as you apply the filter. Fully reversible.
+
+    <Note>
+      Exclusion filters prevent indexing but not ingestion. To avoid ingestion fees entirely, drop data in your infrastructure.
+    </Note>
+  </Accordion>
+
+  <Accordion title="In your code">
+    <Frame>
+      <img src="/images/how-it-works-datadog-4-in-code.svg" alt="Fix it in your code" />
+    </Frame>
+
+    Tero can open a PR with the fix for you to review and merge. Or use Tero as an MCP so developers understand what to change. Or just use the analysis to make changes yourself.
+  </Accordion>
+
+  <Accordion title="In your infrastructure">
+    Deploy Tero's policy engine in your infrastructure. Policies execute before data leaves your network.
+
+    <Tabs>
+      <Tab title="Datadog Agent">
+        <Frame>
+          <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Datadog Agent with Tero policy engine" />
+        </Frame>
+
+        Drop-in replacement for the Datadog Agent. Same config, new capabilities.
+      </Tab>
+      <Tab title="OTel Collector">
+        <Frame>
+          <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="OTel Collector with Tero policy engine" />
+        </Frame>
+
+        Drop-in replacement for the OTel Collector. Same config, new capabilities.
+      </Tab>
+    </Tabs>
+  </Accordion>
+</AccordionGroup>

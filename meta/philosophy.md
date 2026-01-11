@@ -1,94 +1,47 @@
 # Philosophy
 
-The soul of these docs. Who we write for, what we're trying to accomplish, and the feeling we want to create.
+These docs exist to earn trust and build understanding.
 
-## The Reader
+The reader is an engineer responsible for observability at their company. Staff SRE, Platform Lead, Director of Infrastructure — the title varies but the situation is consistent. They're accountable for supporting engineering teams and managing a budget that grows faster than they'd like. They've been burned by vendors who overpromised. They've sat through demos that dodged hard questions. They've read marketing copy that said nothing. They're here because something about Tero caught their attention, and now they want to know: is this real?
 
-We write for the engineer responsible for observability at their company. The title varies—Staff SRE, Platform Lead, Director of Infrastructure—but the role is consistent: they're accountable for both supporting engineering teams and managing the observability budget.
+That's the question the docs answer. Not through claims or persuasion, but through substance. Technical depth that shows we understand the problem. Honest constraints that show we're not hiding anything. Clear explanations that respect their intelligence.
 
-These are technical people. They grew up as engineers and still think like engineers. They understand distributed systems, they've operated Datadog and Splunk and Prometheus, and they've felt the pain firsthand. They're not reading these docs to be sold—they're reading to evaluate whether Tero is real.
+## The distinction from marketing
 
-### What They're Feeling
+The website, blog posts, and sales materials have a different job. They earn attention. The reader hasn't committed yet, so there's a persuasive element — you're making a case for why they should care.
 
-**Skeptical but hopeful.** They've been burned. By vendors who could help but don't. By products that promised intelligence but delivered dashboards. By "AI" that's just marketing. They want to believe something better exists, but they've learned to protect themselves.
+The docs assume they already care. They've given us their time. Now we have to not waste it.
 
-**Tired of the game.** The cost policing, the renewal anxiety, the begging vendors for forgiveness when someone's log explodes the bill. They don't want another tool. They want the game to change.
+This means: get to the point faster. More technical depth, less framing. Fewer "why this matters" sections, more "how this works." Honesty about limitations becomes even more important because they'll find out anyway. The confidence is quieter — we're explaining, not pitching.
 
-**Protective of their credibility.** They evaluate products the way they'd evaluate a hire: Will this create problems for me? Can I bring this to leadership without caveats? Is this something I want associated with my name?
+The docs don't try to convince anyone of anything. They demonstrate what Tero is and how it works. If the product is good and the explanation is clear, the reader draws their own conclusions.
 
-### What Converts Them
+## What earns trust
 
-They convert when they feel like Tero was built by people who understand their world. Not through marketing claims, but through the texture of the product and documentation itself.
+Show real technology, not buzzwords. Mention Hyperscan, explain semantic compression, show how the context graph works. Readers can tell when something is real.
 
-They're looking for signals:
+Be clear about constraints. What doesn't Tero do yet? Where are the edges? Honesty about current scope says we're not trying to trick anyone.
 
-- **Engineering depth.** Real technology, not buzzwords. Mention Hyperscan, explain semantic compression, show benchmarks. They can smell when something is real.
+Respect intelligence. No hand-holding, no over-explaining, no corporate speak. Write like you're explaining to a peer.
 
-- **Honest constraints.** What does Tero not do yet? Where are you headed? Being honest about current scope (Datadog logs first) builds trust. It says: we're not trying to trick you.
+Make the incentives legible. No per-GB pricing. No storing their data. No lock-in. They control their infrastructure. The business model should make sense to them.
 
-- **Respect for their intelligence.** No hand-holding, no over-explaining, no corporate speak. Write like you're explaining to a peer.
+## What breaks trust
 
-- **Aligned incentives.** No per-GB pricing. No storing their data. No lock-in. Open standards. They control their infrastructure.
+Anything that makes us feel like another vendor. Per-GB pricing or volume-based anything. "Send us your data" without clarity about what happens to it. Lock-in signals — proprietary agents, special query languages, data formats they can't escape. Features that don't exist yet documented as if they do. Corporate speak. AI that's just marketing.
 
-The feeling to create: the reader recognizes that Tero was built by engineers who've lived their problems. The architecture makes sense. The trade-offs are explained. Nothing is hidden behind marketing.
+They've seen all of this before. The moment we sound like a vendor doing a sales pitch, they stop reading.
 
-### What Repels Them
+## The feeling
 
-They will write you off the moment you feel like another vendor. The violations:
+The docs should feel like they were written by engineers who care about craft. Technical depth without pretension. Sophisticated but not complicated.
 
-1. **Per-GB pricing or volume-based anything.** Even implying metered billing triggers the "another vendor" response.
+Care without coddling. Respect their intelligence. Don't add disclaimers everywhere. Write like you're explaining to a peer who's short on time but wants to understand deeply.
 
-2. **"Send us your data."** The moment they think you're a hosted SaaS that owns their data, trust erodes. Emphasize: we connect to where your data lives, we don't store it, you own everything.
+Substance without showing off. Show engineering depth — mention the technologies, explain the trade-offs, share real numbers. But never say "we're the best" or "revolutionary." Let the work speak.
 
-3. **Lock-in signals.** Proprietary agents, special query languages, data formats they can't escape. Counter this: open standards (OTel policies), works with what you have, you can leave anytime.
+Simple without simplistic. The architecture is sophisticated. Don't dumb it down. But present it so it feels inevitable — of course it works this way. Progressive disclosure: simple on the surface, depth available when they want it.
 
-4. **Vaporware vibes.** "Coming soon," roadmap promises, features that don't exist. Only document what's real.
+Honest about limits. What do we not do yet? Where are we headed? This builds trust. It says we're building something real, not performing.
 
-5. **Corporate speak.** "Best-in-class," "enterprise-grade," "seamless integration," "delve into," "it's worth noting." These words mean nothing and signal "we're like everyone else."
-
-6. **Over-promising AI.** They've seen too many "AI-powered" products that are just wrappers around an LLM. Be specific about what the AI does and doesn't do.
-
-## The Goal
-
-These docs serve two purposes:
-
-**For prospects:** Cash in the work done by the POV, the website, the positioning. A skeptical engineer reads the POV, thinks "this sounds right," comes to the docs asking "but is it real?" The docs answer: yes, here's exactly how it works, here's what you can do with it, here's how to get started.
-
-**For customers:** Get them to success as quickly as possible. Help them understand the concepts, use the product effectively, and take action. Build the understanding they need to champion Tero internally.
-
-The docs are a sales tool, but not in a salesy way. They convert by demonstrating competence, clarity, and care. Well-written docs signal clear product thinking, practical understanding of customer problems, and respect for the reader's intelligence.
-
-## The Feeling
-
-The docs should feel like they were written by engineers who care deeply about craft. Technical depth without pretension. Sophisticated but not complicated. The kind of documentation you read and think: these people know what they're doing.
-
-### Care Without Coddling
-
-Respect their intelligence. Don't over-explain. Don't add disclaimers everywhere. Write like you're explaining to a peer who's short on time but wants to understand deeply.
-
-### Flex Without Bragging
-
-Show engineering depth—mention Hyperscan, explain why semantic understanding matters, share real numbers (40% typical waste reduction). But never say "we're the best" or "revolutionary." Let the work speak.
-
-### Simple Without Simplistic
-
-The architecture is sophisticated. Don't dumb it down. But present it in a way that feels inevitable—"of course it works this way, this is obviously right." Progressive disclosure: simple on the surface, depth available when they want it.
-
-### Honest About Limits
-
-What do you not do yet? Where are you headed? Being honest about current scope builds trust. It says: we're not trying to trick you, we're building something real.
-
-### They're On Your Team
-
-The best docs feel like someone inside your company wrote them for you. Not sales material. Not marketing copy. A smart engineer saying "here's how this works, here's why it matters, here's how to use it."
-
-## The Test
-
-After writing or reading any page, ask:
-
-1. Would a skeptical Staff SRE at a company spending $2M/year on Datadog find this credible?
-2. Does it sound like a person wrote it, or like marketing/AI?
-3. Does it respect their intelligence without being inaccessible?
-4. Would they feel like Tero was built by people who understand their world?
-
-If any answer is no, rewrite it.
+The best docs feel like a smart engineer inside your company wrote them for you. Not sales material. Not marketing copy. Just: here's how this works, here's why it matters, here's how to use it.
