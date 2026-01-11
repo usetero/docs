@@ -113,15 +113,14 @@ You don't have to decide manually every time. Categories map to where fixes typi
 
 | Category | Where it usually lives |
 |----------|----------------------|
-| Junk, debug output | Code — shouldn't exist |
-| External probes | Infrastructure — filter |
-| Noisy signals | Infrastructure — sample |
-| Correlated errors | Infrastructure — sample |
-| Redundant attributes | Infrastructure — trim |
+| Malformed data, stray debugging | Code — shouldn't exist |
+| Health checks | Infrastructure — filter |
+| Repetitive events | Infrastructure — sample |
+| Redundant fields, static fields | Infrastructure — trim |
 
-Junk and debug output are code problems. The fix is to stop emitting them. Probes, noisy signals, and correlated errors are fine to emit — you just don't need to store all of them. Filter or sample in your infrastructure.
+Malformed data and stray debugging are code problems. The fix is to stop emitting them. Health checks and repetitive events are fine to emit — you just don't need to store all of them. Filter or sample in your infrastructure.
 
-You can configure Tero to route automatically. Junk and debug open PRs. Probes and noisy signals push policies. You review what needs judgment, the obvious stuff flows without intervention.
+You can configure Tero to route automatically. Malformed data and stray debugging open PRs. Health checks and repetitive events push policies. You review what needs judgment, the obvious stuff flows without intervention.
 
 ## Push to teams
 

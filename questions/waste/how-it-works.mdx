@@ -23,22 +23,25 @@ Then we pressure test each event through the Tero Gauntlet.
 A series of increasingly nuanced evaluations. Each stage isn't a simple check, it's reasoned analysis against everything we know about this event, this service, and your system. Fail early and you're out. Survive and we keep testing.
 
 <Steps>
-  <Step title="Garbage">
+  <Step title="Drop: Garbage">
     Is this obviously worthless? Malformed data, binary blobs, debug markers left in production. If it conveys nothing, drop it.
   </Step>
-  <Step title="Intrinsic value">
+  <Step title="Drop: Intrinsic value">
     Does this log carry meaningful information on its own? A payment failure tells you something. A cache hit might not. No intrinsic value? Drop it.
   </Step>
-  <Step title="Extrinsic value">
+  <Step title="Drop: Extrinsic value">
     Does it contribute to the story of the transaction it's part of? A log in isolation might seem low-value, but in context of the trace, it might be the missing piece. We evaluate logs within their correlated set, not in isolation.
   </Step>
-  <Step title="Failure scenarios">
+  <Step title="Drop: Failure scenarios">
     For each known failure mode of this service, would this log help investigate it? We test against a [catalog of failure scenarios](/context/services) per service. If it wouldn't help any investigation, drop it.
   </Step>
-  <Step title="Signal or noise">
+  <Step title="Convert: Metric-shaped logs">
+    Is this log actually a metric in disguise? Counters, gauges, aggregations created as log lines. You're paying log prices for metric data. Convert to actual metrics and we're done.
+  </Step>
+  <Step title="Sample: Signal or noise">
     If this fires 1000 times, is that 1000 distinct situations or 1000 repetitions of one problem? Repetition gets sampled, but correlated sampling, by trace ID or request ID. All logs from the same request stay together or drop together.
   </Step>
-  <Step title="Attribute analysis">
+  <Step title="Trim: Attribute analysis">
     For logs we keep, we analyze attributes. Duplicate values, static metadata, low-value fields. Trim the noise, keep the event.
   </Step>
 </Steps>
@@ -56,31 +59,31 @@ The same gauntlet, different lens. A log that's waste for observability might be
 After analyzing billions of logs, patterns emerge. Certain types of waste keep showing up. We call these categories, but they're not limits. We don't start with categories. We observe them after analysis completes. Categories are how we organize the output so you can understand it, control it, and build trust incrementally.
 
 <AccordionGroup>
-  <Accordion title="Junk" icon="file-circle-xmark">
-    Malformed data, binary blobs, accidental output. `fdsfdsfdseef`. Logs that convey nothing useful. Safe to drop entirely.
+  <Accordion title="Drop: Malformed data" icon="file-circle-xmark" iconType="duotone">
+    Binary blobs, corrupted output, unparseable strings. `fdsfdsfdseef`. Not valid log data. Safe to drop entirely.
   </Accordion>
-  <Accordion title="Debug output" icon="bug">
-    Developer markers that shouldn't be in production. `GOT HERE!`, `TODO: remove this`, print statements left behind. Safe to drop entirely.
+  <Accordion title="Drop: Stray debugging" icon="bug" iconType="duotone">
+    Developer markers that shouldn't have shipped. `GOT HERE!`, `TODO: remove this`, print statements left behind. Safe to drop entirely.
   </Accordion>
-  <Accordion title="External probes" icon="heart-pulse">
-    Health checks, readiness probes, synthetic monitoring hitting your service from outside. Infrastructure talking to itself. Safe to drop. (Health check *failures* are different, those have investigative value.)
+  <Accordion title="Drop: Health checks" icon="heart-pulse" iconType="duotone">
+    Readiness probes, liveness probes, synthetic monitoring. Infrastructure verifying your service is up. Safe to drop. (Failures are different — those have investigative value.)
   </Accordion>
-  <Accordion title="Noisy signals" icon="volume-high">
-    High volume, low variance. Cache hits, heartbeats, routine operations. 1000 cache hits means the cache works. One situation, not 1000 investigations. Sample to reduce volume without losing visibility.
+  <Accordion title="Drop: Bot traffic" icon="robot" iconType="duotone">
+    Crawlers, scrapers, automated scanners. External systems hitting your service, not real users. Safe to drop.
   </Accordion>
-  <Accordion title="Correlated errors" icon="server">
-    A thousand timeout errors during an outage are symptoms of one problem, not a thousand separate incidents. Sample to capture the pattern without the flood.
-  </Accordion>
-  <Accordion title="Redundant attributes" icon="copy">
-    The log matters, some attributes don't. Stack traces when the error code tells the story. Full request bodies when the endpoint is enough. Trim the attribute, keep the event.
-  </Accordion>
-  <Accordion title="Static metadata" icon="tag">
-    SDK versions, infrastructure plumbing, values that never change and never help debugging. Trim the attribute, keep the event.
-  </Accordion>
-  <Accordion title="Metric-shaped logs" icon="chart-line">
+  <Accordion title="Convert: Logs as metrics" icon="chart-line" iconType="duotone">
     Logs created for graphing or counting. Counters, gauges, aggregations. You're paying log prices for metric data. Convert to actual metrics.
   </Accordion>
-  <Accordion title="Uncategorized" icon="question">
+  <Accordion title="Sample: Repetitive events" icon="volume-high" iconType="duotone">
+    High volume, low variance. Cache hits, heartbeats, routine operations. Also error floods during outages — a thousand timeout errors are symptoms of one problem, not a thousand investigations. Sample to reduce volume without losing visibility.
+  </Accordion>
+  <Accordion title="Trim: Redundant fields" icon="copy" iconType="duotone">
+    The log matters, some fields don't. Stack traces when the error code tells the story. Full request bodies when the endpoint is enough. Trim the field, keep the event.
+  </Accordion>
+  <Accordion title="Trim: Static fields" icon="tag" iconType="duotone">
+    SDK versions, infrastructure plumbing, values that never change and never help debugging. Trim the field, keep the event.
+  </Accordion>
+  <Accordion title="Unclassified" icon="question" iconType="duotone">
     Novel patterns that don't fit existing categories. Reviewed by our team, visible to you, a bit more experimental. As patterns become common, they graduate to named categories.
   </Accordion>
 </AccordionGroup>
