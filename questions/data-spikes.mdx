@@ -9,4 +9,8 @@ import EarlyAccessCallout from '/snippets/early-access-callout.mdx';
 
 <EarlyAccessCallout />
 
-Tero detects volume and cardinality explosions before they hit your bill.
+A debug log in hot-path middleware. A metric tag that explodes cardinality. An error cascade that floods your systems. You wake up to a cost spike, trace it back to a change from three days ago, and realize the damage is already done.
+
+Tero catches these as they happen. We know what normal looks like for each service, so we detect when something breaks the pattern — volume doubling, new debug output appearing, cardinality jumping.
+
+And we act on it. Alert you in Slack, page the engineer who caused it, open a ticket, block it at the edge. You decide what happens. The spike never reaches your vendor, and the conversation shifts from "why did this cost us?" to "we caught it."
