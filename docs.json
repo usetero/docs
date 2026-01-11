@@ -81,7 +81,6 @@
           {
             "group": "Integrations",
             "pages": [
-              "integrations/overview",
               "integrations/datadog",
               "integrations/splunk",
               "integrations/github"
