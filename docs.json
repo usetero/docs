@@ -129,34 +129,7 @@
           }
         ]
       },
-      {
-        "tab": "CLI",
-        "icon": "rectangle-terminal",
-        "groups": [
-          {
-            "group": "CLI",
-            "pages": ["cli/overview"]
-          }
-        ]
-      },
-      {
-        "tab": "Control Plane",
-        "icon": "server",
-        "groups": [
-          {
-            "group": "Control Plane",
-            "pages": ["control-plane/overview"]
-          },
-          {
-            "group": "Deployment",
-            "pages": ["control-plane/cloud", "control-plane/self-hosted"]
-          },
-          {
-            "group": "Configuration",
-            "pages": ["control-plane/bring-your-own-ai"]
-          }
-        ]
-      },
+
       {
         "tab": "Trust",
         "icon": "shield-check",
