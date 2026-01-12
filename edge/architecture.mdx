@@ -13,49 +13,51 @@ latency telemetry processing via Policies.
 ### Internal Architecture
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#0e2b22', 'lineColor': '#fafafa', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#0e2b22', 'clusterBkg': '#171717', 'clusterBorder': '#0e2b22', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717'}}}%%
 graph TB
-    subgraph Clients["Clients"]
-        C["HTTP Clients"]
+    subgraph Clients
+        C[HTTP Clients]
     end
 
-    subgraph Server["HTTP Server (httpz)"]
-        TP["Thread Pool"]
-        SC["ServerContext"]
+    subgraph Server[HTTP Server]
+        TP[Thread Pool]
+        SC[ServerContext]
     end
 
-    subgraph Routing["Request Routing"]
-        R["Router<br/>Exact/Prefix/Suffix Match"]
+    subgraph Routing[Request Routing]
+        R[Router]
     end
 
-    subgraph Modules["Module Pipeline"]
+    subgraph Modules[Module Pipeline]
         direction LR
-        H["HealthModule<br/>/_health"]
-        DD["DatadogModule<br/>/api/v2/logs<br/>/api/v2/series"]
-        OT["OtlpModule<br/>/v1/logs<br/>/v1/metrics"]
-        PT["PassthroughModule<br/>Catch-all"]
+        H[HealthModule]
+        DD[DatadogModule]
+        OT[OtlpModule]
+        PT[PassthroughModule]
     end
 
-    subgraph Filtering["Policy Engine"]
-        REG["PolicyRegistry<br/>Lock-free Snapshots"]
-        PE["PolicyEngine<br/>Filter + Transform"]
+    subgraph Filtering[Policy Engine]
+        REG[PolicyRegistry]
+        PE[PolicyEngine]
     end
 
-    subgraph Providers["Policy Providers"]
-        PL["PolicyLoader<br/>Async"]
-        FP["FileProvider<br/>Watch Loop"]
-        HP["HttpProvider<br/>Poll Loop"]
+    subgraph Providers[Policy Providers]
+        PL[PolicyLoader]
+        FP[FileProvider]
+        HP[HttpProvider]
     end
 
-    subgraph Upstream["Upstream"]
-        UCM["UpstreamClientManager<br/>Connection Pool"]
-        TLS["TLS Client"]
+    subgraph Upstream
+        UCM[UpstreamClientManager]
+        TLS[TLS Client]
     end
 
     C -->|Request| TP
     TP --> SC
     SC --> R
-    R --> H & DD & OT & PT
+    R --> H
+    R --> DD
+    R --> OT
+    R --> PT
 
     DD --> PE
     OT --> PE
@@ -64,8 +66,10 @@ graph TB
     PT --> UCM
     UCM --> TLS
 
-    PL -.->|async| FP & HP
-    FP & HP -.->|update| REG
+    PL -.->|async| FP
+    PL -.->|async| HP
+    FP -.->|update| REG
+    HP -.->|update| REG
     REG -.->|snapshot| PE
 
     style C fill:#0e2b22,stroke:#0e2b22,color:#fafafa
@@ -157,7 +161,6 @@ policies, but updates are rare. Edge uses atomic pointers to policy snapshots,
 eliminating read-side synchronization.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#404040', 'lineColor': '#737373', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#404040', 'clusterBkg': '#171717', 'clusterBorder': '#404040', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717', 'actorLineColor': '#333333', 'signalColor': '#a3a3a3', 'signalTextColor': '#fafafa', 'labelTextColor': '#fafafa', 'actorBkg': '#0e2b22', 'actorTextColor': '#fafafa', 'noteBkgColor': '#1a3a2e', 'noteTextColor': '#fafafa', 'noteBorderColor': '#2d5a48', 'activationBkgColor': '#0e2b22', 'activationBorderColor': '#404040', 'sequenceNumberColor': '#fafafa', 'labelBoxBkgColor': '#1a3a2e', 'labelBoxBorderColor': '#2d5a48'}}}%%
 sequenceDiagram
     participant R1 as Request Thread 1
     participant R2 as Request Thread 2
@@ -166,26 +169,20 @@ sequenceDiagram
 
     Note over Reg: Snapshot v1 active
 
-    rect rgba(26, 58, 46, 0.3)
-        Note left of R1: Parallel: Both threads<br/>read same snapshot
-        R1->>Reg: read snapshot
-        Reg-->>R1: Snapshot v1
-        R2->>Reg: read snapshot
-        Reg-->>R2: Snapshot v1
-    end
+    R1->>Reg: read snapshot
+    Reg-->>R1: Snapshot v1
+    R2->>Reg: read snapshot
+    Reg-->>R2: Snapshot v1
 
     Note over U,Reg: Policy update arrives
     U->>Reg: create Snapshot v2
     U->>Reg: atomic swap pointer
     Note over Reg: Snapshot v2 now active
 
-    rect rgba(26, 58, 46, 0.3)
-        Note left of R1: Parallel: Both threads<br/>now see new snapshot
-        R1->>Reg: read snapshot
-        Reg-->>R1: Snapshot v2
-        R2->>Reg: read snapshot
-        Reg-->>R2: Snapshot v2
-    end
+    R1->>Reg: read snapshot
+    Reg-->>R1: Snapshot v2
+    R2->>Reg: read snapshot
+    Reg-->>R2: Snapshot v2
 ```
 
 ### Fail-Open
@@ -227,7 +224,6 @@ Performance depends on:
 Deploy Edge as a shared gateway for multiple services:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#262626', 'lineColor': '#fafafa', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#262626', 'clusterBkg': '#171717', 'clusterBorder': '#262626', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717'}}}%%
 flowchart LR
     subgraph Applications
         App1[App 1]
@@ -235,27 +231,27 @@ flowchart LR
         App3[App 3]
     end
 
-    subgraph Telemetry Pipeline
-        Collector[OTel Collector<br/>/ Vector / Fluentd]
+    subgraph Pipeline[Telemetry Pipeline]
+        Collector[OTel Collector]
     end
 
-    subgraph Egress Gateway
-        Edge[Tero Edge<br/>Gateway]
+    subgraph Gateway[Egress Gateway]
+        Edge[Tero Edge]
     end
 
-    subgraph External Vendors
-        DD[Datadog<br/>$$$/GB]
-        NR[New Relic<br/>$$$/GB]
-        Grafana[Grafana Cloud<br/>$$$/GB]
+    subgraph Vendors[External Vendors]
+        DD[Datadog]
+        NR[New Relic]
+        Grafana[Grafana Cloud]
     end
 
     App1 --> Collector
     App2 --> Collector
     App3 --> Collector
     Collector -->|All Data| Edge
-    Edge -->|Filtered Data<br/>70-90% reduction| DD
-    Edge -->|Filtered Data| NR
-    Edge -->|Filtered Data| Grafana
+    Edge -->|Filtered| DD
+    Edge -->|Filtered| NR
+    Edge -->|Filtered| Grafana
 
     style Edge fill:#10b981,stroke:#262626,color:#fff
     style Collector fill:#f59e0b,stroke:#262626,color:#000
@@ -284,25 +280,24 @@ Best for:
 Deploy Edge alongside each service:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0e2b22', 'primaryTextColor': '#fafafa', 'primaryBorderColor': '#262626', 'lineColor': '#fafafa', 'secondaryColor': '#0e2b22', 'tertiaryColor': '#171717', 'background': '#171717', 'mainBkg': '#171717', 'nodeBorder': '#262626', 'clusterBkg': '#171717', 'clusterBorder': '#262626', 'titleColor': '#fafafa', 'edgeLabelBackground': '#171717'}}}%%
 flowchart LR
-    subgraph Pod/Host
+    subgraph Host[Pod or Host]
         App[Application]
-        Edge[Tero Edge<br/>Sidecar]
+        Edge[Tero Edge]
     end
 
-    subgraph Telemetry Pipeline
-        Collector[OTel Collector<br/>/ Vector / Fluentd]
+    subgraph Pipeline[Telemetry Pipeline]
+        Collector[OTel Collector]
     end
 
     subgraph Backend
         DD[Datadog]
         Splunk[Splunk]
-        S3[S3/Object Storage]
+        S3[S3]
     end
 
     App -->|Logs/Metrics| Edge
-    Edge -->|Filtered Data| Collector
+    Edge -->|Filtered| Collector
     Collector --> DD
     Collector --> Splunk
     Collector --> S3
