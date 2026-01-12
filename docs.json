@@ -82,24 +82,29 @@
             "group": "Integrations",
             "pages": [
               {
-                "group": "Observability",
-                "icon": "chart-mixed",
-                "expanded": true,
+                "group": "Observability Platforms",
+                "icon": "cloud",
                 "pages": [
                   "integrations/observability/datadog",
                   "integrations/observability/splunk"
                 ]
               },
               {
+                "group": "Infrastructure",
+                "icon": "server",
+                "pages": [
+                  "integrations/infrastructure/overview",
+                  "integrations/infrastructure/datadog-agent"
+                ]
+              },
+              {
                 "group": "Code",
                 "icon": "code",
-                "expanded": true,
                 "pages": ["integrations/code/github"]
               },
               {
                 "group": "AI",
                 "icon": "microchip-ai",
-                "expanded": true,
                 "pages": [
                   "integrations/ai/overview",
                   "integrations/ai/anthropic",

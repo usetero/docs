@@ -1,0 +1,204 @@
+---
+title: "Datadog Agent"
+description: "Deploy Edge alongside the Datadog Agent on Kubernetes"
+icon: "dog"
+iconType: "duotone"
+---
+
+<Frame>
+  <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Datadog Agent with Tero Edge" />
+</Frame>
+
+Deploy Tero Edge alongside your Datadog Agent to apply policies to logs, metrics, and traces before they leave your cluster.
+
+## How it works
+
+Edge runs as a DaemonSet on each node, listening on localhost. The Datadog Agent sends telemetry through Edge instead of directly to Datadog. Edge applies policies and forwards to Datadog.
+
+```
+Pods → Datadog Agent → Edge (localhost:8080) → Datadog
+```
+
+Edge only proxies telemetry (logs, metrics, traces). Other agent traffic (security monitoring, remote config, fleet management) goes directly to Datadog.
+
+## Prerequisites
+
+- Datadog Agent running on Kubernetes
+- `kubectl` access to your cluster
+- Tero account
+
+## Connect
+
+<Steps>
+  <Step title="Create an Edge API key">
+    Open your terminal and run:
+
+    ```bash
+    tero
+    ```
+
+    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Production cluster"). Copy the key when shown, it's only displayed once.
+  </Step>
+
+  <Step title="Create the secret">
+    Store your API key as a Kubernetes secret:
+
+    ```bash
+    kubectl create namespace tero-system
+
+    kubectl create secret generic tero-edge \
+      --namespace tero-system \
+      --from-literal=api-key=YOUR_API_KEY
+    ```
+  </Step>
+
+  <Step title="Deploy Edge">
+    Apply the Edge DaemonSet:
+
+    ```yaml edge-daemonset.yaml
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: tero-edge
+      namespace: tero-system
+      labels:
+        app: tero-edge
+    spec:
+      selector:
+        matchLabels:
+          app: tero-edge
+      template:
+        metadata:
+          labels:
+            app: tero-edge
+        spec:
+          hostNetwork: true
+          containers:
+            - name: edge
+              image: ghcr.io/usetero/edge-datadog:latest
+              ports:
+                - containerPort: 8080
+                  hostPort: 8080
+              env:
+                - name: TERO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: tero-edge
+                      key: api-key
+                - name: EDGE_LISTEN_ADDRESS
+                  value: "127.0.0.1"
+                - name: EDGE_LISTEN_PORT
+                  value: "8080"
+                - name: EDGE_UPSTREAM_URL
+                  value: "https://agent-http-intake.logs.datadoghq.com"
+                - name: EDGE_METRICS_URL
+                  value: "https://api.datadoghq.com"
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+    ```
+
+    ```bash
+    kubectl apply -f edge-daemonset.yaml
+    ```
+
+    <Note>
+    Adjust `EDGE_UPSTREAM_URL` and `EDGE_METRICS_URL` for your [Datadog region](/edge/distributions/datadog#regional-endpoints).
+    </Note>
+  </Step>
+
+  <Step title="Configure the Datadog Agent">
+    Add these environment variables to your Datadog Agent:
+
+    ```yaml
+    env:
+      # Logs
+      - name: DD_LOGS_CONFIG_LOGS_DD_URL
+        value: "localhost:8080"
+      - name: DD_LOGS_CONFIG_USE_HTTP
+        value: "true"
+      
+      # Metrics
+      - name: DD_DD_URL
+        value: "http://localhost:8080"
+      
+      # Traces
+      - name: DD_APM_DD_URL
+        value: "http://localhost:8080"
+    ```
+
+    How you add these depends on your deployment method:
+
+    **Helm:** Add to `agents.containers.agent.env` in your values file.
+
+    **Datadog Operator:** Add to `spec.override.nodeAgent.env` in your DatadogAgent CR.
+
+    **Raw manifests:** Add to the agent container's `env` array.
+  </Step>
+
+  <Step title="Verify">
+    Check that Edge pods are running:
+
+    ```bash
+    kubectl get pods -n tero-system
+    ```
+
+    Confirm the agent is sending through Edge by checking Edge logs:
+
+    ```bash
+    kubectl logs -n tero-system -l app=tero-edge
+    ```
+
+    You should see traffic flowing through.
+  </Step>
+</Steps>
+
+## What's proxied
+
+| Signal | Proxied | Direct to Datadog |
+|--------|---------|-------------------|
+| Logs | Yes | |
+| Metrics | Yes | |
+| Traces (APM) | Yes | |
+| Security monitoring | | Yes |
+| Network monitoring | | Yes |
+| Remote config | | Yes |
+| Process monitoring | | Yes |
+
+Edge only handles telemetry you'd apply policies to. Everything else is unaffected.
+
+## Policies
+
+Once Edge is running, policies sync automatically from Tero. Create policies in the Tero UI or via the CLI, and they apply within seconds.
+
+See [Policy Reference](/edge/policy-reference/log-filter) for filtering options.
+
+## Troubleshooting
+
+**Agent can't reach Edge**
+
+Check Edge is listening on the host network:
+
+```bash
+kubectl exec -n tero-system -it <edge-pod> -- netstat -tlnp
+```
+
+Verify the agent is on the same node and using `localhost:8080`.
+
+**Policies not applying**
+
+Check Edge synced successfully:
+
+```bash
+kubectl logs -n tero-system -l app=tero-edge | grep -i sync
+```
+
+Confirm your API key is valid and not revoked.
+
+**Traffic not reaching Datadog**
+
+Verify upstream URLs match your Datadog region. Check Edge logs for upstream connection errors.
