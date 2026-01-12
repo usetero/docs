@@ -1,0 +1,74 @@
+---
+title: "AWS Bedrock"
+description: "Use AWS Bedrock for AI classification"
+icon: "microchip-ai"
+iconType: "duotone"
+---
+
+import AIUsage from '/snippets/ai-usage.mdx';
+
+Use AWS Bedrock for Tero's AI classification. Your data stays in your AWS environment.
+
+<Note>
+Bedrock is only available for self-hosted Tero deployments.
+</Note>
+
+## Prerequisites
+
+- AWS account with Bedrock enabled
+- Access to Claude models in Bedrock
+- AWS credentials (access key/secret or IAM role)
+
+Configuring AWS IAM and Bedrock access is outside the scope of this document. See [AWS Bedrock documentation](https://docs.aws.amazon.com/bedrock/).
+
+## Connect
+
+<Tabs>
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Run tero">
+        Open your terminal and run:
+
+        ```bash
+        tero
+        ```
+
+        This opens the Tero TUI, which guides you through setup.
+      </Step>
+
+      <Step title="Log in to Tero">
+        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
+      </Step>
+
+      <Step title="Select AWS Bedrock">
+        The TUI asks which integration you want to connect. Select AWS Bedrock.
+      </Step>
+
+      <Step title="Configure AWS credentials">
+        Provide your AWS credentials and region. The TUI validates access to Bedrock and confirms the connection.
+      </Step>
+
+      <Step title="Done">
+        Tero is now configured to use AWS Bedrock for classification.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+<AIUsage />
+
+## Data handling
+
+With Bedrock, your telemetry samples never leave your AWS environment. Data is processed by Bedrock in your account, subject to your AWS agreements and compliance controls.
+
+## Fallback
+
+You can configure another provider as a fallback in case Bedrock is unavailable. Fallback triggers on unrecoverable errors (API unavailable, authentication failures). Rate limits do not trigger fallback.
+
+## Requirements
+
+| Requirement | Details |
+|-------------|---------|
+| **Model** | Claude Sonnet (via Bedrock) |
+| **Credentials** | AWS access key/secret or IAM role |
+| **Region** | Any region with Bedrock and Claude access |

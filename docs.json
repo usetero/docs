@@ -81,9 +81,32 @@
           {
             "group": "Integrations",
             "pages": [
-              "integrations/datadog",
-              "integrations/splunk",
-              "integrations/github"
+              {
+                "group": "Observability",
+                "icon": "chart-mixed",
+                "expanded": true,
+                "pages": [
+                  "integrations/observability/datadog",
+                  "integrations/observability/splunk"
+                ]
+              },
+              {
+                "group": "Code",
+                "icon": "code",
+                "expanded": true,
+                "pages": ["integrations/code/github"]
+              },
+              {
+                "group": "AI",
+                "icon": "microchip-ai",
+                "expanded": true,
+                "pages": [
+                  "integrations/ai/overview",
+                  "integrations/ai/anthropic",
+                  "integrations/ai/openai",
+                  "integrations/ai/aws-bedrock"
+                ]
+              }
             ]
           }
         ]
@@ -134,22 +157,8 @@
         "icon": "shield-check",
         "groups": [
           {
-            "group": "Trust",
-            "pages": [
-              "trust/overview",
-              "trust/security",
-              "trust/privacy",
-              "trust/compliance",
-              "trust/resilience"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "trust/checklist",
-              "trust/sub-processors",
-              "trust/documents"
-            ]
+            "group": "Trust Center",
+            "pages": ["trust/overview", "trust/details"]
           }
         ]
       }

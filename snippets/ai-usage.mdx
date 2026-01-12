@@ -1,0 +1,39 @@
+## How Tero uses AI
+
+Tero sends telemetry samples for classification. This powers:
+
+- **Log event classification**: Understanding what each log event represents and whether it's valuable
+- **Service enrichment**: Adding context about what services do based on their telemetry patterns
+- **Waste identification**: Determining which telemetry is debug noise, health checks, or otherwise low-value
+
+See [How Tero evaluates waste](/questions/waste/how-it-works) for the full classification process.
+
+### What gets sent
+
+Tero sends sample log lines, metric names, and span names. These samples include:
+
+- Log message bodies and attributes
+- Service names and descriptions
+- Metric and span metadata
+
+Samples are processed in memory and discarded. They are not stored by Tero or the AI provider.
+
+### Usage scales with diversity, not volume
+
+AI usage depends on how many **unique event types** you have, not how much telemetry you generate.
+
+If you have 1 billion logs but they all match 1,000 distinct event types, Tero only needs to classify those 1,000 events. The other 999,999,000 logs match existing classifications and don't require AI calls.
+
+Rough estimates:
+
+| Environment | Unique event types | Initial analysis |
+|-------------|-------------------|------------------|
+| Small (10 services) | ~500-2,000 | ~50K-200K tokens |
+| Medium (50 services) | ~2,000-10,000 | ~200K-1M tokens |
+| Large (200+ services) | ~10,000-50,000 | ~1M-5M tokens |
+
+After initial analysis, ongoing usage is minimal. New event types are rare once your telemetry patterns are understood.
+
+<Note>
+These are rough estimates. Actual usage depends on telemetry diversity, not volume. A service with verbose logging creates more unique event types than one with structured logs.
+</Note>

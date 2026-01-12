@@ -18,7 +18,7 @@ You have three options: filter in your provider, fix in code, or drop in your in
       <img src="/images/how-it-works-datadog-4-in-provider.svg" alt="Tero configuring Datadog" />
     </Frame>
 
-    Tero configures [exclusion filters](https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters) to prevent waste from being indexed, and modifies [pipelines](https://docs.datadoghq.com/logs/log_configuration/pipelines/) to change how logs are parsed and routed. See [Datadog integration →](/integrations/datadog#actions)
+    Tero configures [exclusion filters](https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters) to prevent waste from being indexed, and modifies [pipelines](https://docs.datadoghq.com/logs/log_configuration/pipelines/) to change how logs are parsed and routed. See [Datadog integration →](/integrations/observability/datadog#actions)
 
     <Warning>
     Exclusion filters prevent indexing but not ingestion. You still pay ingestion fees. To avoid those, [filter in your infrastructure](#in-your-infrastructure).
@@ -29,7 +29,7 @@ You have three options: filter in your provider, fix in code, or drop in your in
       <img src="/images/how-it-works-splunk-4-in-provider.svg" alt="Tero configuring Splunk" />
     </Frame>
 
-    Tero configures [Ingest Actions](https://docs.splunk.com/Documentation/SplunkCloud/latest/Data/DataIngest) to filter waste before indexing. See [Splunk integration →](/integrations/splunk#actions)
+    Tero configures [Ingest Actions](https://docs.splunk.com/Documentation/SplunkCloud/latest/Data/DataIngest) to filter waste before indexing. See [Splunk integration →](/integrations/observability/splunk#actions)
   </Tab>
 </Tabs>
 
@@ -55,7 +55,7 @@ Tero opens PRs directly against your repo. It knows which service produces the w
 
 Changes are batched by [category](/questions/waste/how-it-works#categories). You're not getting one PR per log event — that would be noise. Instead, Tero groups related fixes: all the debug output in a service, all the leftover instrumentation from a specific feature. PRs route to owning teams based on your [service catalog](/context/services), so the right people review the right changes.
 
-[Connect GitHub](/integrations/github) to enable pull requests.
+[Connect GitHub](/integrations/code/github) to enable pull requests.
 
 ### Tickets
 
@@ -63,7 +63,7 @@ Some teams prefer to schedule work themselves rather than receive PRs. Tero can 
 
 This works well when you want visibility into waste without forcing immediate action. Teams see the cost, prioritize against other work, and fix when ready.
 
-[Connect GitHub](/integrations/github) to enable issues.
+[Connect GitHub](/integrations/code/github) to enable issues.
 
 ### CLI
 

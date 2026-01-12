@@ -1,0 +1,74 @@
+---
+title: "Anthropic"
+description: "Use your own Anthropic API key for AI classification"
+icon: "microchip-ai"
+iconType: "duotone"
+---
+
+import AIUsage from '/snippets/ai-usage.mdx';
+
+Use your own Anthropic API key for Tero's AI classification. This is our recommended provider.
+
+## Connect
+
+<Tabs>
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Run tero">
+        Open your terminal and run:
+
+        ```bash
+        tero
+        ```
+
+        This opens the Tero TUI, which guides you through setup.
+
+        <Note>
+        Don't have the CLI installed? See the [quickstart](/quickstart).
+        </Note>
+      </Step>
+
+      <Step title="Log in to Tero">
+        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
+      </Step>
+
+      <Step title="Select Anthropic">
+        The TUI asks which integration you want to connect. Select Anthropic.
+      </Step>
+
+      <Step title="Create an API key">
+        Go to the [Anthropic Console](https://console.anthropic.com/settings/keys) and create an API key. Copy the key.
+      </Step>
+
+      <Step title="Paste your API key">
+        Paste the API key into the TUI. Tero validates the key and confirms the connection.
+      </Step>
+
+      <Step title="Done">
+        Tero is now configured to use your Anthropic API key for classification.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+<AIUsage />
+
+## Data handling
+
+Anthropic's API has a [zero-retention policy](https://www.anthropic.com/policies/privacy) for API requests. Samples sent for classification are:
+
+- Processed in memory
+- Not stored by Anthropic
+- Not used to train models
+
+## Fallback
+
+You can configure OpenAI as a fallback in case Anthropic is unavailable. Fallback triggers on unrecoverable errors (API unavailable, authentication failures). Rate limits do not trigger fallback.
+
+## API key
+
+| Requirement | Details |
+|-------------|---------|
+| **Model** | Claude Sonnet (latest) |
+| **Permissions** | Default API key permissions |
+| **Rate limits** | Standard limits are sufficient |

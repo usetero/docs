@@ -1,0 +1,98 @@
+---
+title: "Details"
+sidebarTitle: "Details"
+description: "Infrastructure, sub-processors, and compliance specifics."
+icon: "list-check"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+Reference information for security reviews and vendor assessments.
+
+## What each integration accesses
+
+Each integration documents exactly what permissions it requires and why.
+
+| Integration | What Tero accesses |
+|-------------|-------------------|
+| [Datadog](/integrations/observability/datadog#permissions) | Logs, metrics, traces, service catalog. Optional write access for exclusion filters. |
+| [Splunk](/integrations/observability/splunk#permissions) | Logs, index metadata. Optional write access for ingest actions. |
+| [GitHub](/integrations/code/github#permissions) | Repository contents, PRs, issues. For code fixes and policy sync. |
+| [Anthropic](/integrations/ai/anthropic) | Telemetry samples for AI classification. Zero retention. |
+
+## Sub-processors
+
+| Service | Purpose | Data | Location |
+|---------|---------|------|----------|
+| Google Cloud Platform | Infrastructure | Control plane, backups | US |
+| Anthropic | AI classification (default) | Samples, not persisted | US |
+| WorkOS | Authentication | Email, SSO tokens | US |
+| Stripe | Payments (self-service only) | Billing info | US |
+
+<Tip>
+**Self-hosted**: No sub-processors. Everything runs in your infrastructure.
+</Tip>
+
+We notify customers 30 days before adding sub-processors that handle data.
+
+## Infrastructure
+
+| Area | Implementation |
+|------|----------------|
+| **Hosting** | Google Cloud Platform, us-central1, multi-zone |
+| **Encryption in transit** | TLS 1.3 |
+| **Encryption at rest** | AES-256 (database, backups, temp storage) |
+| **Key management** | GCP KMS with automatic rotation |
+| **Network** | Private VPC, DDoS protection via Cloud Armor |
+| **Access control** | SSO required, MFA enforced, role-based, time-limited production access |
+| **Backups** | Daily, encrypted, 30-day retention, geo-redundant |
+| **Monitoring** | GCP Security Command Center, real-time alerts |
+
+## Compliance
+
+| Framework | Status |
+|-----------|--------|
+| **SOC 2 Type 2** | 2026 |
+| **Penetration testing** | Q1 2025 |
+| **GDPR** | Compliant. DPA with SCCs available. |
+| **CCPA** | Compliant. No data sales. |
+| **HIPAA** | Not applicable (we don't store PHI). Self-host if your logs contain PHI. |
+
+### Controls
+
+- Role-based access, MFA required, least-privilege
+- Encryption everywhere (TLS 1.3, AES-256)
+- Code review required, automated testing, staged deployments
+- Incident response plan, 24-hour customer notification
+- Vendor risk assessment, documented data flows
+- Background checks, security training, access revocation on departure
+
+## Data retention
+
+| Data | Retention |
+|------|-----------|
+| Account data | While active |
+| Telemetry metadata | While workspace active |
+| Quality rules | While workspace active |
+| Usage analytics | 2 years |
+| Backups | 30 days |
+
+When you delete your account, data is removed within 30 days.
+
+## Your rights
+
+You can request to access, correct, delete, or export your data. Email [{securityEmail}](mailto:{securityEmail}). We respond within 30 days.
+
+GDPR and CCPA rights fully supported.
+
+## Questions
+
+<Card 
+  title="Contact security team" 
+  icon="envelope" 
+  href={`mailto:${securityEmail}`}
+  horizontal
+>
+  Security review? Vendor assessment? Architecture questions? Email **{securityEmail}**.
+</Card>

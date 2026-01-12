@@ -1,0 +1,72 @@
+---
+title: "OpenAI"
+description: "Use your own OpenAI API key for AI classification"
+icon: "microchip-ai"
+iconType: "duotone"
+---
+
+import AIUsage from '/snippets/ai-usage.mdx';
+
+Use your own OpenAI API key for Tero's AI classification.
+
+We recommend Anthropic for slightly better accuracy on telemetry classification, but OpenAI works well and is a good choice if you have existing agreements or prefer it.
+
+## Connect
+
+<Tabs>
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Run tero">
+        Open your terminal and run:
+
+        ```bash
+        tero
+        ```
+
+        This opens the Tero TUI, which guides you through setup.
+
+        <Note>
+        Don't have the CLI installed? See the [quickstart](/quickstart).
+        </Note>
+      </Step>
+
+      <Step title="Log in to Tero">
+        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
+      </Step>
+
+      <Step title="Select OpenAI">
+        The TUI asks which integration you want to connect. Select OpenAI.
+      </Step>
+
+      <Step title="Create an API key">
+        Go to the [OpenAI Platform](https://platform.openai.com/api-keys) and create an API key. Copy the key.
+      </Step>
+
+      <Step title="Paste your API key">
+        Paste the API key into the TUI. Tero validates the key and confirms the connection.
+      </Step>
+
+      <Step title="Done">
+        Tero is now configured to use your OpenAI API key for classification.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+<AIUsage />
+
+## Data handling
+
+OpenAI's API does not use customer data to train models by default. See [OpenAI's API data usage policy](https://openai.com/policies/api-data-usage-policies) for details.
+
+## Fallback
+
+You can configure Anthropic as a fallback in case OpenAI is unavailable. Fallback triggers on unrecoverable errors (API unavailable, authentication failures). Rate limits do not trigger fallback.
+
+## API key
+
+| Requirement | Details |
+|-------------|---------|
+| **Model** | GPT-4 or later |
+| **Permissions** | Default API key permissions |
+| **Rate limits** | Standard limits are sufficient |

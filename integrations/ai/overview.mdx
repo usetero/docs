@@ -1,0 +1,38 @@
+---
+title: "AI Providers"
+sidebarTitle: "Overview"
+description: "Configure which AI provider Tero uses for classification"
+icon: "sliders"
+iconType: "duotone"
+---
+
+Tero uses AI to classify your telemetry and identify waste. By default, this works out of the box using Tero's AI accounts with zero-retention agreements.
+
+If you need to use your own AI provider for compliance, cost tracking, or preference, you can configure Tero to use your API keys instead.
+
+## Providers
+
+| Provider | Notes |
+|----------|-------|
+| [Anthropic](/integrations/ai/anthropic) | Recommended. Most accurate for telemetry classification. |
+| [OpenAI](/integrations/ai/openai) | Works well. Good choice if you have existing agreements. |
+| [AWS Bedrock](/integrations/ai/aws-bedrock) | Self-hosted only. Data stays in your AWS environment. |
+
+## Why bring your own?
+
+- **Compliance**: Your security team requires AI requests go through your accounts
+- **Cost tracking**: You want AI costs on your bill, not bundled with Tero
+- **Existing agreements**: You have negotiated rates or specific terms with a provider
+- **Preference**: You prefer one provider over another
+
+If none of these apply, you don't need to configure anything.
+
+## Primary and fallback
+
+You can configure a primary provider and an optional fallback. If your primary is unavailable (API errors, authentication failures), Tero switches to the fallback automatically.
+
+Rate limits do not trigger fallback.
+
+## Self-hosted
+
+When you self-host Tero, you must configure your own AI provider. Tero's accounts are only available on Tero Cloud.
