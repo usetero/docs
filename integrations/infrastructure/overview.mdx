@@ -8,6 +8,24 @@ iconType: "duotone"
 
 Tero integrates with the agents and collectors in your infrastructure to apply policies before telemetry reaches your observability platform.
 
+<Tabs>
+  <Tab title="Datadog Agent">
+    <Frame>
+      <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Datadog Agent with Tero Edge" />
+    </Frame>
+  </Tab>
+  <Tab title="Splunk Forwarder">
+    <Frame>
+      <img src="/images/how-it-works-splunk-4-in-infrastructure.svg" alt="Splunk Forwarder with Tero Edge" />
+    </Frame>
+  </Tab>
+  <Tab title="OTel Collector">
+    <Frame>
+      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="OTel Collector with Tero Edge" />
+    </Frame>
+  </Tab>
+</Tabs>
+
 ## How it works
 
 Tero Edge runs alongside your existing agents. You configure your agent to send telemetry through Edge. Edge applies policies (drop, sample, transform) and forwards to your backend.
