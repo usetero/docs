@@ -8,10 +8,6 @@ iconType: "duotone"
 
 Tero integrates with the agents and collectors in your infrastructure to apply policies before telemetry reaches your observability platform.
 
-<Frame>
-  <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Tero in your infrastructure" />
-</Frame>
-
 ## How it works
 
 Tero Edge runs alongside your existing agents. You configure your agent to send telemetry through Edge. Edge applies policies (drop, sample, transform) and forwards to your backend.
@@ -28,11 +24,17 @@ Policies sync automatically from Tero. No restarts, no redeploys. Update a polic
 
 ## Why filter in your infrastructure?
 
-**No limits.** Observability platforms cap how many filters or rules you can create. Tero policies have no limits.
-
-**No ingestion fees.** Platform-side filters prevent indexing but not ingestion. Infrastructure filtering drops data before it's sent.
-
-**Portable.** Switch providers, keep your policies. They're yours.
+<CardGroup cols={2}>
+  <Card title="No limits" icon="infinity">
+    Observability platforms cap how many filters or rules you can create. Tero policies have no limits.
+  </Card>
+  <Card title="No ingestion fees" icon="dollar-sign">
+    Platform-side filters prevent indexing but not ingestion. Infrastructure filtering drops data before it's sent.
+  </Card>
+  <Card title="Portable" icon="rotate">
+    Switch providers, keep your policies. They're yours.
+  </Card>
+</CardGroup>
 
 ## Tero Edge
 
