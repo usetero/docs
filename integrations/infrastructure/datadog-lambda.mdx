@@ -35,7 +35,10 @@ flowchart LR
 
 We maintain this fork to release within two weeks of upstream Datadog releases.
 
-<Note>FIPS compliance is not currently supported.</Note>
+<Note>
+  FIPS compliance is not currently supported. Reach out to [Tero
+  Support](mailto:support@usetero.com) if this is required for your environment.
+</Note>
 
 ## Prerequisites
 
@@ -62,16 +65,16 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
 
     **ARM64:**
     ```
-    arn:aws:lambda:us-east-1:242046726909:layer:Datadog-Extension-ARM-Tero:<version>
+    arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:<version>
     ```
 
     **AMD64:**
     ```
-    arn:aws:lambda:us-east-1:242046726909:layer:Datadog-Extension-Tero:<version>
+    arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension:<version>
     ```
 
     <Note>
-    Replace `<version>` with the latest version number. Check the [releases](https://github.com/usetero/datadog-lambda-extension) for current versions.
+    Replace `<version>` with the latest version number. Check the [releases](https://github.com/usetero/datadog-lambda-extension/releases) for current versions.
     </Note>
 
   </Step>
@@ -80,18 +83,13 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
     Add these environment variables to your Lambda function:
 
     ```bash
-    # Required: Your Datadog API key, this should already be present
-    DD_API_KEY=your-datadog-api-key
-
-    # Required: Enable the extension, this should already be present
-    DD_EXTENSION_ENABLED=true
-
-    # Required: Enable policy filtering
     DD_POLICY_ENABLED=true
-
-    # Required: Configure policy provider
     DD_POLICY_PROVIDERS='[{"id":"tero","type":"http","url":"https://sync.usetero.com/v1/policy/sync","headers":[{"name":"Authorization","value":"Bearer YOUR_TERO_API_KEY"}],"poll_interval_secs":60}]'
     ```
+
+    <Info>
+    This assumes `DD_API_KEY` and `DD_EXTENSION_ENABLED=true` are already configured from your existing Datadog setup.
+    </Info>
 
     <Warning>
     Replace `YOUR_TERO_API_KEY` with the API key you created in step 1. The extension will fail to sync policies without a valid bearer token.
@@ -147,85 +145,83 @@ DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.jso
 
 ## Deployment examples
 
-### Terraform
+<Tabs>
+  <Tab title="Terraform">
+    ```hcl
+    resource "aws_lambda_function" "example" {
+      function_name = "my-function"
+      runtime       = "python3.12"
+      architectures = ["arm64"]
 
-```hcl
-resource "aws_lambda_function" "example" {
-  function_name = "my-function"
-  runtime       = "python3.12"
-  architectures = ["arm64"]
+      layers = [
+        "arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1"
+      ]
 
-  layers = [
-    "arn:aws:lambda:us-east-1:242046726909:layer:Datadog-Extension-ARM-Tero:1"
-  ]
-
-  environment {
-    variables = {
-      DD_API_KEY           = var.datadog_api_key
-      DD_EXTENSION_ENABLED = "true"
-      DD_POLICY_ENABLED    = "true"
-      DD_POLICY_PROVIDERS  = jsonencode([
-        {
-          id   = "tero"
-          type = "http"
-          url  = "https://sync.usetero.com/v1/policy/sync"
-          headers = [
-            { name = "Authorization", value = "Bearer ${var.tero_api_key}" }
-          ]
-          poll_interval_secs = 60
+      environment {
+        variables = {
+          DD_API_KEY           = var.datadog_api_key
+          DD_EXTENSION_ENABLED = "true"
+          DD_POLICY_ENABLED    = "true"
+          DD_POLICY_PROVIDERS  = jsonencode([
+            {
+              id   = "tero"
+              type = "http"
+              url  = "https://sync.usetero.com/v1/policy/sync"
+              headers = [
+                { name = "Authorization", value = "Bearer ${var.tero_api_key}" }
+              ]
+              poll_interval_secs = 60
+            }
+          ])
         }
-      ])
+      }
     }
-  }
-}
-```
+    ```
 
-### AWS SAM
-
-```yaml
-MyFunction:
-  Type: AWS::Serverless::Function
-  Properties:
-    Runtime: python3.12
-    Architectures:
-      - arm64
-    Layers:
-      - arn:aws:lambda:us-east-1:242046726909:layer:Datadog-Extension-ARM-Tero:1
-    Environment:
-      Variables:
-        DD_API_KEY: !Ref DatadogApiKey
-        DD_EXTENSION_ENABLED: "true"
-        DD_POLICY_ENABLED: "true"
-        DD_POLICY_PROVIDERS: !Sub |
-          [{"id":"tero","type":"http","url":"https://sync.usetero.com/v1/policy/sync","headers":[{"name":"Authorization","value":"Bearer ${TeroApiKey}"}],"poll_interval_secs":60}]
-```
-
-### Serverless Framework
-
-```yaml
-functions:
-  myFunction:
-    runtime: python3.12
-    architecture: arm64
-    layers:
-      - arn:aws:lambda:us-east-1:242046726909:layer:Datadog-Extension-ARM-Tero:1
-    environment:
-      DD_API_KEY: ${ssm:/datadog/api-key}
-      DD_EXTENSION_ENABLED: "true"
-      DD_POLICY_ENABLED: "true"
-      DD_POLICY_PROVIDERS:
-        '[{"id":"tero","type":"http","url":"https://sync.usetero.com/v1/policy/sync","headers":[{"name":"Authorization","value":"Bearer
-        ${ssm:/tero/api-key}"}],"poll_interval_secs":60}]'
-```
-
-### AWS CLI
-
-```bash
-aws lambda update-function-configuration \
-  --function-name my-function \
-  --layers "arn:aws:lambda:us-east-1:242046726909:layer:Datadog-Extension-ARM-Tero:1" \
-  --environment "Variables={DD_API_KEY=your-api-key,DD_EXTENSION_ENABLED=true,DD_POLICY_ENABLED=true,DD_POLICY_PROVIDERS='[{\"id\":\"tero\",\"type\":\"http\",\"url\":\"https://sync.usetero.com/v1/policy/sync\",\"headers\":[{\"name\":\"Authorization\",\"value\":\"Bearer your-tero-key\"}]}]'}"
-```
+  </Tab>
+  <Tab title="AWS SAM">
+    ```yaml
+    MyFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        Runtime: python3.12
+        Architectures:
+          - arm64
+        Layers:
+          - arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1
+        Environment:
+          Variables:
+            DD_API_KEY: !Ref DatadogApiKey
+            DD_EXTENSION_ENABLED: "true"
+            DD_POLICY_ENABLED: "true"
+            DD_POLICY_PROVIDERS: !Sub |
+              [{"id":"tero","type":"http","url":"https://sync.usetero.com/v1/policy/sync","headers":[{"name":"Authorization","value":"Bearer ${TeroApiKey}"}],"poll_interval_secs":60}]
+    ```
+  </Tab>
+  <Tab title="Serverless Framework">
+    ```yaml
+    functions:
+      myFunction:
+        runtime: python3.12
+        architecture: arm64
+        layers:
+          - arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1
+        environment:
+          DD_API_KEY: ${ssm:/datadog/api-key}
+          DD_EXTENSION_ENABLED: "true"
+          DD_POLICY_ENABLED: "true"
+          DD_POLICY_PROVIDERS: '[{"id":"tero","type":"http","url":"https://sync.usetero.com/v1/policy/sync","headers":[{"name":"Authorization","value":"Bearer ${ssm:/tero/api-key}"}],"poll_interval_secs":60}]'
+    ```
+  </Tab>
+  <Tab title="AWS CLI">
+    ```bash
+    aws lambda update-function-configuration \
+      --function-name my-function \
+      --layers "arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1" \
+      --environment "Variables={DD_API_KEY=your-api-key,DD_EXTENSION_ENABLED=true,DD_POLICY_ENABLED=true,DD_POLICY_PROVIDERS='[{\"id\":\"tero\",\"type\":\"http\",\"url\":\"https://sync.usetero.com/v1/policy/sync\",\"headers\":[{\"name\":\"Authorization\",\"value\":\"Bearer your-tero-key\"}]}]'}"
+    ```
+  </Tab>
+</Tabs>
 
 ## How policy filtering works
 
