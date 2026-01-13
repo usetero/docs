@@ -91,7 +91,7 @@
                 "icon": "server",
                 "pages": [
                   "integrations/datadog-agent",
-                  "integrations/datadog-lambda.mdx"
+                  "integrations/datadog-lambda"
                 ]
               },
               {
