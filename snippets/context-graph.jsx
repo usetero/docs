@@ -2425,7 +2425,7 @@ export const ContextGraph = () => {
       if (!logEventsByService[le.service_id]) {
         logEventsByService[le.service_id] = [];
       }
-      if (logEventsByService[le.service_id].length < 75) {
+      if (logEventsByService[le.service_id].length < 70) {
         logEventsByService[le.service_id].push(le);
       }
     });
