@@ -94,7 +94,8 @@
                 "icon": "server",
                 "pages": [
                   "integrations/infrastructure/overview",
-                  "integrations/infrastructure/datadog-agent"
+                  "integrations/infrastructure/datadog-agent",
+                  "integrations/infrastructure/datadog-lambda"
                 ]
               },
               {
