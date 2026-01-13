@@ -84,33 +84,28 @@
               {
                 "group": "Observability Platforms",
                 "icon": "cloud",
-                "pages": [
-                  "integrations/observability/datadog",
-                  "integrations/observability/splunk"
-                ]
+                "pages": ["integrations/datadog", "integrations/splunk"]
               },
               {
                 "group": "Infrastructure",
                 "icon": "server",
                 "pages": [
-                  "integrations/infrastructure/overview",
-                  "integrations/infrastructure/datadog-agent",
-                  "integrations/infrastructure/datadog-lambda"
+                  "integrations/datadog-agent",
+                  "integrations/datadog-lambda.mdx"
                 ]
               },
               {
                 "group": "Code",
                 "icon": "code",
-                "pages": ["integrations/code/github"]
+                "pages": ["integrations/github"]
               },
               {
                 "group": "AI",
                 "icon": "microchip-ai",
                 "pages": [
-                  "integrations/ai/overview",
-                  "integrations/ai/anthropic",
-                  "integrations/ai/openai",
-                  "integrations/ai/aws-bedrock"
+                  "integrations/anthropic",
+                  "integrations/openai",
+                  "integrations/aws-bedrock"
                 ]
               }
             ]
