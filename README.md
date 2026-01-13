@@ -1,10 +1,12 @@
 # Tero Documentation
 
-This repository contains Tero's public documentation, built with [Mintlify](https://mintlify.com).
+This repository contains Tero's public documentation, built with
+[Mintlify](https://mintlify.com).
 
 ## What's Here
 
 Customer-facing documentation covering:
+
 - How Tero works
 - Integration guides
 - CLI and Edge reference
@@ -12,9 +14,12 @@ Customer-facing documentation covering:
 
 ## Contributing
 
-We welcome contributions from customers and the community. If you spot errors, unclear explanations, or missing information, please open an issue or submit a pull request.
+We welcome contributions from customers and the community. If you spot errors,
+unclear explanations, or missing information, please open an issue or submit a
+pull request.
 
-Follow the writing style in `docs/` (internal planning docs) and maintain the progressive structure outlined there.
+Follow the writing style in `docs/` (internal planning docs) and maintain the
+progressive structure outlined there.
 
 ## Development
 
@@ -34,7 +39,8 @@ View your local preview at `http://localhost:3000`.
 
 ## Publishing
 
-Changes pushed to the main branch are automatically deployed to production via the Mintlify GitHub app.
+Changes pushed to the main branch are automatically deployed to production via
+the Mintlify GitHub app.
 
 ## Structure
 
@@ -45,5 +51,5 @@ Changes pushed to the main branch are automatically deployed to production via t
 
 ## Need Help?
 
-- [Tero Support](mailto:support@tero.com)
+- [Tero Support](mailto:support@usetero.com)
 - [Mintlify Documentation](https://mintlify.com/docs)

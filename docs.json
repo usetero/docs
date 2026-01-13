@@ -89,7 +89,10 @@
               {
                 "group": "Infrastructure",
                 "icon": "server",
-                "pages": ["integrations/datadog-agent"]
+                "pages": [
+                  "integrations/datadog-agent",
+                  "integrations/datadog-lambda"
+                ]
               },
               {
                 "group": "Code",
