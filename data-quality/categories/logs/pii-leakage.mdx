@@ -5,7 +5,7 @@ icon: "shield-exclamation"
 iconType: "duotone"
 ---
 
-<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
+<Badge color="green" icon="circle-check">Zero risk</Badge>
 
 Credit card numbers, emails, SSNs, access tokens. Sensitive data that ended up in logs by accident. A developer logs a request object. An error message includes data it shouldn't. A third-party library dumps more than you expected.
 
@@ -165,6 +165,99 @@ But you should also fix the source. Open a PR to remove the sensitive fields fro
 
 ## How it works
 
-Tero scans log content for patterns that match sensitive data: credit card numbers (Luhn algorithm), email addresses, SSNs, API keys, JWTs, and other common PII patterns.
+Tero scans log content for patterns that match sensitive data using regex patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
 
-When Tero finds PII, it identifies the field and the service. You can then redact (replace with `[REDACTED]`), hash (replace with a consistent hash for correlation), or drop the field entirely.
+When Tero finds sensitive data, it identifies the field and the service. You can then redact (replace with `[REDACTED]`), hash (replace with a consistent hash for correlation), or drop the field entirely.
+
+### Supported patterns
+
+Each category below can be approved as a set of policies. Approve the categories relevant to your compliance requirements.
+
+<AccordionGroup>
+  <Accordion title="Personal information">
+    - Credit card numbers (Visa, Mastercard, Amex, Discover)
+    - Social Security numbers (US)
+    - National Insurance numbers (UK)
+    - Email addresses
+    - Phone numbers
+    - IP addresses
+    - IBANs
+  </Accordion>
+  
+  <Accordion title="Cloud providers">
+    - AWS access keys and secret keys
+    - GCP API keys
+    - Azure AD client secrets
+    - Alibaba access keys
+    - DigitalOcean tokens
+    - Heroku API keys
+    - Cloudflare API keys
+    - Databricks API tokens
+  </Accordion>
+  
+  <Accordion title="Source control & CI/CD">
+    - GitHub tokens (PAT, OAuth, App, Fine-grained)
+    - GitLab tokens (PAT, Deploy, Runner, CI/CD job)
+    - Bitbucket client secrets
+    - Travis CI tokens
+    - CircleCI tokens
+    - Drone CI tokens
+  </Accordion>
+  
+  <Accordion title="Communication & collaboration">
+    - Slack tokens (bot, user, webhook)
+    - Discord tokens
+    - Telegram bot tokens
+    - Microsoft Teams webhooks
+    - Mattermost tokens
+    - Twilio API keys
+  </Accordion>
+  
+  <Accordion title="Databases & infrastructure">
+    - Database connection strings
+    - Planetscale tokens
+    - MongoDB connection strings
+    - Redis connection strings
+    - Elasticsearch credentials
+  </Accordion>
+  
+  <Accordion title="Payment & financial">
+    - Stripe API keys
+    - Square access tokens
+    - Plaid API tokens
+    - Coinbase access tokens
+    - GoCardless tokens
+  </Accordion>
+  
+  <Accordion title="AI & ML services">
+    - OpenAI API keys
+    - Anthropic API keys
+    - Hugging Face tokens
+    - Cohere API tokens
+  </Accordion>
+  
+  <Accordion title="Observability & monitoring">
+    - Datadog access tokens
+    - New Relic API keys
+    - Grafana API keys
+    - Sentry tokens
+    - Dynatrace API tokens
+  </Accordion>
+  
+  <Accordion title="SaaS & productivity">
+    - Notion API tokens
+    - Asana client secrets
+    - Linear API keys
+    - Jira API tokens
+    - Shopify access tokens
+    - SendGrid API tokens
+    - Mailchimp API keys
+  </Accordion>
+  
+  <Accordion title="Cryptographic material">
+    - Private keys (RSA, DSA, EC, PGP)
+    - JWTs
+    - PKCS12 files
+    - Age secret keys
+  </Accordion>
+</AccordionGroup>
