@@ -27,7 +27,7 @@
   },
   "favicon": "/favicon.svg",
   "banner": {
-    "content": "[Read about why data waste is observability's most important problem →](https://usetero.com/blog/the-question-your-observability-vendor-wont-answer)",
+    "content": "[The question your observability vendor won't answer →](https://usetero.com/blog/the-question-your-observability-vendor-wont-answer)",
     "dismissible": true
   },
   "homepage": "introduction/what-is-tero",
