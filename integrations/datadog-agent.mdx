@@ -6,24 +6,41 @@ iconType: "duotone"
 ---
 
 <Frame>
-  <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Datadog Agent with Tero Edge" />
+  <img
+    src="/images/how-it-works-datadog-4-in-infrastructure.svg"
+    alt="Datadog Agent with Tero Edge"
+  />
 </Frame>
 
-Deploy Tero Edge alongside your Datadog Agent to apply policies to logs, metrics, and traces before they leave your cluster.
+Deploy Tero Edge alongside your Datadog Agent to apply policies to logs,
+metrics, and traces before they leave your cluster.
 
 ## How it works
 
-Edge runs as a DaemonSet on each node, listening on localhost. The Datadog Agent sends telemetry through Edge instead of directly to Datadog. Edge applies policies and forwards to Datadog.
+Edge runs as a DaemonSet on each node. The Datadog Agent sends logs through Edge
+instead of directly to Datadog. Edge applies policies and forwards to Datadog.
 
-```
-Pods → Datadog Agent → Edge (localhost:8080) → Datadog
+```mermaid
+flowchart LR
+    Pods --> DD[Datadog Agent]
+    DD --> Edge[Tero Edge]
+    Edge --> Datadog
+
+    style Pods fill:#262626,stroke:#262626,color:#fafafa
+    style DD fill:#632ca6,stroke:#632ca6,color:#fff
+    style Edge fill:#10b981,stroke:#10b981,color:#fff
+    style Datadog fill:#632ca6,stroke:#632ca6,color:#fff
 ```
 
-Edge only proxies telemetry (logs, metrics, traces). Other agent traffic (security monitoring, remote config, fleet management) goes directly to Datadog.
+Edge only proxies telemetry (logs, metrics, traces). Other agent traffic
+(security monitoring, remote config, fleet management) goes directly to Datadog.
 
 ## Prerequisites
 
-- Datadog Agent running on Kubernetes
+- Datadog Agent running on Kubernetes (via
+  [Helm](https://docs.datadoghq.com/containers/kubernetes/installation/?tab=helm)
+  or
+  [Datadog Operator](https://docs.datadoghq.com/containers/kubernetes/installation/?tab=operator))
 - `kubectl` access to your cluster
 - Tero account
 
@@ -37,11 +54,12 @@ Edge only proxies telemetry (logs, metrics, traces). Other agent traffic (securi
     tero
     ```
 
-    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Production cluster"). Copy the key when shown, it's only displayed once.
+    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Production cluster"). Copy the key when shown—it's only displayed once.
+
   </Step>
 
-  <Step title="Create the secret">
-    Store your API key as a Kubernetes secret:
+  <Step title="Create the namespace and secret">
+    Create the namespace and store your API key as a Kubernetes secret:
 
     ```bash
     kubectl create namespace tero-system
@@ -50,12 +68,221 @@ Edge only proxies telemetry (logs, metrics, traces). Other agent traffic (securi
       --namespace tero-system \
       --from-literal=api-key=YOUR_API_KEY
     ```
+
   </Step>
 
-  <Step title="Deploy Edge">
-    Apply the Edge DaemonSet:
+  <Step title="Create the Edge ConfigMap">
+    Create a ConfigMap with your Edge configuration. Select your Datadog region:
 
-    ```yaml edge-daemonset.yaml
+    <Tabs>
+      <Tab title="US1">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+              "metrics_url": "https://api.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="US3">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.us3.datadoghq.com",
+              "metrics_url": "https://api.us3.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="US5">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.us5.datadoghq.com",
+              "metrics_url": "https://api.us5.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="EU">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.datadoghq.eu",
+              "metrics_url": "https://api.datadoghq.eu",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="AP1">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.ap1.datadoghq.com",
+              "metrics_url": "https://api.ap1.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+    </Tabs>
+
+    <Accordion title="Using a file provider instead?">
+      If you prefer to manage policies locally instead of syncing from Tero, use a file provider. Add `policies.json` to your ConfigMap:
+
+      ```yaml tero-edge-config.yaml
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: tero-edge-config
+        namespace: tero-system
+      data:
+        config.json: |
+          {
+            "listen_address": "0.0.0.0",
+            "listen_port": 8080,
+            "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+            "metrics_url": "https://api.datadoghq.com",
+            "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+            "log_level": "info",
+            "max_body_size": 1048576,
+            "policy_providers": [
+              {
+                "id": "file",
+                "type": "file",
+                "path": "/etc/tero/policies.json"
+              }
+            ]
+          }
+        policies.json: |
+          {
+            "policies": [
+              {
+                "id": "drop-debug-logs",
+                "name": "drop-debug-logs",
+                "enabled": true,
+                "log": {
+                  "match": [{ "log_field": "severity_text", "regex": "DEBUG" }],
+                  "keep": "none"
+                }
+              }
+            ]
+          }
+      ```
+
+      Update `upstream_url` and `metrics_url` for your Datadog region.
+    </Accordion>
+
+    ```bash
+    kubectl apply -f tero-edge-config.yaml
+    ```
+
+  </Step>
+
+  <Step title="Deploy the Edge DaemonSet">
+    Deploy Edge to run on each node:
+
+    ```yaml tero-edge-daemonset.yaml
     apiVersion: apps/v1
     kind: DaemonSet
     metadata:
@@ -72,133 +299,228 @@ Edge only proxies telemetry (logs, metrics, traces). Other agent traffic (securi
           labels:
             app: tero-edge
         spec:
-          hostNetwork: true
           containers:
-            - name: edge
-              image: ghcr.io/usetero/edge-datadog:latest
-              ports:
-                - containerPort: 8080
-                  hostPort: 8080
+            - name: tero-edge
+              image: ghcr.io/usetero/edge:latest
+              args:
+                - /etc/tero/config.json
               env:
                 - name: TERO_API_KEY
                   valueFrom:
                     secretKeyRef:
                       name: tero-edge
                       key: api-key
-                - name: EDGE_LISTEN_ADDRESS
-                  value: "127.0.0.1"
-                - name: EDGE_LISTEN_PORT
-                  value: "8080"
-                - name: EDGE_UPSTREAM_URL
-                  value: "https://agent-http-intake.logs.datadoghq.com"
-                - name: EDGE_METRICS_URL
-                  value: "https://api.datadoghq.com"
+              ports:
+                - containerPort: 8080
+                  hostPort: 8080
+                  protocol: TCP
               resources:
                 requests:
-                  cpu: 100m
-                  memory: 128Mi
+                  cpu: 50m
+                  memory: 32Mi
                 limits:
-                  cpu: 500m
-                  memory: 256Mi
+                  cpu: 200m
+                  memory: 64Mi
+              volumeMounts:
+                - name: tero-edge-config
+                  mountPath: /etc/tero
+                  readOnly: true
+              livenessProbe:
+                httpGet:
+                  path: /_health
+                  port: 8080
+                initialDelaySeconds: 5
+                periodSeconds: 10
+              readinessProbe:
+                httpGet:
+                  path: /_health
+                  port: 8080
+                initialDelaySeconds: 2
+                periodSeconds: 5
+          volumes:
+            - name: tero-edge-config
+              configMap:
+                name: tero-edge-config
+          tolerations:
+            - operator: Exists
     ```
 
     ```bash
-    kubectl apply -f edge-daemonset.yaml
+    kubectl apply -f tero-edge-daemonset.yaml
     ```
 
-    <Note>
-    Adjust `EDGE_UPSTREAM_URL` and `EDGE_METRICS_URL` for your [Datadog region](/edge/distributions/datadog#regional-endpoints).
-    </Note>
   </Step>
 
   <Step title="Configure the Datadog Agent">
-    Add these environment variables to your Datadog Agent:
+    Point the Datadog Agent's log output to Edge running on the same node.
 
-    ```yaml
-    env:
-      # Logs
-      - name: DD_LOGS_CONFIG_LOGS_DD_URL
-        value: "localhost:8080"
-      - name: DD_LOGS_CONFIG_USE_HTTP
-        value: "true"
-      
-      # Metrics
-      - name: DD_DD_URL
-        value: "http://localhost:8080"
-      
-      # Traces
-      - name: DD_APM_DD_URL
-        value: "http://localhost:8080"
-    ```
+    <Tabs>
+      <Tab title="Datadog Operator">
+        Add to your `DatadogAgent` CR:
 
-    How you add these depends on your deployment method:
+        ```yaml
+        spec:
+          features:
+            logCollection:
+              enabled: true
+          override:
+            nodeAgent:
+              env:
+                - name: HOST_IP
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: status.hostIP
+                - name: DD_LOGS_CONFIG_LOGS_DD_URL
+                  value: "http://$(HOST_IP):8080"
+              tolerations:
+                - operator: Exists
+        ```
+      </Tab>
+      <Tab title="Helm">
+        Add to your `values.yaml`:
 
-    **Helm:** Add to `agents.containers.agent.env` in your values file.
+        ```yaml
+        datadog:
+          logs:
+            enabled: true
 
-    **Datadog Operator:** Add to `spec.override.nodeAgent.env` in your DatadogAgent CR.
+        agents:
+          containers:
+            agent:
+              env:
+                - name: HOST_IP
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: status.hostIP
+                - name: DD_LOGS_CONFIG_LOGS_DD_URL
+                  value: "http://$(HOST_IP):8080"
+          tolerations:
+            - operator: Exists
+        ```
+      </Tab>
+    </Tabs>
 
-    **Raw manifests:** Add to the agent container's `env` array.
+    The `HOST_IP` variable ensures the agent sends to the Edge instance on the same node via the hostPort.
+
   </Step>
 
   <Step title="Verify">
     Check that Edge pods are running:
 
     ```bash
-    kubectl get pods -n tero-system
+    kubectl get pods -n tero-system -l app=tero-edge
     ```
 
-    Confirm the agent is sending through Edge by checking Edge logs:
+    Check Edge logs for incoming traffic:
 
     ```bash
-    kubectl logs -n tero-system -l app=tero-edge
+    kubectl logs -n tero-system -l app=tero-edge --tail=50
     ```
 
-    You should see traffic flowing through.
   </Step>
 </Steps>
 
-## What's proxied
+## Policy providers
 
-| Signal | Proxied | Direct to Datadog |
-|--------|---------|-------------------|
-| Logs | Yes | |
-| Metrics | Yes | |
-| Traces (APM) | Yes | |
-| Security monitoring | | Yes |
-| Network monitoring | | Yes |
-| Remote config | | Yes |
-| Process monitoring | | Yes |
+Edge supports multiple policy sources. Configure them in the `policy_providers`
+array in your ConfigMap.
 
-Edge only handles telemetry you'd apply policies to. Everything else is unaffected.
+### File provider
 
-## Policies
+Load policies from a local file. Good for static policies bundled in the
+ConfigMap.
 
-Once Edge is running, policies sync automatically from Tero. Create policies in the Tero UI or via the CLI, and they apply within seconds.
+```json
+{
+  "id": "file",
+  "type": "file",
+  "path": "/etc/tero/policies.json"
+}
+```
 
-See [Policy Reference](/edge/policy-reference/log-filter) for filtering options.
+### HTTP provider
+
+Fetch policies from a remote endpoint. Good for dynamic policies managed via the
+Tero API.
+
+```json
+{
+  "id": "tero",
+  "type": "http",
+  "url": "https://sync.usetero.com/v1/policy/sync",
+  "headers": [{ "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }]
+}
+```
+
+The `${TERO_API_KEY}` variable is injected from the Kubernetes secret via the
+DaemonSet environment configuration.
+
+## Example policies
+
+Add policies to the `policies.json` section of your ConfigMap:
+
+```json
+{
+  "policies": [
+    {
+      "id": "drop-debug-logs",
+      "name": "drop-debug-logs",
+      "enabled": true,
+      "log": {
+        "match": [{ "log_field": "severity_text", "regex": "DEBUG" }],
+        "keep": "none"
+      }
+    },
+    {
+      "id": "drop-nginx-source",
+      "name": "drop-nginx-source",
+      "enabled": true,
+      "log": {
+        "match": [{ "log_attribute": "ddsource", "regex": "nginx" }],
+        "keep": "none"
+      }
+    },
+    {
+      "id": "keep-errors",
+      "name": "keep-errors",
+      "enabled": true,
+      "log": {
+        "match": [
+          { "log_field": "severity_text", "regex": "error" },
+          { "log_field": "severity_text", "regex": "critical" }
+        ],
+        "keep": "all"
+      }
+    }
+  ]
+}
+```
+
+See [Policy Reference](/edge/policy-reference/log-filter) for all filtering
+options.
 
 ## Troubleshooting
 
 **Agent can't reach Edge**
 
-Check Edge is listening on the host network:
+Verify Edge is listening on the hostPort:
 
 ```bash
-kubectl exec -n tero-system -it <edge-pod> -- netstat -tlnp
+kubectl get pods -n tero-system -l app=tero-edge -o wide
 ```
 
-Verify the agent is on the same node and using `localhost:8080`.
+Ensure both the agent and Edge have matching tolerations so they run on the same
+nodes.
 
 **Policies not applying**
 
-Check Edge synced successfully:
+Check Edge loaded policies successfully:
 
 ```bash
-kubectl logs -n tero-system -l app=tero-edge | grep -i sync
+kubectl logs -n tero-system -l app=tero-edge | grep -i policy
 ```
-
-Confirm your API key is valid and not revoked.
 
 **Traffic not reaching Datadog**
 
-Verify upstream URLs match your Datadog region. Check Edge logs for upstream connection errors.
+Verify `upstream_url` matches your Datadog region. Check Edge logs for upstream
+connection errors.

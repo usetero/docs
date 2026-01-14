@@ -120,6 +120,7 @@
                 "icon": "server",
                 "pages": [
                   "integrations/datadog-agent",
+                  "integrations/otel-collector",
                   "integrations/datadog-lambda"
                 ]
               },
