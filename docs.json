@@ -52,33 +52,27 @@
             "pages": [
               "data-quality/overview",
               {
-                "group": "Categories",
-                "icon": "layer-group",
+                "group": "Logs",
+                "icon": "file-lines",
                 "pages": [
-                  {
-                    "group": "Logs",
-                    "icon": "file-lines",
-                    "pages": [
-                      "data-quality/categories/logs/malformed-data",
-                      "data-quality/categories/logs/redundant-attributes",
-                      "data-quality/categories/logs/leftover-debug-logs",
-                      "data-quality/categories/logs/pii-leakage",
-                      "data-quality/categories/logs/unintended-tool-metadata",
-                      "data-quality/categories/logs/health-checks",
-                      "data-quality/categories/logs/bot-traffic",
-                      "data-quality/categories/logs/excessive-payloads",
-                      "data-quality/categories/logs/debug-mode-left-on",
-                      "data-quality/categories/logs/logs-in-hot-path",
-                      "data-quality/categories/logs/excessive-repetition"
-                    ]
-                  },
-                  {
-                    "group": "Metrics",
-                    "icon": "chart-line",
-                    "pages": [
-                      "data-quality/categories/metrics/high-cardinality-tags"
-                    ]
-                  }
+                  "data-quality/categories/logs/malformed-data",
+                  "data-quality/categories/logs/redundant-attributes",
+                  "data-quality/categories/logs/leftover-debug-logs",
+                  "data-quality/categories/logs/pii-leakage",
+                  "data-quality/categories/logs/unintended-tool-metadata",
+                  "data-quality/categories/logs/health-checks",
+                  "data-quality/categories/logs/bot-traffic",
+                  "data-quality/categories/logs/excessive-payloads",
+                  "data-quality/categories/logs/debug-mode-left-on",
+                  "data-quality/categories/logs/logs-in-hot-path",
+                  "data-quality/categories/logs/excessive-repetition"
+                ]
+              },
+              {
+                "group": "Metrics",
+                "icon": "chart-line",
+                "pages": [
+                  "data-quality/categories/metrics/high-cardinality-tags"
                 ]
               },
               {
