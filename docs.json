@@ -170,6 +170,10 @@
               "edge/policy-reference/metric-transform",
               "edge/policy-reference/trace-filter"
             ]
+          },
+          {
+            "group": "Source",
+            "pages": ["edge/github-edge", "edge/github-policy"]
           }
         ]
       },

@@ -8,7 +8,7 @@ iconType: "duotone"
 
 <img src="/images/edge-hero.svg" alt="Tero" />
 
-Edge is a high-performance telemetry proxy that applies policies to your
+[Edge](https://github.com/usetero/edge) is a high-performance telemetry proxy that applies policies to your
 observability data before it reaches your backends. It sits between your
 applications and observability platforms, filtering noise, redacting sensitive
 data, and transforming telemetry in real-time.
@@ -43,7 +43,7 @@ Applications → Edge → Observability Platform
 3. **Apply** actions: drop, sample, transform, or pass through
 4. **Forward** surviving telemetry to your backend
 
-Policies are evaluated in parallel for each piece of telemetry. There's no
+[Policies](https://github.com/usetero/policy) are evaluated in parallel for each piece of telemetry. There's no
 sequential pipeline—matching policies contribute their actions, and the most
 restrictive action wins.
 
