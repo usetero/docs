@@ -1,0 +1,73 @@
+---
+title: "Categories"
+sidebarTitle: "Overview"
+description: "Types of waste Tero identifies"
+icon: "layer-group"
+iconType: "duotone"
+---
+
+Categories are types of mistakes. Each one is specific: a concrete problem Tero finds in your data.
+
+Categories are organized by data type. Logs have their own set of mistakes. Metrics have theirs. As Tero expands to traces, those will get their own too.
+
+## Logs
+
+Mistakes that show up in your log data. Some affect attributes (fields within a log). Others affect entire events.
+
+### Attribute-level
+
+The log stays. Specific fields get removed.
+
+<CardGroup cols={2}>
+  <Card title="Redundant attributes" icon="copy" href="/data-quality/categories/logs/redundant-attributes">
+    Two fields with the same value
+  </Card>
+  <Card title="Unintended tool metadata" icon="wrench" href="/data-quality/categories/logs/unintended-tool-metadata">
+    Fields added by agents you never search
+  </Card>
+  <Card title="Excessive payloads" icon="weight-hanging" href="/data-quality/categories/logs/excessive-payloads">
+    Response bodies and large nested objects
+  </Card>
+</CardGroup>
+
+### Event-level
+
+The entire log gets dropped or sampled.
+
+<CardGroup cols={2}>
+  <Card title="Malformed data" icon="file-circle-xmark" href="/data-quality/categories/logs/malformed-data">
+    Binary blobs, corrupted output
+  </Card>
+  <Card title="Leftover debug logs" icon="bug" href="/data-quality/categories/logs/leftover-debug-logs">
+    Debug statements that shipped by accident
+  </Card>
+  <Card title="Debug mode left on" icon="toggle-on" href="/data-quality/categories/logs/debug-mode-left-on">
+    Verbose logging never disabled
+  </Card>
+  <Card title="Logs in hot path" icon="fire" href="/data-quality/categories/logs/logs-in-hot-path">
+    Log statements in middleware or tight loops
+  </Card>
+  <Card title="Health checks" icon="heart-pulse" href="/data-quality/categories/logs/health-checks">
+    Readiness probes, liveness checks
+  </Card>
+  <Card title="Bot traffic" icon="robot" href="/data-quality/categories/logs/bot-traffic">
+    Crawlers, scrapers, automated scanners
+  </Card>
+  <Card title="Excessive repetition" icon="volume-high" href="/data-quality/categories/logs/excessive-repetition">
+    High volume where cost outweighs value
+  </Card>
+</CardGroup>
+
+## Metrics
+
+Mistakes that show up in your metric data.
+
+<CardGroup cols={2}>
+  <Card title="High cardinality tags" icon="chart-scatter" href="/data-quality/categories/metrics/high-cardinality-tags">
+    Tags with unbounded values that explode storage
+  </Card>
+</CardGroup>
+
+## Traces
+
+Coming soon.

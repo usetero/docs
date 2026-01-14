@@ -1,0 +1,68 @@
+---
+title: "Data Quality"
+sidebarTitle: "Overview"
+description: "How Tero drives up the quality of your observability data"
+icon: "sparkles"
+iconType: "duotone"
+---
+
+Tero analyzes your data and surfaces rules. Each rule is a specific statement about what's wrong: this field duplicates that one, this log is a health check probe, this event fires a million times but represents one problem.
+
+Rules are organized by [category](/data-quality/categories/overview). Each category is a type of mistake, something concrete that shouldn't be in your data.
+
+## How Tero evaluates
+
+Tero evaluates every log event, metric, and trace span against everything in your [context graph](/context/overview): query history, dashboards, alerts, service context, known failure scenarios. Not just one signal. All of them.
+
+Some decisions come from evidence. You've never queried `k8s.pod.uid` in six months? That's a strong signal it's not useful. A metric tag appears in zero dashboards and zero alerts? Another signal.
+
+Other decisions come from reasoning. Two fields have identical values, so one is redundant. A tag is an internal Kubernetes identifier and you have the human-readable name, so the UID serves no purpose. A log fires during health checks but never during real requests? Infrastructure noise.
+
+Evidence and reasoning together. The same way you'd evaluate waste if you had time to look at every piece of telemetry. Tero does it continuously.
+
+## The trust ladder
+
+Once Tero finds issues, it organizes them by risk level so you can start with the obvious stuff and build confidence before tackling anything nuanced.
+
+<CardGroup cols={1}>
+  <Card title="Zero risk" icon="circle-check" color="#10b981" horizontal>
+    You'll agree immediately: [Redundant attributes](/data-quality/categories/logs/redundant-attributes), [Leftover debug logs](/data-quality/categories/logs/leftover-debug-logs), [Malformed data](/data-quality/categories/logs/malformed-data), and more
+  </Card>
+  <Card title="Low risk" icon="circle-half-stroke" color="#f59e0b" horizontal>
+    Straightforward but worth a glance: [Health checks](/data-quality/categories/logs/health-checks), [Bot traffic](/data-quality/categories/logs/bot-traffic), [Unintended tool metadata](/data-quality/categories/logs/unintended-tool-metadata), and more
+  </Card>
+  <Card title="Medium risk" icon="circle-exclamation" color="#ef4444" horizontal>
+    Requires discussion with the team: [Excessive payloads](/data-quality/categories/logs/excessive-payloads), [Excessive repetition](/data-quality/categories/logs/excessive-repetition), [Debug mode left on](/data-quality/categories/logs/debug-mode-left-on), and more
+  </Card>
+</CardGroup>
+
+[See all categories →](/data-quality/categories/overview)
+
+## Working through it
+
+Start at the top of the ladder and work your way down. You don't review rules one by one. You review categories.
+
+<Steps>
+  <Step title="Open a category">
+    Pick one. Start with something obvious like [redundant attributes](/data-quality/categories/logs/redundant-attributes) or [malformed data](/data-quality/categories/logs/malformed-data).
+  </Step>
+  <Step title="Look at examples">
+    Tero shows you real instances from your data. Understand why it's flagged. See the pattern.
+  </Step>
+  <Step title="Approve">
+    If you agree, approve the whole category. Tero handles the rest.
+  </Step>
+  <Step title="Automate or review">
+    Some categories you'll automate forever. Others you'll want to review each time. Your call.
+  </Step>
+</Steps>
+
+Your ruleset grows over time. New rules surface as your systems evolve. You review incrementally. The work compounds.
+
+## No regression
+
+Once approved, rules are enforced. You [choose how](/data-quality/enforcement/overview): configure your provider, push to the edge, open PRs, create tickets.
+
+If a problem resurfaces (an engineer re-enables debug logging, a new service emits the same waste pattern) Tero catches it. You see it in your next review.
+
+Problems you fix stay fixed. That's the point.

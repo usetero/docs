@@ -1,0 +1,64 @@
+---
+title: "Debug mode left on"
+description: "Verbose logging enabled for troubleshooting, never disabled"
+icon: "toggle-on"
+iconType: "duotone"
+---
+
+<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
+
+A service set to DEBUG log level for troubleshooting that was never switched back. You're getting 10x the logs you need because someone forgot to turn off verbose logging.
+
+## Why it happens
+
+An engineer enables DEBUG logging to investigate an issue. The issue gets resolved. The engineer moves on. The log level stays at DEBUG. Days pass. Weeks pass. The service keeps emitting massive volumes of logs nobody reads.
+
+This is surprisingly common. Log level changes often happen through environment variables or config files that don't go through normal code review.
+
+## Example
+
+<Tabs>
+  <Tab title="Before">
+    A service emitting thousands of DEBUG logs per minute:
+    ```json
+    {"severity_text": "DEBUG", "body": "Entering getUserById", "service.name": "user-service"}
+    {"severity_text": "DEBUG", "body": "Cache miss for user 12345", "service.name": "user-service"}
+    {"severity_text": "DEBUG", "body": "Querying database", "service.name": "user-service"}
+    {"severity_text": "DEBUG", "body": "Query took 3ms", "service.name": "user-service"}
+    {"severity_text": "DEBUG", "body": "Exiting getUserById", "service.name": "user-service"}
+    ```
+  </Tab>
+  <Tab title="After">
+    Log level set back to INFO. Only meaningful events logged.
+  </Tab>
+</Tabs>
+
+This isn't a policy you deploy. It's a configuration change the service owner needs to make.
+
+<Tip>
+  Tero detects this by noticing a sudden spike in DEBUG logs that persists beyond a reasonable troubleshooting window. If a service has been emitting DEBUG logs for days, something's probably wrong.
+</Tip>
+
+## Recommended enforcement
+
+Start by notifying the service owner. If the issue persists, escalate.
+
+<CardGroup cols={3}>
+  <Card title="Create tickets" icon="ticket" href="/data-quality/enforcement/create-tickets">
+    Alert the service owner that debug mode is still enabled.
+  </Card>
+  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+    If log levels are config-as-code, change it directly.
+  </Card>
+  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+    Block temporarily if tickets go unacknowledged. Auto-reverts.
+  </Card>
+</CardGroup>
+
+Most teams start with tickets. If a service has had debug mode on for 48+ hours with no response, temporary edge blocking gets attention without permanent consequences.
+
+## How it works
+
+Tero tracks log volume patterns per service in your [context graph](/context/overview). When a service's DEBUG log volume spikes and stays elevated for more than a few hours, it's flagged.
+
+The key signal is time. DEBUG logs during an active incident are normal. DEBUG logs that persist for days after the incident ended are a forgotten configuration.

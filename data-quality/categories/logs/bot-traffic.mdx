@@ -1,0 +1,73 @@
+---
+title: "Bot traffic"
+description: "Crawlers, scrapers, automated scanners"
+icon: "robot"
+iconType: "duotone"
+---
+
+<Badge color="orange" icon="circle-half-stroke">Low risk</Badge>
+
+Requests from crawlers, scrapers, and automated scanners. Googlebot indexing your pages, security scanners probing your endpoints, Slack unfurling your links. Real traffic, but not your users.
+
+## Why it happens
+
+Bots are a fact of life. Search engines crawl your site. Social platforms fetch previews. Security tools scan for vulnerabilities. Monitoring services check uptime.
+
+Each request generates logs. For public-facing services, bot traffic can be 30-50% of total volume. You're paying to store logs from Googlebot, not your customers.
+
+## Example
+
+<Tabs>
+  <Tab title="Before">
+    ```json
+    {
+      "@timestamp": "2024-01-15T10:30:00Z",
+      "service.name": "marketing-site",
+      "http.method": "GET",
+      "http.target": "/pricing",
+      "http.status_code": 200,
+      "http.user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    }
+    ```
+  </Tab>
+  <Tab title="After">
+    Dropped entirely.
+  </Tab>
+</Tabs>
+
+Tero generates a scoped policy for each service where bot traffic is detected:
+
+```yaml
+id: drop-bot-traffic-marketing-site
+name: Drop bot traffic from marketing-site
+description: Drop requests from known crawlers and scrapers.
+log:
+  match:
+    - resource_attribute: service.name
+      exact: marketing-site
+    - log_attribute: http.user_agent
+      regex: "(Googlebot|bingbot|Slackbot|AhrefsBot|facebookexternalhit)"
+  keep: none
+```
+
+<Tip>
+  Bot traffic patterns are consistent across services. You can expand the scope to apply org-wide.
+</Tip>
+
+## Recommended enforcement
+
+<Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge" horizontal>
+  Drop bot traffic logs before they reach your provider. Immediate volume reduction.
+</Card>
+
+Bot traffic is external noise. Your application didn't decide to log these requests - they just happened. Dropping them at the edge is the simplest fix.
+
+## How it works
+
+Tero identifies bot traffic through multiple signals:
+
+- **Known user agents**: Bots usually self-identify. `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves in the user agent string.
+- **Missing browser signals**: Real browsers send cookies, referrers, and consistent header patterns. Requests missing these signals are likely automated.
+- **Request patterns**: Bots often crawl systematically - sequential paths, predictable timing, no session continuity.
+
+A request that matches bot patterns and comes from a public-facing endpoint is flagged. Internal service traffic is not flagged, even if it lacks browser signals.

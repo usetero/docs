@@ -1,0 +1,64 @@
+---
+title: "Create tickets"
+description: "Assign work to engineers in Linear or GitHub Issues"
+icon: "ticket"
+iconType: "duotone"
+---
+
+<Badge color="orange" icon="clock">Variable</Badge>
+
+Create a ticket and assign it to the right team. The engineer investigates, decides on the fix, and resolves it on their schedule.
+
+<Note>
+Use this when humans need to make decisions, the fix requires context you don't have, or you want to delegate without prescribing the solution.
+</Note>
+
+## How it works
+
+Tero creates a ticket in your issue tracker with all the context needed to understand and fix the problem. The ticket is assigned based on service ownership from your [service catalog](/context/services).
+
+## Setup
+
+Connect your issue tracker:
+
+<CardGroup cols={2}>
+  <Card title="Linear" icon="square-kanban" href="/integrations/linear">
+    Connect Linear to create issues in the right team's backlog.
+  </Card>
+  <Card title="GitHub Issues" icon="github" href="/integrations/github">
+    Create issues in the repository that owns the service.
+  </Card>
+</CardGroup>
+
+## Example
+
+Tero identifies that `user-service` has debug mode enabled. It's been emitting DEBUG-level logs for 3 days, generating 10x normal volume.
+
+You approve the rule and select "Create tickets." Tero creates a ticket in Linear:
+
+```
+Title: Debug mode left on in user-service
+
+user-service has been emitting DEBUG logs for 3 days.
+This is generating 10x normal log volume (~$2,400/day in excess costs).
+
+Debug logging was likely enabled for troubleshooting and not disabled afterward.
+
+Action needed:
+- Verify debug mode should be off
+- Update the log level configuration
+- Consider adding alerts for prolonged debug mode
+
+Identified by Tero: https://app.tero.dev/rules/abc123
+```
+
+The ticket is assigned to the user-service team based on your service catalog. They investigate, change the configuration, and close the ticket.
+
+## When to use
+
+Create tickets works best when:
+
+- The fix requires human judgment (is this intentional?)
+- Multiple solutions exist and the team should choose
+- You want to track the work formally
+- The issue isn't urgent enough for immediate action
