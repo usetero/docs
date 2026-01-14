@@ -1,68 +1,94 @@
 ---
 title: "Data Quality"
 sidebarTitle: "Overview"
-description: "How Tero drives up the quality of your observability data"
+description: "What Tero finds and how you'll work through it"
 icon: "sparkles"
 iconType: "duotone"
 ---
 
 Tero analyzes your data and surfaces rules. Each rule is a specific statement about what's wrong: this field duplicates that one, this log is a health check probe, this event fires a million times but represents one problem.
 
-Rules are organized by [category](/data-quality/categories/overview). Each category is a type of mistake, something concrete that shouldn't be in your data.
-
-## How Tero evaluates
-
-Tero evaluates every log event, metric, and trace span against everything in your [context graph](/context/overview): query history, dashboards, alerts, service context, known failure scenarios. Not just one signal. All of them.
-
-Some decisions come from evidence. You've never queried `k8s.pod.uid` in six months? That's a strong signal it's not useful. A metric tag appears in zero dashboards and zero alerts? Another signal.
-
-Other decisions come from reasoning. Two fields have identical values, so one is redundant. A tag is an internal Kubernetes identifier and you have the human-readable name, so the UID serves no purpose. A log fires during health checks but never during real requests? Infrastructure noise.
-
-Evidence and reasoning together. The same way you'd evaluate waste if you had time to look at every piece of telemetry. Tero does it continuously.
+Rules are organized by category. Each category is a type of mistake, something concrete that shouldn't be in your data.
 
 ## The trust ladder
 
-Once Tero finds issues, it organizes them by risk level so you can start with the obvious stuff and build confidence before tackling anything nuanced.
+Tero organizes issues by risk level. Start at the top and work your way down.
 
 <CardGroup cols={1}>
   <Card title="Zero risk" icon="circle-check" color="#10b981" horizontal>
-    You'll agree immediately: [Redundant attributes](/data-quality/categories/logs/redundant-attributes), [Leftover debug logs](/data-quality/categories/logs/leftover-debug-logs), [PII leakage](/data-quality/categories/logs/pii-leakage), and more
+    You'll agree immediately: redundant attributes, leftover debug logs, malformed data
   </Card>
   <Card title="Low risk" icon="circle-half-stroke" color="#f59e0b" horizontal>
-    Straightforward but worth a glance: [Health checks](/data-quality/categories/logs/health-checks), [Bot traffic](/data-quality/categories/logs/bot-traffic), [Unintended tool metadata](/data-quality/categories/logs/unintended-tool-metadata), and more
+    Straightforward but worth a glance: health checks, bot traffic, unintended tool metadata
   </Card>
   <Card title="Medium risk" icon="circle-exclamation" color="#ef4444" horizontal>
-    Requires discussion with the team: [Excessive payloads](/data-quality/categories/logs/excessive-payloads), [PII leakage](/data-quality/categories/logs/pii-leakage), [Debug mode left on](/data-quality/categories/logs/debug-mode-left-on), and more
+    Requires discussion with the team: excessive payloads, debug mode left on, sampling decisions
   </Card>
 </CardGroup>
 
-[See all categories →](/data-quality/categories/overview)
+Pick a category, look at examples from your data, approve if you agree. You review categories, not individual rules. Your ruleset grows over time.
 
-## Working through it
+## Categories
 
-Start at the top of the ladder and work your way down. You don't review rules one by one. You review categories.
+### Logs
 
-<Steps>
-  <Step title="Open a category">
-    Pick one. Start with something obvious like [redundant attributes](/data-quality/categories/logs/redundant-attributes) or [malformed data](/data-quality/categories/logs/malformed-data).
-  </Step>
-  <Step title="Look at examples">
-    Tero shows you real instances from your data. Understand why it's flagged. See the pattern.
-  </Step>
-  <Step title="Approve">
-    If you agree, approve the whole category. Tero handles the rest.
-  </Step>
-  <Step title="Automate or review">
-    Some categories you'll automate forever. Others you'll want to review each time. Your call.
-  </Step>
-</Steps>
+Some categories affect attributes (fields within a log). Others affect entire events.
 
-Your ruleset grows over time. New rules surface as your systems evolve. You review incrementally. The work compounds.
+**Attribute-level** — the log stays, specific fields get removed:
 
-## No regression
+<CardGroup cols={2}>
+  <Card title="Redundant attributes" icon="copy" href="/data-quality/categories/logs/redundant-attributes">
+    Two fields with the same value
+  </Card>
+  <Card title="Unintended tool metadata" icon="wrench" href="/data-quality/categories/logs/unintended-tool-metadata">
+    Fields added by agents you never search
+  </Card>
+  <Card title="Excessive payloads" icon="weight-hanging" href="/data-quality/categories/logs/excessive-payloads">
+    Response bodies and large nested objects
+  </Card>
+</CardGroup>
 
-Once approved, rules are enforced. You [choose how](/data-quality/enforcement/overview): configure your provider, push to the edge, open PRs, create tickets.
+**Event-level** — the entire log gets dropped or sampled:
 
-If a problem resurfaces (an engineer re-enables debug logging, a new service emits the same waste pattern) Tero catches it. You see it in your next review.
+<CardGroup cols={2}>
+  <Card title="Malformed data" icon="file-circle-xmark" href="/data-quality/categories/logs/malformed-data">
+    Binary blobs, corrupted output
+  </Card>
+  <Card title="Leftover debug logs" icon="bug" href="/data-quality/categories/logs/leftover-debug-logs">
+    Debug statements that shipped by accident
+  </Card>
+  <Card title="Debug mode left on" icon="toggle-on" href="/data-quality/categories/logs/debug-mode-left-on">
+    Verbose logging never disabled
+  </Card>
+  <Card title="Logs in hot path" icon="fire" href="/data-quality/categories/logs/logs-in-hot-path">
+    Log statements in middleware or tight loops
+  </Card>
+  <Card title="Health checks" icon="heart-pulse" href="/data-quality/categories/logs/health-checks">
+    Readiness probes, liveness checks
+  </Card>
+  <Card title="Bot traffic" icon="robot" href="/data-quality/categories/logs/bot-traffic">
+    Crawlers, scrapers, automated scanners
+  </Card>
+  <Card title="Excessive repetition" icon="volume-high" href="/data-quality/categories/logs/excessive-repetition">
+    High volume where cost outweighs value
+  </Card>
+  <Card title="PII leakage" icon="shield-exclamation" href="/data-quality/categories/logs/pii-leakage">
+    Sensitive data that ended up in logs
+  </Card>
+</CardGroup>
 
-Problems you fix stay fixed. That's the point.
+### Metrics
+
+<CardGroup cols={2}>
+  <Card title="High cardinality tags" icon="chart-scatter" href="/data-quality/categories/metrics/high-cardinality-tags">
+    Tags with unbounded values that explode storage
+  </Card>
+</CardGroup>
+
+## Enforcement
+
+Once you approve a rule, you choose how it gets enforced: configure your provider directly, push to the edge, open PRs, create tickets.
+
+If a problem resurfaces — an engineer re-enables debug logging, a new service emits the same waste pattern — Tero catches it. Problems you fix stay fixed.
+
+[See enforcement options →](/data-quality/enforcement/overview)

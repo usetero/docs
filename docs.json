@@ -55,7 +55,6 @@
                 "group": "Categories",
                 "icon": "layer-group",
                 "pages": [
-                  "data-quality/categories/overview",
                   {
                     "group": "Logs",
                     "icon": "file-lines",
