@@ -1,0 +1,263 @@
+---
+title: "PII leakage"
+description: "Sensitive data that ended up in logs by accident"
+icon: "shield-exclamation"
+iconType: "duotone"
+---
+
+<Badge color="green" icon="circle-check">Zero risk</Badge>
+
+Credit card numbers, emails, SSNs, access tokens. Sensitive data that ended up in logs by accident. A developer logs a request object. An error message includes data it shouldn't. A third-party library dumps more than you expected.
+
+## Why it happens
+
+Developers log context for debugging. Sometimes that context includes sensitive fields. A payment service logs the full request body. An auth service logs tokens for troubleshooting. An error handler dumps the entire user object.
+
+Nobody intends to leak PII. But it happens. And once it's in your observability provider, you have a compliance problem.
+
+## Example
+
+<Tabs>
+  <Tab title="Credit card numbers">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "payment-service",
+          "event": "payment.processed",
+          "card_number": "4111111111111111",
+          "amount": 99.99
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "payment-service",
+          "event": "payment.processed",
+          "amount": 99.99
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Tero generates the following policy:
+
+    ```yaml
+    id: redact-credit-card-payment-service
+    name: Redact credit card numbers from payment-service
+    description: Drop card_number field containing credit card data.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: payment-service
+        - log_attribute: card_number
+          regex: "^[0-9]{13,19}$"
+      transform:
+        remove:
+          - log_attribute: card_number
+    ```
+  </Tab>
+  <Tab title="Social Security numbers">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "identity-service",
+          "event": "identity.verified",
+          "user_id": "usr_abc123",
+          "ssn": "123-45-6789"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "identity-service",
+          "event": "identity.verified",
+          "user_id": "usr_abc123"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Tero generates the following policy:
+
+    ```yaml
+    id: redact-ssn-identity-service
+    name: Redact SSNs from identity-service
+    description: Drop ssn field containing Social Security numbers.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: identity-service
+        - log_attribute: ssn
+          regex: "^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+      transform:
+        remove:
+          - log_attribute: ssn
+    ```
+  </Tab>
+  <Tab title="Email addresses">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "notification-service",
+          "event": "email.sent",
+          "recipient": "alice@example.com",
+          "template": "welcome"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "notification-service",
+          "event": "email.sent",
+          "template": "welcome"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Tero generates the following policy:
+
+    ```yaml
+    id: redact-email-notification-service
+    name: Redact email addresses from notification-service
+    description: Drop recipient field containing email addresses.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: notification-service
+        - log_attribute: recipient
+          regex: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+      transform:
+        remove:
+          - log_attribute: recipient
+    ```
+  </Tab>
+</Tabs>
+
+Each PII pattern gets its own policy. You approve them individually based on your compliance requirements.
+
+## Recommended enforcement
+
+<CardGroup cols={2}>
+  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+    Redact PII before data leaves your network. The data never reaches your provider.
+  </Card>
+  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+    Fix the instrumentation so PII is never logged in the first place.
+  </Card>
+</CardGroup>
+
+Edge enforcement is critical here. Redacting at the edge means the sensitive data never leaves your infrastructure. No cleanup timeline. No breach notifications. The blast radius is zero because the data never reached your provider.
+
+But you should also fix the source. Open a PR to remove the sensitive fields from the log statement entirely.
+
+## How it works
+
+Tero scans log content for patterns that match sensitive data using regex patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
+
+When Tero finds sensitive data, it identifies the field and the service. You can then redact (replace with `[REDACTED]`), hash (replace with a consistent hash for correlation), or drop the field entirely.
+
+### Supported patterns
+
+Each category below can be approved as a set of policies. Approve the categories relevant to your compliance requirements.
+
+<AccordionGroup>
+  <Accordion title="Personal information">
+    - Credit card numbers (Visa, Mastercard, Amex, Discover)
+    - Social Security numbers (US)
+    - National Insurance numbers (UK)
+    - Email addresses
+    - Phone numbers
+    - IP addresses
+    - IBANs
+  </Accordion>
+  
+  <Accordion title="Cloud providers">
+    - AWS access keys and secret keys
+    - GCP API keys
+    - Azure AD client secrets
+    - Alibaba access keys
+    - DigitalOcean tokens
+    - Heroku API keys
+    - Cloudflare API keys
+    - Databricks API tokens
+  </Accordion>
+  
+  <Accordion title="Source control & CI/CD">
+    - GitHub tokens (PAT, OAuth, App, Fine-grained)
+    - GitLab tokens (PAT, Deploy, Runner, CI/CD job)
+    - Bitbucket client secrets
+    - Travis CI tokens
+    - CircleCI tokens
+    - Drone CI tokens
+  </Accordion>
+  
+  <Accordion title="Communication & collaboration">
+    - Slack tokens (bot, user, webhook)
+    - Discord tokens
+    - Telegram bot tokens
+    - Microsoft Teams webhooks
+    - Mattermost tokens
+    - Twilio API keys
+  </Accordion>
+  
+  <Accordion title="Databases & infrastructure">
+    - Database connection strings
+    - Planetscale tokens
+    - MongoDB connection strings
+    - Redis connection strings
+    - Elasticsearch credentials
+  </Accordion>
+  
+  <Accordion title="Payment & financial">
+    - Stripe API keys
+    - Square access tokens
+    - Plaid API tokens
+    - Coinbase access tokens
+    - GoCardless tokens
+  </Accordion>
+  
+  <Accordion title="AI & ML services">
+    - OpenAI API keys
+    - Anthropic API keys
+    - Hugging Face tokens
+    - Cohere API tokens
+  </Accordion>
+  
+  <Accordion title="Observability & monitoring">
+    - Datadog access tokens
+    - New Relic API keys
+    - Grafana API keys
+    - Sentry tokens
+    - Dynatrace API tokens
+  </Accordion>
+  
+  <Accordion title="SaaS & productivity">
+    - Notion API tokens
+    - Asana client secrets
+    - Linear API keys
+    - Jira API tokens
+    - Shopify access tokens
+    - SendGrid API tokens
+    - Mailchimp API keys
+  </Accordion>
+  
+  <Accordion title="Cryptographic material">
+    - Private keys (RSA, DSA, EC, PGP)
+    - JWTs
+    - PKCS12 files
+    - Age secret keys
+  </Accordion>
+</AccordionGroup>

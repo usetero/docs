@@ -1,0 +1,82 @@
+---
+title: "Enforce at edge"
+description: "Execute rules before data leaves your network"
+icon: "server"
+iconType: "duotone"
+---
+
+<Badge color="green" icon="bolt">Immediate</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
+
+Drop, sample, or transform telemetry before it leaves your infrastructure. No code changes, no provider configuration.
+
+<Note>
+This is the most common enforcement method. Most [data quality categories](/data-quality/categories/overview) recommend it.
+</Note>
+
+## How it works
+
+[Tero Edge](/edge/overview) runs in your infrastructure as a proxy. It periodically syncs with the Tero control plane to fetch policies and applies them in real time.
+
+<Tabs>
+  <Tab title="Datadog">
+    <Frame>
+      <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Enforce at edge with Datadog" />
+    </Frame>
+  </Tab>
+  <Tab title="Splunk">
+    <Frame>
+      <img src="/images/how-it-works-splunk-4-in-infrastructure.svg" alt="Enforce at edge with Splunk" />
+    </Frame>
+  </Tab>
+  <Tab title="OpenTelemetry">
+    <Frame>
+      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="Enforce at edge with OpenTelemetry" />
+    </Frame>
+  </Tab>
+</Tabs>
+
+## Setup
+
+Deploy the proxy alongside your existing telemetry pipeline:
+
+<CardGroup cols={2}>
+  <Card title="Datadog Agent" icon="dog" href="/integrations/datadog-agent">
+    Deploy alongside the Datadog Agent on Kubernetes.
+  </Card>
+  <Card title="OpenTelemetry Collector" icon="circle-nodes" href="/edge/distributions/otlp">
+    Deploy alongside the OTel Collector.
+  </Card>
+</CardGroup>
+
+## Example
+
+Tero identifies that `checkout-api` is emitting 2.3 million health check logs per day. Kubernetes probes hit `/health` every 10 seconds on every pod. The logs have never been queried and don't appear in any dashboard or alert.
+
+You approve the rule and select "Enforce at edge." Tero generates this policy:
+
+```yaml
+id: drop-health-checks-checkout-api
+name: Drop health check logs from checkout-api
+log:
+  match:
+    - resource_attribute: service.name
+      exact: checkout-api
+    - log_attribute: http.target
+      regex: "^/(health|ready|live)"
+    - log_attribute: http.status_code
+      exact: "200"
+  keep: none
+```
+
+The policy syncs to Edge within seconds. Edge begins dropping logs that match: requests to `checkout-api` on health check paths with status code `200`. Failed health checks (non-200) still flow through since those have debugging value.
+
+Your data quality dashboard updates in real time. You see the volume from `checkout-api` drop immediately. If something goes wrong, disable the rule and the policy is removed on the next sync. Logs flow normally again.
+
+## When to use
+
+Enforce at edge works best when:
+
+- You want immediate impact without code changes
+- The waste is infrastructure noise (health checks, bot traffic, tool metadata)
+- You need to reduce costs quickly while planning a permanent fix
+- You want to block temporarily and revert easily

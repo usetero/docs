@@ -1,45 +1,51 @@
 ---
 title: "Quickstart"
-description: "Connect Tero to Datadog in minutes"
+description: "Your first rule in minutes"
 icon: "rocket"
 iconType: "duotone"
 ---
 
-<Tabs>
-  <Tab title="CLI">
-    <Steps>
-      <Step title="Install the CLI">
-        <CodeGroup>
-        ```bash curl
-        curl -sSfL https://sh.usetero.com | sh
-        ```
+<Steps>
+  <Step title="Install">
+    <CodeGroup>
+    ```bash curl
+    curl -sSfL https://sh.usetero.com | sh
+    ```
 
-        ```bash Homebrew
-        brew install usetero/tap/tero
-        ```
+    ```bash Homebrew
+    brew install usetero/tap/tero
+    ```
 
-        ```bash Scoop (Windows)
-        scoop bucket add tero https://github.com/usetero/scoop-bucket
-        scoop install tero
-        ```
+    ```bash Scoop (Windows)
+    scoop bucket add tero https://github.com/usetero/scoop-bucket
+    scoop install tero
+    ```
+    </CodeGroup>
+  </Step>
 
-        ```bash Docker
-        docker pull usetero/tero
-        ```
-        </CodeGroup>
-      </Step>
+  <Step title="Connect">
+    ```bash
+    tero
+    ```
 
-      <Step title="Connect Datadog">
-        ```bash
-        tero
-        ```
+    Connect your observability platform. Datadog, Splunk, or wherever your data lives. Read-only by default.
+  </Step>
 
-        On first run, Tero walks you through authentication and connecting your Datadog account with a read-only API key. Once connected, Tero starts building context from your telemetry.
-      </Step>
+  <Step title="See your first rules">
+    ```
+    /rules
+    ```
 
-      <Step title="Ask your first question">
-        Once context is built, you're ready to ask: [How much data is waste?](/questions/waste/getting-started)
-      </Step>
-    </Steps>
-  </Tab>
-</Tabs>
+    Tero surfaces rules organized by category: redundant attributes, health check logs, stray debugging. Pick something obvious. Approve it.
+  </Step>
+
+  <Step title="That's it">
+    Your first rule is enforced. Explore from here:
+
+    - `/services`, `/logs` — navigate your data
+    - `@checkout-api` — reference any context
+    - Ask naturally: "What's the noisiest service?" "Why is this flagged?"
+
+    Every rule you approve builds leverage.
+  </Step>
+</Steps>

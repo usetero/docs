@@ -1,0 +1,45 @@
+---
+title: "Enforcement"
+sidebarTitle: "Overview"
+description: "Where and how rules get enforced"
+icon: "gavel"
+iconType: "duotone"
+---
+
+You approved a rule. Now what?
+
+Tero enforces it. You choose where and how. Some options are immediate and automatic. Others delegate to your engineers.
+
+<CardGroup cols={2}>
+  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+    Execute rules before data leaves your network. Drop, sample, transform, redact.
+  </Card>
+  <Card title="Enforce in provider" icon="cloud" href="/data-quality/enforcement/enforce-in-provider">
+    Configure exclusion filters and routing rules directly via API. No deployment required.
+  </Card>
+  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+    Fix instrumentation at the source. Tero opens the PR, your team reviews.
+  </Card>
+  <Card title="Create tickets" icon="ticket" href="/data-quality/enforcement/create-tickets">
+    Assign work to engineers in Linear or GitHub Issues.
+  </Card>
+  <Card title="Notify" icon="bell" href="/data-quality/enforcement/notify">
+    Alert teams in Slack or email.
+  </Card>
+  <Card title="Set SLOs" icon="bullseye" href="/data-quality/enforcement/set-slos">
+    Quality targets for teams to meet. Track progress over time.
+  </Card>
+</CardGroup>
+
+## Which to use?
+
+| Method | Resolution | Reversible | Best for |
+|--------|------------|------------|----------|
+| <Icon icon="server" /> [Enforce at edge](/data-quality/enforcement/enforce-at-edge) | <Badge color="green" icon="bolt">Immediate</Badge> | <Badge color="green" icon="rotate-left">Reversible</Badge> | Most categories |
+| <Icon icon="cloud" /> [Enforce in provider](/data-quality/enforcement/enforce-in-provider) | <Badge color="green" icon="bolt">Immediate</Badge> | <Badge color="green" icon="rotate-left">Reversible</Badge> | No Edge deployed |
+| <Icon icon="code-pull-request" /> [Open PRs](/data-quality/enforcement/open-prs) | <Badge color="orange" icon="clock">Variable</Badge> | <Badge color="green" icon="rotate-left">Reversible</Badge> | Code-level fixes |
+| <Icon icon="ticket" /> [Create tickets](/data-quality/enforcement/create-tickets) | <Badge color="orange" icon="clock">Variable</Badge> | — | Human decisions needed |
+| <Icon icon="bell" /> [Notify](/data-quality/enforcement/notify) | <Badge color="orange" icon="clock">Variable</Badge> | — | Awareness |
+| <Icon icon="bullseye" /> [Set SLOs](/data-quality/enforcement/set-slos) | <Badge color="gray" icon="chart-line">Ongoing</Badge> | <Badge color="green" icon="rotate-left">Reversible</Badge> | Long-term tracking |
+
+Tero recommends an enforcement method for each category. You can override, combine, or change later.

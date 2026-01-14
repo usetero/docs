@@ -1,29 +1,73 @@
 ---
 title: "How Tero works"
 sidebarTitle: "How Tero works"
-description: "Connect, build context, ask questions, take action"
+description: "Connect, build context, review rules, enforce"
 icon: "gears"
 iconType: "duotone"
 ---
 
-import HowItWorksDatadog from '/snippets/how-it-works-datadog.mdx';
-import HowItWorksSplunk from '/snippets/how-it-works-splunk.mdx';
-import HowItWorksOtel from '/snippets/how-it-works-otel.mdx';
+## 1. Connect
 
-Tero connects to your existing observability tools.
+<Frame>
+  <img src="/images/how-it-works-generic-1.svg" alt="Connect to your observability stack" />
+</Frame>
 
-<Tabs>
-  <Tab title="Datadog">
-    <HowItWorksDatadog />
-  </Tab>
-  <Tab title="Splunk">
-    <HowItWorksSplunk />
-  </Tab>
-  <Tab title="OpenTelemetry">
-    <HowItWorksOtel />
-  </Tab>
-</Tabs>
+Tero connects to your observability stack via API: Datadog, Splunk, your collectors, your pipelines. Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
 
-<Note>
-See [Integrations](/integrations/overview) for provider-specific details.
-</Note>
+## 2. Build context
+
+<Frame>
+  <img src="/images/how-it-works-generic-2.svg" alt="Build context from your data" />
+</Frame>
+
+Tero analyzes your telemetry and builds [context](/context). Billions of raw logs compress into thousands of semantic log events. Each is understood: what it represents, when it matters, which service produces it. Services, dependencies, and failure scenarios get connected into a graph.
+
+This is the foundation. Not just a catalog of your data — a semantic understanding of what it means.
+
+## 3. Review and approve rules
+
+<Frame>
+  <img src="/images/how-it-works-generic-3.svg" alt="Review and approve rules" />
+</Frame>
+
+Tero analyzes the context and surfaces rules. Specific statements about what's waste and why.
+
+Rules are organized by category: redundant attributes, health check logs, stray debugging, verbose payloads, repetitive events, PII leakage. Each category has a risk level. Start with the obvious: redundant fields that duplicate other fields, debug logs that shouldn't be in production. These are zero-risk. You'll agree immediately.
+
+As you build confidence, go deeper. Sampling high-volume events. Trimming verbose payloads. Categories that require more judgment.
+
+You can approve rules individually or entire categories at once. Automate what you're confident in. Your ruleset grows over time.
+
+## 4. Enforce
+
+Approved rules get enforced. You choose where:
+
+<AccordionGroup>
+  <Accordion title="In your provider" defaultOpen>
+    <Frame>
+      <img src="/images/how-it-works-generic-4-in-provider.svg" alt="Configure your provider" />
+    </Frame>
+
+    Configure exclusion filters, routing rules, or transformations directly via API. No deployment required. Fully reversible.
+  </Accordion>
+
+  <Accordion title="In your code">
+    <Frame>
+      <img src="/images/how-it-works-generic-4-in-code.svg" alt="Fix it in your code" />
+    </Frame>
+
+    Open PRs to fix instrumentation at the source. Or create tickets for engineers to handle on their schedule.
+  </Accordion>
+
+  <Accordion title="In your infrastructure">
+    <Frame>
+      <img src="/images/how-it-works-generic-4-in-infrastructure.svg" alt="Execute at the edge" />
+    </Frame>
+
+    Execute rules at the [edge](/edge) before data leaves your network. Drop-in replacements for collectors you already run. Same config, new capabilities.
+  </Accordion>
+</AccordionGroup>
+
+Rules stay enforced. Tero monitors for regression. If a problem resurfaces — an engineer re-enables debug logging, a new service emits the same waste pattern — Tero catches it.
+
+New rules surface as your systems evolve. You review incrementally. Your ruleset grows. Problems you fix stay fixed.
