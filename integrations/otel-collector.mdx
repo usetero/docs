@@ -119,16 +119,26 @@ flowchart LR
         spec:
           mode: deployment
           config:
+            receivers:
+              otlp:
+                protocols:
+                  grpc:
+                    endpoint: 0.0.0.0:4317
+                  http:
+                    endpoint: 0.0.0.0:4318
             exporters:
               otlphttp:
                 endpoint: http://localhost:8080
             service:
               pipelines:
                 logs:
+                  receivers: [otlp]
                   exporters: [otlphttp]
                 metrics:
+                  receivers: [otlp]
                   exporters: [otlphttp]
                 traces:
+                  receivers: [otlp]
                   exporters: [otlphttp]
           volumes:
             - name: tero-edge-config
@@ -224,16 +234,26 @@ flowchart LR
               periodSeconds: 5
 
         config:
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                  endpoint: 0.0.0.0:4317
+                http:
+                  endpoint: 0.0.0.0:4318
           exporters:
             otlphttp:
               endpoint: http://localhost:8080
           service:
             pipelines:
               logs:
+                receivers: [otlp]
                 exporters: [otlphttp]
               metrics:
+                receivers: [otlp]
                 exporters: [otlphttp]
               traces:
+                receivers: [otlp]
                 exporters: [otlphttp]
         ```
       </Tab>
