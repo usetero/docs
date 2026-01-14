@@ -69,7 +69,8 @@
                       "data-quality/categories/logs/logs-in-hot-path",
                       "data-quality/categories/logs/health-checks",
                       "data-quality/categories/logs/bot-traffic",
-                      "data-quality/categories/logs/excessive-repetition"
+                      "data-quality/categories/logs/excessive-repetition",
+                      "data-quality/categories/logs/pii-leakage"
                     ]
                   },
                   {
@@ -86,8 +87,8 @@
                 "icon": "gavel",
                 "pages": [
                   "data-quality/enforcement/overview",
-                  "data-quality/enforcement/enforce-in-provider",
                   "data-quality/enforcement/enforce-at-edge",
+                  "data-quality/enforcement/enforce-in-provider",
                   "data-quality/enforcement/open-prs",
                   "data-quality/enforcement/create-tickets",
                   "data-quality/enforcement/notify",
