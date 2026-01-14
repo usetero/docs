@@ -58,53 +58,224 @@ Edge only proxies telemetry (logs, metrics, traces). Other agent traffic
 
   </Step>
 
-  <Step title="Create the secret">
-    Store your API key as a Kubernetes secret:
+  <Step title="Create the namespace and secret">
+    Create the namespace and store your API key as a Kubernetes secret:
 
     ```bash
+    kubectl create namespace tero-system
+
     kubectl create secret generic tero-edge \
+      --namespace tero-system \
       --from-literal=api-key=YOUR_API_KEY
     ```
 
   </Step>
 
   <Step title="Create the Edge ConfigMap">
-    Create a ConfigMap with your Edge configuration and policies:
+    Create a ConfigMap with your Edge configuration. Select your Datadog region:
 
-    ```yaml tero-edge-config.yaml
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: tero-edge-config
-    data:
-      config.json: |
-        {
-          "listen_address": "0.0.0.0",
-          "listen_port": 8080,
-          "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
-          "log_level": "info",
-          "max_body_size": 1048576,
-          "policy_providers": [
+    <Tabs>
+      <Tab title="US1">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
             {
-              "id": "tero",
-              "type": "http",
-              "url": "https://sync.usetero.com/v1/policy/sync",
-              "headers": [
-                { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
-              ],
-              "poll_interval_secs": 60
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+              "metrics_url": "https://api.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
             }
-          ]
-        }
-    ```
+        ```
+      </Tab>
+      <Tab title="US3">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.us3.datadoghq.com",
+              "metrics_url": "https://api.us3.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="US5">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.us5.datadoghq.com",
+              "metrics_url": "https://api.us5.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="EU">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.datadoghq.eu",
+              "metrics_url": "https://api.datadoghq.eu",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+      <Tab title="AP1">
+        ```yaml tero-edge-config.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: tero-edge-config
+          namespace: tero-system
+        data:
+          config.json: |
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://agent-http-intake.logs.ap1.datadoghq.com",
+              "metrics_url": "https://api.ap1.datadoghq.com",
+              "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ]
+                }
+              ]
+            }
+        ```
+      </Tab>
+    </Tabs>
+
+    <Accordion title="Using a file provider instead?">
+      If you prefer to manage policies locally instead of syncing from Tero, use a file provider. Add `policies.json` to your ConfigMap:
+
+      ```yaml tero-edge-config.yaml
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: tero-edge-config
+        namespace: tero-system
+      data:
+        config.json: |
+          {
+            "listen_address": "0.0.0.0",
+            "listen_port": 8080,
+            "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
+            "metrics_url": "https://api.datadoghq.com",
+            "workspace_id": "90A6EFC2-27B8-41BC-9343-43BFB1DF0732",
+            "log_level": "info",
+            "max_body_size": 1048576,
+            "policy_providers": [
+              {
+                "id": "file",
+                "type": "file",
+                "path": "/etc/tero/policies.json"
+              }
+            ]
+          }
+        policies.json: |
+          {
+            "policies": [
+              {
+                "id": "drop-debug-logs",
+                "name": "drop-debug-logs",
+                "enabled": true,
+                "log": {
+                  "match": [{ "log_field": "severity_text", "regex": "DEBUG" }],
+                  "keep": "none"
+                }
+              }
+            ]
+          }
+      ```
+
+      Update `upstream_url` and `metrics_url` for your Datadog region.
+    </Accordion>
 
     ```bash
     kubectl apply -f tero-edge-config.yaml
     ```
-
-    <Note>
-    Adjust `upstream_url` for your [Datadog region](https://docs.datadoghq.com/getting_started/site/). For example, use `https://agent-http-intake.logs.us5.datadoghq.com` for US5.
-    </Note>
 
   </Step>
 
@@ -116,6 +287,7 @@ Edge only proxies telemetry (logs, metrics, traces). Other agent traffic
     kind: DaemonSet
     metadata:
       name: tero-edge
+      namespace: tero-system
       labels:
         app: tero-edge
     spec:
@@ -236,13 +408,13 @@ Edge only proxies telemetry (logs, metrics, traces). Other agent traffic
     Check that Edge pods are running:
 
     ```bash
-    kubectl get pods -l app=tero-edge
+    kubectl get pods -n tero-system -l app=tero-edge
     ```
 
     Check Edge logs for incoming traffic:
 
     ```bash
-    kubectl logs -l app=tero-edge --tail=50
+    kubectl logs -n tero-system -l app=tero-edge --tail=50
     ```
 
   </Step>
@@ -276,8 +448,7 @@ Tero API.
   "id": "tero",
   "type": "http",
   "url": "https://sync.usetero.com/v1/policy/sync",
-  "headers": [{ "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }],
-  "poll_interval_secs": 60
+  "headers": [{ "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }]
 }
 ```
 
@@ -335,7 +506,7 @@ options.
 Verify Edge is listening on the hostPort:
 
 ```bash
-kubectl get pods -l app=tero-edge -o wide
+kubectl get pods -n tero-system -l app=tero-edge -o wide
 ```
 
 Ensure both the agent and Edge have matching tolerations so they run on the same
@@ -346,7 +517,7 @@ nodes.
 Check Edge loaded policies successfully:
 
 ```bash
-kubectl logs -l app=tero-edge | grep -i policy
+kubectl logs -n tero-system -l app=tero-edge | grep -i policy
 ```
 
 **Traffic not reaching Datadog**
