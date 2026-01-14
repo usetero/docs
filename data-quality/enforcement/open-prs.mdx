@@ -1,0 +1,68 @@
+---
+title: "Open PRs"
+description: "Fix instrumentation at the source with pull requests"
+icon: "code-pull-request"
+iconType: "duotone"
+---
+
+<Badge color="orange" icon="clock">Variable</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
+
+Fix the problem at the source. Tero opens a pull request to remove or modify the instrumentation that's generating waste. Your team reviews and merges.
+
+<Note>
+Use this for code-level issues like leftover debug logs, excessive payloads, or logs in hot paths. The waste stops being generated instead of being filtered downstream.
+</Note>
+
+## How it works
+
+Tero analyzes your codebase to find the instrumentation generating the waste. It creates a branch, makes the change, and opens a pull request. Your team reviews the PR like any other code change.
+
+<Frame>
+  <img src="/images/how-it-works-generic-4-in-code.svg" alt="Open PRs" />
+</Frame>
+
+## Setup
+
+Connect your source control:
+
+<CardGroup cols={2}>
+  <Card title="GitHub" icon="github" href="/integrations/github">
+    Install the Tero GitHub App to enable pull requests.
+  </Card>
+</CardGroup>
+
+## Example
+
+Tero identifies a debug log statement in `checkout-api` that shipped to production. The log says `"got here lol"` and fires 50,000 times per day.
+
+You approve the rule and select "Open PRs." Tero locates the log statement in your codebase:
+
+```python
+# src/checkout/service.py, line 142
+def process_order(order):
+    logger.debug("got here lol")  # <-- Tero removes this line
+    ...
+```
+
+Tero opens a pull request:
+
+```
+Title: Remove debug log from checkout-api
+
+This debug statement shipped to production and generates 50,000 logs/day.
+It doesn't appear in any dashboard or alert.
+
+Identified by Tero: https://app.tero.dev/rules/abc123
+```
+
+Your team reviews the PR. Once merged and deployed, the logs stop being generated entirely. No filtering needed—the waste is gone at the source.
+
+## When to use
+
+Open PRs works best when:
+
+- The waste is clearly a mistake (debug logs, forgotten print statements)
+- The fix is straightforward (remove a line, change a log level)
+- You want a permanent fix, not ongoing filtering
+
+For configuration-based issues (debug mode left on), Tero can also open PRs to change config files if they're in version control.

@@ -1,0 +1,74 @@
+---
+title: "High cardinality tags"
+description: "Metric tags with unbounded values that explode storage"
+icon: "chart-scatter"
+iconType: "duotone"
+---
+
+<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
+
+Metric tags with unbounded or highly variable values. User IDs, request IDs, timestamps, IP addresses as tags. Each unique value creates a new time series, and your metric storage explodes.
+
+## Why it happens
+
+A developer adds a tag to help with debugging. `user_id` on a latency metric seems useful: you could see latency per user. But you have a million users. Now you have a million time series for one metric.
+
+Metrics are meant to be aggregated. Tags with high cardinality defeat the purpose. You end up with millions of sparse time series that nobody queries and cost a fortune to store.
+
+## Example
+
+<Tabs>
+  <Tab title="Before">
+    A request latency metric with user_id as a tag:
+    ```
+    http_request_duration_seconds{service="api", endpoint="/users", user_id="usr_abc123"} 0.045
+    http_request_duration_seconds{service="api", endpoint="/users", user_id="usr_def456"} 0.052
+    http_request_duration_seconds{service="api", endpoint="/users", user_id="usr_ghi789"} 0.038
+    ```
+    One metric × one endpoint × one million users = one million time series.
+  </Tab>
+  <Tab title="After">
+    ```
+    http_request_duration_seconds{service="api", endpoint="/users"} 0.045
+    ```
+    Tag removed. Aggregate the metric, query logs for per-user debugging.
+  </Tab>
+</Tabs>
+
+Tero generates a policy to remove the high-cardinality tag:
+
+```yaml
+id: remove-user-id-tag
+name: Remove user_id tag from all metrics
+description: Drop high-cardinality user_id tag. Creates millions of sparse time series.
+metric:
+  match:
+    - tag: user_id
+      exists: true
+  transform:
+    remove_tags:
+      - user_id
+```
+
+<Tip>
+  You can scope this to specific metrics if some legitimately need user-level granularity. But most teams apply it globally. If `user_id` is high cardinality, it's high cardinality everywhere.
+</Tip>
+
+## Recommended enforcement
+
+<CardGroup cols={2}>
+  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+    Strip the tag before metrics reach your provider.
+  </Card>
+  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+    Remove the tag from instrumentation code.
+  </Card>
+</CardGroup>
+
+The best fix is to remove the tag from instrumentation. If that's not possible, strip it at the edge before it reaches your metrics provider.
+
+## How it works
+
+Tero analyzes tag cardinality across your [context graph](/context/overview). Tags with thousands of unique values (user IDs, request IDs, session tokens) are flagged as high cardinality.
+
+Tero also checks whether these high-cardinality tags are ever used in queries or dashboards. A tag with 100,000 unique values that nobody filters by is a clear candidate for removal.

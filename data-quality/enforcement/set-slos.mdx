@@ -1,0 +1,56 @@
+---
+title: "Set SLOs"
+description: "Quality targets for teams to meet"
+icon: "bullseye"
+iconType: "duotone"
+---
+
+<Badge color="gray" icon="chart-line">Ongoing</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
+
+Define quality targets and track progress over time. Teams see their data quality score and work toward the target at their own pace.
+
+<Note>
+Use this for long-term improvement rather than immediate fixes. Good for organizational rollouts where you want to set expectations without mandating specific actions.
+</Note>
+
+## How it works
+
+Tero defines SLOs in your observability provider that measure data quality metrics. Teams see dashboards tracking their progress. Alerts fire when teams fall below target.
+
+## Setup
+
+Connect your provider with SLO support:
+
+<CardGroup cols={2}>
+  <Card title="Datadog" icon="dog" href="/integrations/datadog">
+    Tero creates SLOs using Datadog's SLO product.
+  </Card>
+</CardGroup>
+
+## Example
+
+You want the platform team to reduce waste from health check logs by 90% over the next quarter.
+
+You approve the rule and select "Set SLOs." Tero creates an SLO in Datadog:
+
+```
+Name: Health check log reduction - platform services
+Target: 90% reduction in health check log volume
+Window: 30 days rolling
+
+Current: 2.3M logs/day
+Target: 230K logs/day
+```
+
+The platform team sees this SLO in their Datadog dashboard. They decide how to hit the target—maybe they configure their ingress controller to stop logging health checks, or they deploy Edge policies, or they update their Kubernetes probes. The SLO tracks progress regardless of method.
+
+If the team falls below target, an alert fires. They investigate and course-correct.
+
+## When to use
+
+Set SLOs works best when:
+
+- You want to measure progress over time, not fix immediately
+- Teams should choose their own approach to hit the target
+- You're rolling out data quality org-wide and want accountability
+- The issue isn't urgent but should improve over time

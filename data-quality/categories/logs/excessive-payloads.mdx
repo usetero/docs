@@ -1,0 +1,77 @@
+---
+title: "Excessive payloads"
+description: "Response bodies and large nested objects"
+icon: "weight-hanging"
+iconType: "duotone"
+---
+
+<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
+
+Large data blobs embedded in logs. Full HTTP response bodies, entire database records, massive stack traces. Fields that add kilobytes to every log event.
+
+## Why it happens
+
+Developers log context for debugging. Sometimes that context is a full API response. Or an entire user object. Or a 500-line stack trace. It helps when investigating issues, but it ships to production and stays there forever.
+
+One log event with a 10KB response body, fired 100,000 times a day, is 1GB of storage. For one log pattern. In one service.
+
+## Example
+
+<Tabs>
+  <Tab title="Before">
+    ```json
+    {
+      "@timestamp": "2024-01-15T10:30:00Z",
+      "service.name": "order-service",
+      "event": "order.created",
+      "order_id": "ORD-12345",
+      "http.response.body": "{\"id\":\"ORD-12345\",\"items\":[{\"sku\":\"SKU-001\",\"name\":\"Widget Pro\",\"quantity\":2,\"price\":29.99},{\"sku\":\"SKU-002\",\"name\":\"Gadget Plus\",\"quantity\":1,\"price\":49.99}],\"shipping\":{\"method\":\"express\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Seattle\",\"state\":\"WA\",\"zip\":\"98101\",\"country\":\"US\"}},\"billing\":{\"method\":\"card\",\"last4\":\"4242\"},\"totals\":{\"subtotal\":109.97,\"shipping\":12.99,\"tax\":10.45,\"total\":133.41}}"
+    }
+    ```
+  </Tab>
+  <Tab title="After">
+    ```json
+    {
+      "@timestamp": "2024-01-15T10:30:00Z",
+      "service.name": "order-service",
+      "event": "order.created",
+      "order_id": "ORD-12345"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Tero generates a scoped policy for each service where excessive payloads exist:
+
+```yaml
+id: remove-response-body-order-service
+name: Remove response body from order-service
+description: Drop full HTTP response body. The order_id is preserved for lookup.
+log:
+  match:
+    - resource_attribute: service.name
+      exact: order-service
+    - log_attribute: event
+      exact: order.created
+  transform:
+    remove:
+      - log_attribute: http.response.body
+```
+
+<Tip>
+  Review these carefully. Some teams intentionally log full payloads for compliance or debugging. Discuss with the service owner before approving.
+</Tip>
+
+## Recommended enforcement
+
+<Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs" horizontal>
+  Fix at the source. The developer who added this logging should decide what to keep.
+</Card>
+
+Unlike infrastructure noise, excessive payloads are usually intentional logging decisions. The right fix is often to log less in the first place, not to strip fields at the edge.
+
+## How it works
+
+Tero identifies excessive payloads by analyzing field sizes across your [context graph](/context/overview). Fields that consistently exceed a size threshold (like `http.response.body` or `request.payload`) are flagged.
+
+Tero also checks whether these large fields are ever queried. A 10KB field that nobody searches is a clear candidate for removal. A 10KB field that appears in dashboards might be intentional.

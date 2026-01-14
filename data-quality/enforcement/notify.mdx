@@ -1,0 +1,57 @@
+---
+title: "Notify"
+description: "Alert teams in Slack or email"
+icon: "bell"
+iconType: "duotone"
+---
+
+<Badge color="orange" icon="clock">Variable</Badge>
+
+Send a notification to the right team. Lighter than a ticket—just awareness. The team decides whether to act.
+
+<Note>
+Use this for awareness without formal tracking. Good for low-priority issues or when you want human confirmation before taking action.
+</Note>
+
+## How it works
+
+Tero sends a message to Slack or email with context about the issue. The notification includes what Tero found, the impact, and a link to take action in Tero.
+
+## Setup
+
+Connect your notification channel:
+
+<CardGroup cols={2}>
+  <Card title="Slack" icon="slack" href="/integrations/slack">
+    Send notifications to channels or DMs based on service ownership.
+  </Card>
+</CardGroup>
+
+## Example
+
+Tero identifies that `payment-service` is logging full request payloads including credit card data (masked, but still present).
+
+You approve the rule and select "Notify." Tero sends a Slack message to #payments-team:
+
+```
+🔔 Tero identified an issue in payment-service
+
+payment-service is logging full request payloads (~15KB per log).
+This generates 2.1M logs/day at $3,200/day in costs.
+
+The payloads contain masked credit card data. While masked,
+this may still be a compliance concern.
+
+→ Review in Tero: https://app.tero.dev/rules/abc123
+```
+
+The team sees the message, investigates, and decides how to respond. They might open a PR, create a ticket, or dismiss if it's intentional.
+
+## When to use
+
+Notify works best when:
+
+- You want awareness without formal tracking
+- The issue is low priority
+- You want human confirmation before automated action
+- Multiple people should see it but one person will own the response

@@ -1,0 +1,59 @@
+---
+title: "Logs in hot path"
+description: "Log statements in middleware, tight loops, or high-frequency code"
+icon: "fire"
+iconType: "duotone"
+---
+
+<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
+
+Log statements that fire on every request, every iteration, or every tick. Middleware that logs every incoming request. Loops that log each item. Code that runs constantly and logs every time.
+
+## Why it happens
+
+A developer adds logging to understand how code behaves. The code runs more often than expected. A log statement in middleware fires on every request. A log inside a loop fires thousands of times per operation. A background job logs every tick.
+
+The log statement isn't wrong. It's just in the wrong place.
+
+## Example
+
+<Tabs>
+  <Tab title="Before">
+    Middleware logging every request:
+    ```json
+    {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
+    {"body": "Incoming request", "http.target": "/api/orders", "service.name": "api-gateway"}
+    {"body": "Incoming request", "http.target": "/api/products", "service.name": "api-gateway"}
+    {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
+    ```
+    Thousands per minute. Every request. No additional context.
+  </Tab>
+  <Tab title="After">
+    Log removed from middleware, or sampled to reduce volume.
+  </Tab>
+</Tabs>
+
+This is a code change. The log statement needs to be moved, removed, or made conditional.
+
+<Tip>
+  Tero detects this by identifying log events with extremely high volume but low variance. If a log fires 100,000 times with nearly identical content, it's probably in a hot path.
+</Tip>
+
+## Recommended enforcement
+
+<CardGroup cols={2}>
+  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+    Remove or relocate the log statement in code.
+  </Card>
+  <Card title="Create tickets" icon="ticket" href="/data-quality/enforcement/create-tickets">
+    Alert the team to review the logging pattern.
+  </Card>
+</CardGroup>
+
+The fix is usually in code: move the log outside the loop, add a condition, or remove it entirely. Sampling at the edge is a temporary fix but doesn't address the root cause.
+
+## How it works
+
+Tero identifies hot path logs by analyzing volume and variance in your [context graph](/context/overview). A log event that fires at extremely high rates with low content variance is flagged.
+
+The key signal is the ratio of volume to information. A log that fires 100,000 times and says the same thing each time isn't providing 100,000 pieces of information. It's providing one piece of information, repeated.

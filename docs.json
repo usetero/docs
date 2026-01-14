@@ -26,6 +26,10 @@
     }
   },
   "favicon": "/favicon.svg",
+  "banner": {
+    "content": "[Read about why data waste is observability's most important problem →](https://usetero.com/blog/the-question-your-observability-vendor-wont-answer)",
+    "dismissible": true
+  },
   "homepage": "introduction/what-is-tero",
   "navigation": {
     "tabs": [
@@ -44,28 +48,52 @@
             ]
           },
           {
-            "group": "Questions",
+            "group": "Data Quality",
             "pages": [
+              "data-quality/overview",
               {
-                "group": "How much data is waste?",
-                "icon": "trash-can",
+                "group": "Categories",
+                "icon": "layer-group",
                 "pages": [
-                  "questions/waste/getting-started",
-                  "questions/waste/how-it-works",
-                  "questions/waste/taking-action"
+                  "data-quality/categories/overview",
+                  {
+                    "group": "Logs",
+                    "icon": "file-lines",
+                    "pages": [
+                      "data-quality/categories/logs/redundant-attributes",
+                      "data-quality/categories/logs/unintended-tool-metadata",
+                      "data-quality/categories/logs/excessive-payloads",
+                      "data-quality/categories/logs/malformed-data",
+                      "data-quality/categories/logs/leftover-debug-logs",
+                      "data-quality/categories/logs/debug-mode-left-on",
+                      "data-quality/categories/logs/logs-in-hot-path",
+                      "data-quality/categories/logs/health-checks",
+                      "data-quality/categories/logs/bot-traffic",
+                      "data-quality/categories/logs/excessive-repetition"
+                    ]
+                  },
+                  {
+                    "group": "Metrics",
+                    "icon": "chart-line",
+                    "pages": [
+                      "data-quality/categories/metrics/high-cardinality-tags"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "How is my renewal looking?",
-                "icon": "file-contract",
+                "group": "Enforcement",
+                "icon": "gavel",
                 "pages": [
-                  "questions/renewal/getting-started",
-                  "questions/renewal/how-it-works",
-                  "questions/renewal/the-renewal-conversation"
+                  "data-quality/enforcement/overview",
+                  "data-quality/enforcement/enforce-in-provider",
+                  "data-quality/enforcement/enforce-at-edge",
+                  "data-quality/enforcement/open-prs",
+                  "data-quality/enforcement/create-tickets",
+                  "data-quality/enforcement/notify",
+                  "data-quality/enforcement/set-slos"
                 ]
-              },
-              "questions/data-spikes",
-              "questions/pii"
+              }
             ]
           },
           {
@@ -152,7 +180,6 @@
           }
         ]
       },
-
       {
         "tab": "Trust",
         "icon": "shield-check",
