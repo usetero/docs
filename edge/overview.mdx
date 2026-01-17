@@ -15,16 +15,14 @@ data, and transforming telemetry in real-time.
 
 ## Why Edge?
 
-Observability platforms charge by volume. As your infrastructure grows, so does
-the noise—debug logs, health checks, internal metrics. You're paying to store
-data you'll never query.
+As your infrastructure grows, so does the noise: debug logs, health checks, internal metrics. Data that clutters your dashboards and slows your queries.
 
-Edge solves this by processing telemetry in your environment:
+Edge processes telemetry in your environment before it leaves:
 
 - **Filter noise** before it leaves your infrastructure
 - **Redact sensitive data** to meet compliance requirements
 - **Transform fields** to normalize across services
-- **Sample high-volume events** to control costs
+- **Sample high-volume events** to reduce noise
 
 All without changing application code.
 
@@ -43,16 +41,13 @@ Applications → Edge → Observability Platform
 3. **Apply** actions: drop, sample, transform, or pass through
 4. **Forward** surviving telemetry to your backend
 
-[Policies](https://github.com/usetero/policy) are evaluated in parallel for each piece of telemetry. There's no
-sequential pipeline—matching policies contribute their actions, and the most
-restrictive action wins.
+[Policies](https://github.com/usetero/policy) are evaluated in parallel for each piece of telemetry. There's no sequential pipeline. Matching policies contribute their actions, and the most restrictive action wins.
 
 ## Key Features
 
 <CardGroup cols={2}>
   <Card title="Policy-Based Processing" icon="filter">
-    Define rules that match specific telemetry and apply actions. Policies are
-    atomic and independent—no dependencies between them.
+    Define rules that match specific telemetry and apply actions. Policies are atomic and independent.
   </Card>
   <Card title="Hot Reload" icon="rotate">
     Update policies without restarting. Edge watches for changes and applies

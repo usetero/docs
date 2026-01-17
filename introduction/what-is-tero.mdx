@@ -1,24 +1,16 @@
 ---
 title: "What is Tero?"
-description: "An intelligent control plane for observability data"
+description: "A control plane for observability data"
 icon: "robot"
 iconType: "duotone"
 ---
 
 <img src="/images/tero-hero.svg" alt="Tero" />
 
-Tero is an intelligent control plane for observability data.
+Most observability problems aren't platform problems. They're data problems: too much noise, not enough signal, no way to know what's worth keeping.
 
-It connects to your existing tools: Datadog, Splunk, your collectors, your pipelines. It builds [context](/context) from your data — every log event, every metric, every trace span. Not just the format. The meaning. What each log event represents, whether it matters, what's waste and what's valuable.
+Tero is a control plane for observability data. It connects to your existing stack (Datadog, Splunk, your collectors) and analyzes every log, metric, and trace. Not just the format. The meaning: what each event represents, whether it matters, what's waste.
 
-That understanding becomes rules.
+That understanding surfaces as [rules](/data-quality/overview): this field duplicates that one, this log is a health check firing 86,400 times a day, this debug statement shipped to production. You review, approve, and Tero enforces. Permanently.
 
-Tero surfaces them by category: redundant attributes, health check logs, stray debugging, verbose payloads, repetitive events, PII leakage. Each rule is a specific statement: this field duplicates that one, this log is infrastructure noise, this event fires a thousand times but represents one problem, this field contains a credit card number.
-
-You review. You approve. Tero enforces — *permanently*.
-
-Rules can execute at the [edge](/edge), configure your provider, open PRs in your code, or create tickets for your engineers. You choose how to act. Tero monitors for regression. Problems you fix stay fixed.
-
-This is the system you've been building manually: exclusion filters before renewals, pipeline rules you forgot about, Slack messages asking engineers to fix their logging. All of it formalized. All of it enforced. All of it permanent.
-
-Most teams find 40-70% of their observability data is waste. Tero eliminates it. Every rule you approve builds leverage.
+Like a control plane for your infrastructure, but for your data. Declare what clean looks like, enforce it everywhere, catch drift when it happens.

@@ -12,7 +12,7 @@ iconType: "duotone"
   <img src="/images/how-it-works-generic-1.svg" alt="Connect to your observability stack" />
 </Frame>
 
-Tero connects to your observability stack via API: Datadog, Splunk, your collectors, your pipelines. Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
+Tero connects to your observability stack via API: Datadog, Splunk, your collectors. Read-only by default. No agents, no code changes, no infrastructure changes. Your setup stays exactly as it is.
 
 ## 2. Build context
 
@@ -20,27 +20,23 @@ Tero connects to your observability stack via API: Datadog, Splunk, your collect
   <img src="/images/how-it-works-generic-2.svg" alt="Build context from your data" />
 </Frame>
 
-Tero analyzes your telemetry and builds [context](/context). Billions of raw logs compress into thousands of semantic log events. Each is understood: what it represents, when it matters, which service produces it. Services, dependencies, and failure scenarios get connected into a graph.
+Tero analyzes your telemetry and builds [context](/context/overview). Billions of raw logs compress into thousands of distinct log events. Each one is understood: what it represents, which service produces it, whether anyone queries it. Services, dependencies, and failure scenarios get connected into a graph.
 
-This is the foundation. Not just a catalog of your data — a semantic understanding of what it means.
+This is how Tero knows what's waste and what matters.
 
-## 3. Review and approve rules
+## 3. Review rules
 
 <Frame>
   <img src="/images/how-it-works-generic-3.svg" alt="Review and approve rules" />
 </Frame>
 
-Tero analyzes the context and surfaces [rules](/data-quality). Specific statements about what's waste and why.
+Tero surfaces [rules](/data-quality/overview): specific statements about what's wrong and why. This field duplicates that one. This log is a health check firing 86,400 times a day. This debug statement shipped to production.
 
-Rules are organized by [category](/data-quality#categories): redundant attributes, health check logs, stray debugging, verbose payloads, repetitive events, PII leakage. Each category has a risk level. Start with the obvious: redundant fields that duplicate other fields, debug logs that shouldn't be in production. These are zero-risk. You'll agree immediately.
-
-As you build confidence, go deeper. Sampling high-volume events. Trimming verbose payloads. Categories that require more judgment.
-
-You can approve rules individually or entire categories at once. Automate what you're confident in. Your ruleset grows over time.
+Rules are organized by [category](/data-quality/overview#categories): redundant attributes, health checks, leftover debugging, verbose payloads, PII leakage. You review with examples from your actual data. Approve what you agree with.
 
 ## 4. Enforce
 
-Approved rules get [enforced](/data-quality/enforcement). You choose where:
+Approved rules get [enforced](/data-quality/enforcement/overview). You choose where:
 
 <AccordionGroup>
   <Accordion title="In your provider" defaultOpen>
@@ -56,7 +52,7 @@ Approved rules get [enforced](/data-quality/enforcement). You choose where:
       <img src="/images/how-it-works-generic-4-in-code.svg" alt="Fix it in your code" />
     </Frame>
 
-    Open PRs to fix instrumentation at the source. Or create tickets for engineers to handle on their schedule.
+    Open PRs to fix instrumentation at the source, or create tickets for engineers to handle on their schedule.
   </Accordion>
 
   <Accordion title="In your infrastructure">
@@ -64,10 +60,8 @@ Approved rules get [enforced](/data-quality/enforcement). You choose where:
       <img src="/images/how-it-works-generic-4-in-infrastructure.svg" alt="Execute at the edge" />
     </Frame>
 
-    Execute rules at the [edge](/edge) before data leaves your network. Drop-in replacements for collectors you already run. Same config, new capabilities.
+    Execute rules at the [edge](/edge/overview) before data leaves your network. Drop-in replacements for collectors you already run.
   </Accordion>
 </AccordionGroup>
 
-Rules stay enforced. Tero monitors for regression. If a problem resurfaces — an engineer re-enables debug logging, a new service emits the same waste pattern — Tero catches it.
-
-New rules surface as your systems evolve. You review incrementally. Your ruleset grows. Problems you fix stay fixed.
+Tero monitors for regression. If a problem resurfaces, Tero catches it. Problems you fix stay fixed.

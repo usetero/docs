@@ -8,7 +8,7 @@ iconType: "duotone"
 
 Tero analyzes your data and surfaces rules. Each rule is a specific statement about what's wrong: this field duplicates that one, this log is a health check probe, this event fires a million times but represents one problem.
 
-Rules are organized by category. Each category is a type of mistake, something concrete that shouldn't be in your data.
+Rules are organized by category. Each category is a type of problem: something concrete that shouldn't be in your data.
 
 ## The trust ladder
 
@@ -34,7 +34,7 @@ Pick a category, look at examples from your data, approve if you agree. You revi
 
 Some categories affect attributes (fields within a log). Others affect entire events.
 
-**Attribute-level** — the log stays, specific fields get removed:
+**Attribute-level** (the log stays, specific fields get removed):
 
 <CardGroup cols={2}>
   <Card title="Redundant attributes" icon="copy" href="/data-quality/logs/redundant-attributes">
@@ -48,7 +48,7 @@ Some categories affect attributes (fields within a log). Others affect entire ev
   </Card>
 </CardGroup>
 
-**Event-level** — the entire log gets dropped or sampled:
+**Event-level** (the entire log gets dropped or sampled):
 
 <CardGroup cols={2}>
   <Card title="Malformed data" icon="file-circle-xmark" href="/data-quality/logs/malformed-data">
@@ -89,6 +89,4 @@ Some categories affect attributes (fields within a log). Others affect entire ev
 
 Once you approve a rule, you choose how it gets enforced: configure your provider directly, push to the edge, open PRs, create tickets.
 
-If a problem resurfaces — an engineer re-enables debug logging, a new service emits the same waste pattern — Tero catches it. Problems you fix stay fixed.
-
-[See enforcement options →](/data-quality/enforcement/overview)
+If a problem resurfaces, Tero catches it. Problems you fix stay fixed.
