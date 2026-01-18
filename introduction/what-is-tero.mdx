@@ -11,7 +11,11 @@ Most observability problems aren't platform problems. They're data problems: too
 
 Tero fixes the data.
 
-It's a control plane for observability data. Tero connects to your existing stack, analyzes every log, metric, and trace, and tells you exactly what's wrong. Not just volume breakdowns. Specific statements: this field duplicates that one, this log is a health check firing 86,400 times a day, this debug statement shipped to production.
+It's a control plane for observability data. Tero connects to your existing stack, analyzes every log, metric, and trace, and tells you exactly what's wrong. Not just volume breakdowns. Specific statements you can verify:
+
+- [Redundant attributes](/data-quality/logs/redundant-attributes): `time` and `@timestamp` contain the same value
+- [Health checks](/data-quality/logs/health-checks): `/health` endpoint logging 86,400 times a day
+- [Leftover debug logs](/data-quality/logs/leftover-debug-logs): `logger.debug("got here")` shipped to production
 
 You review the [rules](/data-quality/overview), approve what you agree with, and Tero [enforces](/data-quality/enforcement/overview). In your provider, at the edge, or in your code. It monitors for drift. Problems you fix stay fixed.
 
