@@ -7,10 +7,12 @@ iconType: "duotone"
 
 <img src="/images/tero-hero.svg" alt="Tero" />
 
-Everyone thinks observability is expensive. It's not. It's dirty. At least half of what you're sending to your observability provider is waste. Debug logs that never got turned off. Health checks firing every second. Redundant fields in every log. It accumulates everywhere, and nobody cleans it up because nobody can see it. Pipelines move data but don't understand it. Vendors bill by volume so they don't care.
+Tero is a control plane for observability data.
 
-Tero is a control plane for observability data. It connects to your stack, builds a [Master Catalog](/master-catalog) of everything (every service, every log event, every metric) and understands what it all means. From that, it generates [policies](/policies). Not recommendations. Actual artifacts, YAML files, that say "this is wrong, here's how to fix it." You review them, approve them, and Tero [enforces](/policies/enforcement) them. In your provider, at the edge, in your code.
+Connect your stack. Tero builds a [Master Catalog](/master-catalog): every service, every log event, every metric, understood semantically. Not just format, but meaning. From that understanding, Tero generates [policies](/policies): data quality as code. You review them, approve them, and Tero [enforces](/policies/enforcement) them. In your provider, at the edge, in your code.
 
-It's like how Kubernetes has a control plane for workloads. Tero is that for your data. Declare what clean looks like, enforce it everywhere.
+Control planes manage desired state. You declare the target, they make reality match. Tero does that for your observability data.
 
-The result: better observability and lower costs. Not a tradeoff between them.
+Why does this matter? Because observability isn't expensive. It's dirty. At least half of what you're sending to your provider is waste: debug logs that never got turned off, health checks firing every second, redundant fields in every log. It accumulates because nobody can see it. Pipelines move data but don't understand it. Vendors bill by volume so they don't care.
+
+Tero cleans it up and keeps it clean. Better observability, lower costs. Not a tradeoff.
