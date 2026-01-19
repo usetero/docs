@@ -15,7 +15,7 @@ Use this when humans need to make decisions, the fix requires context you don't 
 
 ## How it works
 
-Tero creates a ticket in your issue tracker with all the context needed to understand and fix the problem. The ticket is assigned based on service ownership from your [service catalog](/context/services).
+Tero creates a ticket in your issue tracker with all the context needed to understand and fix the problem. The ticket is assigned based on service ownership from your [Master Catalog](/master-catalog/services).
 
 ## Setup
 
@@ -34,7 +34,7 @@ Connect your issue tracker:
 
 Tero identifies that `user-service` has debug mode enabled. It's been emitting DEBUG-level logs for 3 days, generating 10x normal volume.
 
-You approve the rule and select "Create tickets." Tero creates a ticket in Linear:
+You approve the policy and select "Create tickets." Tero creates a ticket in Linear:
 
 ```
 Title: Debug mode left on in user-service
@@ -49,10 +49,10 @@ Action needed:
 - Update the log level configuration
 - Consider adding alerts for prolonged debug mode
 
-Identified by Tero: https://app.tero.dev/rules/abc123
+Identified by Tero: https://app.tero.dev/policies/abc123
 ```
 
-The ticket is assigned to the user-service team based on your service catalog. They investigate, change the configuration, and close the ticket.
+The ticket is assigned to the user-service team based on your Master Catalog. They investigate, change the configuration, and close the ticket.
 
 ## When to use
 

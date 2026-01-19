@@ -5,7 +5,7 @@ icon: "diagram-subtask"
 iconType: "duotone"
 ---
 
-A trace span represents an operation in a distributed request. An HTTP call, a database query, a message publish. Tero discovers span patterns from your [integrations](/integrations) and builds semantic understanding of what each operation does, how long it takes, and whether it's worth keeping.
+A trace span represents an operation in a distributed request. An HTTP call, a database query, a message publish. Tero discovers span patterns from your [integrations](/integrations) and builds understanding of what each operation does, how long it takes, and whether it's worth keeping.
 
 ## Example
 
@@ -42,7 +42,7 @@ matchers:
 
 These matchers identify 180,000 spans. Each span has different trace IDs, durations, response codes. But they all match the same pattern: checkout calling Stripe to charge a card. That's the span pattern.
 
-<Expandable title="All fields">
+<Expandable title="Fields">
   <ResponseField name="name" type="string">
     A descriptive identifier like `http_call_payment_gateway_charge` or `postgres_query_select_orders`. Unique within the service.
   </ResponseField>
@@ -81,7 +81,7 @@ Reference a span pattern with `@` to focus your questions:
 
 Tero pulls in the span's context: which service owns it, what the operation does, how it connects to other signals. Your question gets answered with that full picture.
 
-## Improving context
+## Refining trace spans
 
 Tero classifies spans automatically, but you know your systems better:
 
@@ -89,4 +89,4 @@ Tero classifies spans automatically, but you know your systems better:
 - **Edit descriptions** to add context Tero couldn't infer.
 - **Adjust normalization** if an operation is being split into too many patterns or merged incorrectly.
 
-Every correction improves future classifications.
+Every correction improves the catalog.

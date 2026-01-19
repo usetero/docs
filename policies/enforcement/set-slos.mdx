@@ -31,7 +31,7 @@ Connect your provider with SLO support:
 
 You want the platform team to reduce waste from health check logs by 90% over the next quarter.
 
-You approve the rule and select "Set SLOs." Tero creates an SLO in Datadog:
+You approve the policy and select "Set SLOs." Tero creates an SLO in Datadog:
 
 ```
 Name: Health check log reduction - platform services
@@ -42,7 +42,7 @@ Current: 2.3M logs/day
 Target: 230K logs/day
 ```
 
-The platform team sees this SLO in their Datadog dashboard. They decide how to hit the target—maybe they configure their ingress controller to stop logging health checks, or they deploy Edge policies, or they update their Kubernetes probes. The SLO tracks progress regardless of method.
+The platform team sees this SLO in their Datadog dashboard. They decide how to hit the target: maybe they configure their ingress controller to stop logging health checks, or they deploy Edge policies, or they update their Kubernetes probes. The SLO tracks progress regardless of method.
 
 If the team falls below target, an alert fires. They investigate and course-correct.
 

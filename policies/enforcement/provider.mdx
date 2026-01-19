@@ -10,7 +10,7 @@ iconType: "duotone"
 Configure exclusion filters and routing rules directly in your observability provider. No deployment required. Tero uses the provider's API to apply changes.
 
 <Note>
-Use this when you don't have [Edge](/edge/overview) deployed or want to configure provider-specific features like index routing.
+Use this when you don't have [Edge](/edge) deployed or want to configure provider-specific features like index routing.
 </Note>
 
 ## How it works
@@ -34,7 +34,7 @@ Tero connects to your provider's API and configures filters, pipelines, or routi
   </Tab>
   <Tab title="OpenTelemetry">
     <Frame>
-      <img src="/images/how-it-works-otel-4-in-provider.svg" alt="Enforce in provider with OpenTelemetry" />
+      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="Enforce in provider with OpenTelemetry" />
     </Frame>
     
     For OTel backends, Tero configures provider-specific filtering where supported.
@@ -58,7 +58,7 @@ Connect your provider with write access:
 
 Tero identifies that `checkout-api` is emitting 2.3 million health check logs per day. The logs have never been queried and don't appear in any dashboard or alert.
 
-You approve the rule and select "Enforce in provider." Tero configures an exclusion filter in Datadog:
+You approve the policy and select "Enforce in provider." Tero configures an exclusion filter in Datadog:
 
 ```
 Filter name: tero-drop-health-checks-checkout-api
@@ -67,7 +67,7 @@ Query: service:checkout-api http.target:/health* http.status_code:200
 
 The filter takes effect within minutes. Matching logs stop being indexed. You still see them in Live Tail (they reach Datadog), but they don't count against your indexed volume.
 
-Your data quality dashboard updates as Datadog reports the change. If something goes wrong, disable the rule and Tero removes the exclusion filter. Logs index normally again.
+Your data quality dashboard updates as Datadog reports the change. If something goes wrong, disable the policy and Tero removes the exclusion filter. Logs index normally again.
 
 ## When to use
 
@@ -78,4 +78,4 @@ Enforce in provider works best when:
 - Egress costs aren't a concern
 - You want to start immediately without deploying infrastructure
 
-If you need maximum control, egress savings, or sub-millisecond latency, use [Enforce at edge](/data-quality/enforcement/enforce-at-edge) instead.
+If you need maximum control, egress savings, or sub-millisecond latency, use [Enforce at edge](/policies/enforcement/edge) instead.

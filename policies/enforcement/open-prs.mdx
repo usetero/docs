@@ -35,7 +35,7 @@ Connect your source control:
 
 Tero identifies a debug log statement in `checkout-api` that shipped to production. The log says `"got here lol"` and fires 50,000 times per day.
 
-You approve the rule and select "Open PRs." Tero locates the log statement in your codebase:
+You approve the policy and select "Open PRs." Tero locates the log statement in your codebase:
 
 ```python
 # src/checkout/service.py, line 142
@@ -52,7 +52,7 @@ Title: Remove debug log from checkout-api
 This debug statement shipped to production and generates 50,000 logs/day.
 It doesn't appear in any dashboard or alert.
 
-Identified by Tero: https://app.tero.dev/rules/abc123
+Identified by Tero: https://app.tero.dev/policies/abc123
 ```
 
 Your team reviews the PR. Once merged and deployed, the logs stop being generated entirely. No filtering needed. The waste is gone at the source.

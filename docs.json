@@ -48,54 +48,51 @@
             ]
           },
           {
-            "group": "Data Quality",
+            "group": "Master Catalog",
             "pages": [
-              "data-quality/overview",
+              "master-catalog/overview",
+              "master-catalog/services",
+              "master-catalog/log-events",
+              "master-catalog/metrics",
+              "master-catalog/trace-spans"
+            ]
+          },
+          {
+            "group": "Policies",
+            "pages": [
+              "policies/overview",
               {
-                "group": "Logs",
-                "icon": "file-lines",
+                "group": "Categories",
+                "icon": "tags",
                 "pages": [
-                  "data-quality/logs/malformed-data",
-                  "data-quality/logs/redundant-attributes",
-                  "data-quality/logs/leftover-debug-logs",
-                  "data-quality/logs/pii-leakage",
-                  "data-quality/logs/unintended-tool-metadata",
-                  "data-quality/logs/health-checks",
-                  "data-quality/logs/bot-traffic",
-                  "data-quality/logs/excessive-payloads",
-                  "data-quality/logs/debug-mode-left-on",
-                  "data-quality/logs/logs-in-hot-path",
-                  "data-quality/logs/excessive-repetition"
+                  "policies/categories/redundant-attributes",
+                  "policies/categories/leftover-debug-logs",
+                  "policies/categories/malformed-data",
+                  "policies/categories/health-checks",
+                  "policies/categories/bot-traffic",
+                  "policies/categories/unintended-tool-metadata",
+                  "policies/categories/pii-leakage",
+                  "policies/categories/excessive-payloads",
+                  "policies/categories/debug-mode-left-on",
+                  "policies/categories/logs-in-hot-path",
+                  "policies/categories/excessive-repetition",
+                  "policies/categories/high-cardinality-tags"
                 ]
-              },
-              {
-                "group": "Metrics",
-                "icon": "chart-line",
-                "pages": ["data-quality/metrics/high-cardinality-tags"]
               },
               {
                 "group": "Enforcement",
                 "icon": "gavel",
                 "pages": [
-                  "data-quality/enforcement/overview",
-                  "data-quality/enforcement/enforce-at-edge",
-                  "data-quality/enforcement/enforce-in-provider",
-                  "data-quality/enforcement/open-prs",
-                  "data-quality/enforcement/create-tickets",
-                  "data-quality/enforcement/notify",
-                  "data-quality/enforcement/set-slos"
+                  "policies/enforcement/overview",
+                  "policies/enforcement/edge",
+                  "policies/enforcement/provider",
+                  "policies/enforcement/open-prs",
+                  "policies/enforcement/create-tickets",
+                  "policies/enforcement/notify",
+                  "policies/enforcement/set-slos"
                 ]
-              }
-            ]
-          },
-          {
-            "group": "Context",
-            "pages": [
-              "context/overview",
-              "context/services",
-              "context/log-events",
-              "context/metrics",
-              "context/trace-spans"
+              },
+              "policies/management"
             ]
           },
           {

@@ -57,10 +57,10 @@ metric:
 ## Recommended enforcement
 
 <CardGroup cols={2}>
-  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+  <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
     Strip the tag before metrics reach your provider.
   </Card>
-  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+  <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
     Remove the tag from instrumentation code.
   </Card>
 </CardGroup>
@@ -69,6 +69,6 @@ The best fix is to remove the tag from instrumentation. If that's not possible, 
 
 ## How it works
 
-Tero analyzes tag cardinality across your [context graph](/context/overview). Tags with thousands of unique values (user IDs, request IDs, session tokens) are flagged as high cardinality.
+Tero analyzes tag cardinality across your [Master Catalog](/master-catalog). Tags with thousands of unique values (user IDs, request IDs, session tokens) are flagged as high cardinality.
 
 Tero also checks whether these high-cardinality tags are ever used in queries or dashboards. A tag with 100,000 unique values that nobody filters by is a clear candidate for removal.

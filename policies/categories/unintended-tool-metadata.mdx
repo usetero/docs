@@ -170,12 +170,12 @@ Most of it, you don't. These fields exist on every log, get indexed, take up sto
 </Tabs>
 
 <Tip>
-  This category often makes sense to apply org-wide. If you're not querying `k8s.pod.uid` on one service, you're probably not querying it anywhere.
+  This type often makes sense to apply org-wide. If you're not querying `k8s.pod.uid` on one service, you're probably not querying it anywhere.
 </Tip>
 
 ## Recommended enforcement
 
-<Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge" horizontal>
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Drop unused fields before data leaves your network. Immediate savings, no code changes.
 </Card>
 
@@ -183,6 +183,6 @@ These fields are added by infrastructure tooling, not your application code. Fix
 
 ## How it works
 
-Tero checks every signal in your [context graph](/context/overview): query history, dashboards, alerts, saved searches. Fields that exist on logs but never appear anywhere are flagged as unused.
+Tero checks every signal in your [Master Catalog](/master-catalog): query history, dashboards, alerts, saved searches. Fields that exist on logs but never appear anywhere are flagged as unused.
 
 This isn't guessing. If `k8s.pod.uid` appears in even one dashboard or alert, it won't be flagged. Tero only surfaces fields with zero usage across all signals.

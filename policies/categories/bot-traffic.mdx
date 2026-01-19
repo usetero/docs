@@ -56,11 +56,11 @@ log:
 
 ## Recommended enforcement
 
-<Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge" horizontal>
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Drop bot traffic logs before they reach your provider. Immediate volume reduction.
 </Card>
 
-Bot traffic is external noise. Your application didn't decide to log these requests - they just happened. Dropping them at the edge is the simplest fix.
+Bot traffic is external noise. Your application didn't decide to log these requests, they just happened. Dropping them at the edge is the simplest fix.
 
 ## How it works
 
@@ -68,6 +68,6 @@ Tero identifies bot traffic through multiple signals:
 
 - **Known user agents**: Bots usually self-identify. `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves in the user agent string.
 - **Missing browser signals**: Real browsers send cookies, referrers, and consistent header patterns. Requests missing these signals are likely automated.
-- **Request patterns**: Bots often crawl systematically - sequential paths, predictable timing, no session continuity.
+- **Request patterns**: Bots often crawl systematically: sequential paths, predictable timing, no session continuity.
 
 A request that matches bot patterns and comes from a public-facing endpoint is flagged. Internal service traffic is not flagged, even if it lacks browser signals.

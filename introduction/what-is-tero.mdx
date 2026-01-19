@@ -7,16 +7,10 @@ iconType: "duotone"
 
 <img src="/images/tero-hero.svg" alt="Tero" />
 
-Most observability problems aren't platform problems. They're data problems: too much noise, not enough signal, no way to know what's worth keeping. At least 40% of what you're sending to Datadog or Splunk is waste. That's why debugging is slow, dashboards are cluttered, and costs keep growing.
+Everyone thinks observability is expensive. It's not. It's dirty. At least half of what you're sending to your observability provider is waste. Debug logs that never got turned off. Health checks firing every second. Redundant fields in every log. It accumulates everywhere, and nobody cleans it up because nobody can see it. Pipelines move data but don't understand it. Vendors bill by volume so they don't care.
 
-Tero fixes the data.
+Tero is a control plane for observability data. It connects to your stack, builds a [Master Catalog](/master-catalog) of everything (every service, every log event, every metric) and understands what it all means. From that, it generates [policies](/policies). Not recommendations. Actual artifacts, YAML files, that say "this is wrong, here's how to fix it." You review them, approve them, and Tero [enforces](/policies/enforcement) them. In your provider, at the edge, in your code.
 
-It's a control plane for observability data. Tero connects to your existing stack, analyzes every log, metric, and trace, and tells you exactly what's wrong. Not just volume breakdowns. Specific statements you can verify:
+It's like how Kubernetes has a control plane for workloads. Tero is that for your data. Declare what clean looks like, enforce it everywhere.
 
-- [Health checks](/data-quality/logs/health-checks): Kubernetes probes hitting `/health` every 10 seconds, millions of logs nobody queries
-- [Logs in hot path](/data-quality/logs/logs-in-hot-path): middleware logging "Incoming request" on every HTTP request
-- [High cardinality tags](/data-quality/metrics/high-cardinality-tags): `user_id` as a metric tag, exploding your custom metrics
-
-You review the [rules](/data-quality/overview), approve what you agree with, and Tero [enforces](/data-quality/enforcement/overview). In your provider, at the edge, or in your code. It monitors for drift. Problems you fix stay fixed.
-
-Like a control plane for your infrastructure, but for your data. Declare what clean looks like, enforce it everywhere, catch drift when it happens.
+The result: better observability and lower costs. Not a tradeoff between them.

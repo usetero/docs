@@ -42,10 +42,10 @@ This is a code change. The log statement needs to be moved, removed, or made con
 ## Recommended enforcement
 
 <CardGroup cols={2}>
-  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+  <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
     Remove or relocate the log statement in code.
   </Card>
-  <Card title="Create tickets" icon="ticket" href="/data-quality/enforcement/create-tickets">
+  <Card title="Create tickets" icon="ticket" href="/policies/enforcement/create-tickets">
     Alert the team to review the logging pattern.
   </Card>
 </CardGroup>
@@ -54,6 +54,6 @@ The fix is usually in code: move the log outside the loop, add a condition, or r
 
 ## How it works
 
-Tero identifies hot path logs by analyzing volume and variance in your [context graph](/context/overview). A log event that fires at extremely high rates with low content variance is flagged.
+Tero identifies hot path logs by analyzing volume and variance in your [Master Catalog](/master-catalog). A log event that fires at extremely high rates with low content variance is flagged.
 
 The key signal is the ratio of volume to information. A log that fires 100,000 times and says the same thing each time isn't providing 100,000 pieces of information. It's providing one piece of information, repeated.

@@ -18,7 +18,7 @@ The docs don't try to convince anyone of anything. They demonstrate what Tero is
 
 ## What earns trust
 
-Show real technology, not buzzwords. Mention Hyperscan, explain semantic compression, show how the context graph works. Readers can tell when something is real.
+Show real technology, not buzzwords. Mention Hyperscan, explain semantic compression, show how the Master Catalog works. Readers can tell when something is real.
 
 Be clear about constraints. What doesn't Tero do yet? Where are the edges? Honesty about current scope says we're not trying to trick anyone.
 

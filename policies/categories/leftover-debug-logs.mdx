@@ -48,18 +48,16 @@ log:
   keep: none
 ```
 
-Tero identifies this specific log event and generates a policy to drop it.
-
 ## Recommended enforcement
 
-<Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs" horizontal>
+<Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
   Fix at the source. These are code mistakes, not infrastructure decisions.
 </Card>
 
-Unlike most categories, leftover debug logs should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently.
+Unlike most policy types, leftover debug logs should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently.
 
 ## How it works
 
-Tero evaluates each [log event](/context/log-events) in your context graph. It looks at the content, the severity, the service context, and whether the log appears in any dashboards or alerts.
+Tero evaluates each [log event](/master-catalog/log-events) in your Master Catalog. It looks at the content, the severity, the service context, and whether the log appears in any dashboards or alerts.
 
-A log with `severity_text: DEBUG` might be intentional. But a log that says "got here lol", has DEBUG severity, and never appears in any dashboard or alert? That's clearly a debug statement that shipped by accident. Tero flags it as a specific rule you can approve or dismiss.
+A log with `severity_text: DEBUG` might be intentional. But a log that says "got here lol", has DEBUG severity, and never appears in any dashboard or alert? That's clearly a debug statement that shipped by accident. Tero flags it and generates a policy you can approve or dismiss.

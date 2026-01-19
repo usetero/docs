@@ -5,7 +5,7 @@ icon: "chart-line"
 iconType: "duotone"
 ---
 
-Tero discovers metrics from your [integrations](/integrations) and builds semantic understanding of what each one measures and whether it's worth keeping.
+Tero discovers metrics from your [integrations](/integrations) and builds understanding of what each one measures and whether it's worth keeping.
 
 ## Example
 
@@ -44,7 +44,7 @@ tags:
 
 Tero identifies which tags are useful and which are causing cardinality problems.
 
-<Expandable title="All fields">
+<Expandable title="Fields">
   <ResponseField name="name" type="string">
     The metric name as it appears in your telemetry.
   </ResponseField>
@@ -80,7 +80,7 @@ Reference a metric with `@` to focus your questions:
 
 Tero pulls in the metric's context: what it measures, which service owns it, related log events. Your question gets answered with that full picture.
 
-## Improving context
+## Refining metrics
 
 Tero infers what metrics measure, but you can refine:
 
@@ -88,4 +88,4 @@ Tero infers what metrics measure, but you can refine:
 - **Reclassify** metrics that Tero misjudged
 - **Confirm tag recommendations** to normalize or drop problematic tags
 
-Every refinement improves how Tero uses metrics in future answers.
+Every refinement improves the catalog.

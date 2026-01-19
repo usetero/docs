@@ -64,7 +64,7 @@ log:
 
 ## Recommended enforcement
 
-<Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs" horizontal>
+<Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
   Fix at the source. The developer who added this logging should decide what to keep.
 </Card>
 
@@ -72,6 +72,6 @@ Unlike infrastructure noise, excessive payloads are usually intentional logging 
 
 ## How it works
 
-Tero identifies excessive payloads by analyzing field sizes across your [context graph](/context/overview). Fields that consistently exceed a size threshold (like `http.response.body` or `request.payload`) are flagged.
+Tero identifies excessive payloads by analyzing field sizes across your [Master Catalog](/master-catalog). Fields that consistently exceed a size threshold (like `http.response.body` or `request.payload`) are flagged.
 
 Tero also checks whether these large fields are ever queried. A 10KB field that nobody searches is a clear candidate for removal. A 10KB field that appears in dashboards might be intentional.

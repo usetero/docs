@@ -47,11 +47,9 @@ log:
   keep: none
 ```
 
-Tero identifies this specific log event and generates a policy to drop it.
-
 ## Recommended enforcement
 
-<Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge" horizontal>
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Drop malformed logs before they reach your provider. No point paying to store garbage.
 </Card>
 
@@ -59,6 +57,6 @@ There's no "fix at source" for most malformed data. It's usually a symptom of so
 
 ## How it works
 
-Tero evaluates each [log event](/context/log-events) in your context graph. It looks at the content structure and whether the log is parseable.
+Tero evaluates each [log event](/master-catalog/log-events) in your Master Catalog. It looks at the content structure and whether the log is parseable.
 
-When Tero finds malformed data (binary content, unparseable strings, corrupted output), it creates a rule for that specific log event. You approve the rule, and Tero generates a policy that matches the exact pattern it found.
+When Tero finds malformed data (binary content, unparseable strings, corrupted output), it generates a policy for that specific pattern. You approve the policy, and it gets enforced.

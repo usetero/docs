@@ -1,0 +1,89 @@
+---
+title: "Management"
+description: "Where policies live and how they sync"
+icon: "folder-tree"
+iconType: "duotone"
+---
+
+Policies aren't hidden in a vendor UI. They sync to where your team can see them.
+
+## Where policies live
+
+Three options, from simplest to most distributed:
+
+### Tero
+
+Policies live in Tero. You review and approve them in the interface. This is the default and the easiest way to start.
+
+Good for: Getting started, small teams, centralized control.
+
+### Central repository
+
+Policies sync to a dedicated Git repository. The platform team maintains it. Changes go through pull requests. You get version history, code review, and audit trails.
+
+```
+policies/
+├── foundation/
+│   ├── drop-debug-logs.yaml
+│   ├── drop-health-checks.yaml
+│   └── redact-pii.yaml
+└── generated/
+    ├── checkout-api/
+    │   ├── drop-cart-item-added.yaml
+    │   └── sample-order-validated.yaml
+    └── user-service/
+        └── drop-session-heartbeat.yaml
+```
+
+Good for: Platform teams, compliance requirements, audit trails.
+
+### Service repositories
+
+Policies sync to each service's repository in a `.tero/` folder. Engineers see exactly what's happening to their service's data. Changes come via PR, either from Tero or from engineers directly.
+
+```
+checkout-api/
+├── src/
+├── tests/
+├── package.json
+└── .tero/
+    └── policies/
+        ├── drop-cart-item-added.yaml
+        └── sample-order-validated.yaml
+```
+
+The `.tero/` folder pattern follows what engineers already know: `.github/`, `.vscode/`, `.eslintrc`. Configuration that lives with the code.
+
+When Tero drops or transforms data from a service, the policy is right there for engineers to see. They can review what's happening to their telemetry, understand why a policy exists, propose changes via PR, or override if something's wrong.
+
+Changes flow both ways. Tero proposes policies. Engineers can accept, modify, or reject them. If an engineer edits a policy directly in the repo, Tero picks up the change.
+
+Good for: Distributed ownership, no surprises, service teams own their policies.
+
+## How sync works
+
+Git is the source of truth. Tero proposes, you approve, Git stores, Tero enforces.
+
+1. Tero detects an issue and generates a policy
+2. Tero opens a PR to add the policy to your repo
+3. You review, edit if needed, merge
+4. Tero enforces what's in the repo
+
+If you edit a policy directly in the repo, Tero enforces the updated version. If Tero detects something new, it opens another PR. Same GitOps workflow you use for everything else.
+
+## Version control
+
+Every policy change is tracked:
+
+- **Who** approved or modified it
+- **When** the change happened
+- **Why** (linked to the detection that triggered it)
+- **What** the previous version looked like
+
+Roll back by reverting the commit. The old policy syncs back to enforcement.
+
+## Getting started
+
+Start with policies in Tero. As you build confidence, move to a central repo. When you're ready for distributed ownership, sync to service repos.
+
+You don't have to choose one. Foundation policies can live in a central repo while generated policies sync to each service.

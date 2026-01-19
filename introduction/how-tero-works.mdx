@@ -1,7 +1,7 @@
 ---
 title: "How Tero works"
 sidebarTitle: "How Tero works"
-description: "Connect, build context, review rules, enforce"
+description: "Connect, build the catalog, review policies, enforce"
 icon: "gears"
 iconType: "duotone"
 ---
@@ -14,29 +14,29 @@ iconType: "duotone"
 
 Tero connects to your observability stack via API: Datadog, Splunk, your collectors. Read-only by default. No agents, no code changes, no infrastructure changes. Your setup stays exactly as it is.
 
-## 2. Build context
+## 2. Build the Master Catalog
 
 <Frame>
-  <img src="/images/how-it-works-generic-2.svg" alt="Build context from your data" />
+  <img src="/images/how-it-works-generic-2.svg" alt="Build the Master Catalog from your data" />
 </Frame>
 
-Tero analyzes your telemetry and builds [context](/context/overview). Billions of raw logs compress into thousands of distinct log events. Each one is understood: what it represents, which service produces it, whether anyone queries it. Services, dependencies, and failure scenarios get connected into a graph.
+Tero analyzes your telemetry and builds the [Master Catalog](/master-catalog). Billions of raw logs compress into thousands of distinct log events. Each one is understood: what it represents, which service produces it, whether anyone queries it. Services, dependencies, and failure scenarios get connected into a graph.
 
 This is how Tero knows what's waste and what matters.
 
-## 3. Review rules
+## 3. Review policies
 
 <Frame>
-  <img src="/images/how-it-works-generic-3.svg" alt="Review and approve rules" />
+  <img src="/images/how-it-works-generic-3.svg" alt="Review and approve policies" />
 </Frame>
 
-Tero surfaces [rules](/data-quality/overview): specific statements about what's wrong and why. This field duplicates that one. This log is a health check firing 86,400 times a day. This debug statement shipped to production.
+Tero generates [policies](/policies): specific statements about what's wrong and how to fix it. This field duplicates that one. This log is a health check firing 86,400 times a day. This debug statement shipped to production.
 
-Rules are organized by [category](/data-quality/overview#categories): redundant attributes, health checks, leftover debugging, verbose payloads, PII leakage. You review with examples from your actual data. Approve what you agree with.
+Policies are organized by [category](/policies/categories): redundant attributes, health checks, leftover debugging, verbose payloads, PII leakage. You review with examples from your actual data. Approve what you agree with.
 
 ## 4. Enforce
 
-Approved rules get [enforced](/data-quality/enforcement/overview). You choose where:
+Approved policies get [enforced](/policies/enforcement). You choose where:
 
 <AccordionGroup>
   <Accordion title="In your provider" defaultOpen>
@@ -44,7 +44,7 @@ Approved rules get [enforced](/data-quality/enforcement/overview). You choose wh
       <img src="/images/how-it-works-generic-4-in-provider.svg" alt="Configure your provider" />
     </Frame>
 
-    Configure exclusion filters, routing rules, or transformations directly via API. No deployment required. Fully reversible.
+    [Enforce policies in your provider](/policies/enforcement/provider) by configuring exclusion filters, routing rules, or transformations directly via API. No deployment required. Fully reversible.
   </Accordion>
 
   <Accordion title="In your code">
@@ -52,7 +52,7 @@ Approved rules get [enforced](/data-quality/enforcement/overview). You choose wh
       <img src="/images/how-it-works-generic-4-in-code.svg" alt="Fix it in your code" />
     </Frame>
 
-    Open PRs to fix instrumentation at the source, or create tickets for engineers to handle on their schedule.
+    Enforce policies by [opening PRs](/policies/enforcement/open-prs) to fix instrumentation at the source, or [create tickets](/policies/enforcement/create-tickets) for engineers to handle on their schedule.
   </Accordion>
 
   <Accordion title="In your infrastructure">
@@ -60,7 +60,7 @@ Approved rules get [enforced](/data-quality/enforcement/overview). You choose wh
       <img src="/images/how-it-works-generic-4-in-infrastructure.svg" alt="Execute at the edge" />
     </Frame>
 
-    Execute rules at the [edge](/edge/overview) before data leaves your network. Drop-in replacements for collectors you already run.
+    [Enforce policies at the edge](/policies/enforcement/edge) before data leaves your network. Drop-in replacements for collectors you already run.
   </Accordion>
 </AccordionGroup>
 

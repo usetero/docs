@@ -1,0 +1,72 @@
+---
+title: "Policies"
+sidebarTitle: "Overview"
+description: "Data quality as code"
+icon: "file-code"
+iconType: "duotone"
+---
+
+Policies are data quality as code: atomic, portable statements about what's wrong with your data and how to fix it.
+
+```yaml
+id: checkout-api-drop-health-checks
+name: Drop health check logs from checkout-api
+
+log:
+  match:
+    - resource_attribute: service.name
+      exact: checkout-api
+    - log_field: body
+      regex: "GET /health"
+  keep: none
+```
+
+That's a policy. It does one thing. You read it and know exactly what it does. No pipeline context needed, no graph to trace.
+
+## Why policies
+
+Traditional pipeline configs have a problem. They start clean and grow into thousands of lines nobody fully understands. You need to understand the whole config to safely change any part. AI can't help because everything is interconnected.
+
+Policies are different. Each one is independent: no ordering dependencies, no shared state. Ten thousand policies execute as fast as ten. You can add a policy without understanding the others, remove one without fear. That independence is what makes them manageable at scale.
+
+It's also what makes them portable. The same policy works whether you're enforcing at the [edge](/policies/enforcement/edge), pushing to your [provider's API](/policies/enforcement/provider), or syncing to a pipeline. The policy is the source of truth. Enforcement is just translation.
+
+## How policies are created
+
+Two sources:
+
+**Foundation policies** are broad rules you write. Drop all debug logs. Redact CVV everywhere. Sample health checks to 10%. These apply across services and rarely change.
+
+**Generated policies** come from Tero. The [Master Catalog](/master-catalog) identifies your log events, understands what they mean, and generates specific policies for each. You might have hundreds: one per log event type that needs attention.
+
+You review policies by [category](/policies/categories). Start with low-risk categories: redundant attributes, malformed data, obvious debug logs. These are easy to verify and safe to approve. As trust builds, move into categories that require more judgment.
+
+## What policies can do
+
+Policies target logs or metrics and specify an action:
+
+**Filter** — Control what gets kept:
+- `keep: all` — keep everything (default)
+- `keep: none` — drop it
+- `keep: 50%` — sample to a percentage
+- `keep: 100/s` — rate limit
+
+**Transform** — Modify what survives:
+- Remove fields
+- Redact sensitive values
+- Rename attributes
+- Add metadata
+
+See the full [policy spec](https://github.com/usetero/policy) for details.
+
+## Where policies live
+
+Policies aren't hidden in a vendor UI. They sync to where your team can see them:
+
+- **Tero**: review and approve in the interface
+- **Central repo**: platform team maintains a policies repository  
+- **Service repos**: `.tero/` folder in each service, so engineers see what's happening to their data
+
+No surprises. If Tero is dropping or transforming data from a service, the policy is right there in the code for engineers to see.
+
+See [management](/policies/management) for details on syncing and version control.

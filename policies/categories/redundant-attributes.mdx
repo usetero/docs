@@ -79,7 +79,7 @@ log:
 
 ## Recommended enforcement
 
-<Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge" horizontal>
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Drop the redundant field before data leaves your network. Immediate savings, no code changes.
 </Card>
 
@@ -87,6 +87,6 @@ These fields are typically added by agents and collectors, not your application 
 
 ## How it works
 
-Tero analyzes every log event in your [context graph](/context/overview). When two fields contain identical values consistently (exact string matches, timestamps that differ only in format, numeric fields with the same value) they're flagged as redundant.
+Tero analyzes every log event in your [Master Catalog](/master-catalog). When two fields contain identical values consistently (exact string matches, timestamps that differ only in format, numeric fields with the same value) they're flagged as redundant.
 
 Fields that are *similar* but not identical aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not redundant. Tero only flags true duplicates.

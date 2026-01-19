@@ -31,10 +31,10 @@ Connect your notification channel:
 
 Tero identifies that `payment-service` is logging full request payloads including credit card data (masked, but still present).
 
-You approve the rule and select "Notify." Tero sends a Slack message to #payments-team:
+You approve the policy and select "Notify." Tero sends a Slack message to #payments-team:
 
 ```
-🔔 Tero identified an issue in payment-service
+Tero identified an issue in payment-service
 
 payment-service is logging full request payloads (~15KB per log).
 This generates 2.1M logs/day at $3,200/day in costs.
@@ -42,7 +42,7 @@ This generates 2.1M logs/day at $3,200/day in costs.
 The payloads contain masked credit card data. While masked,
 this may still be a compliance concern.
 
-→ Review in Tero: https://app.tero.dev/rules/abc123
+→ Review in Tero: https://app.tero.dev/policies/abc123
 ```
 
 The team sees the message, investigates, and decides how to respond. They might open a PR, create a ticket, or dismiss if it's intentional.

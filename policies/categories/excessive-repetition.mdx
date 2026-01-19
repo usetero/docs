@@ -54,10 +54,10 @@ log:
 ## Recommended enforcement
 
 <CardGroup cols={2}>
-  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+  <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
     Sample before data reaches your provider.
   </Card>
-  <Card title="Set SLOs" icon="chart-line" href="/data-quality/enforcement/set-slos">
+  <Card title="Set SLOs" icon="chart-line" href="/policies/enforcement/set-slos">
     Define acceptable repetition thresholds.
   </Card>
 </CardGroup>
@@ -66,6 +66,6 @@ Unlike hot path logs, these aren't code mistakes. The logging is correct. You ju
 
 ## How it works
 
-Tero identifies excessive repetition by analyzing volume spikes and content variance in your [context graph](/context/overview). A log event that suddenly spikes 100x with identical content is flagged.
+Tero identifies excessive repetition by analyzing volume spikes and content variance in your [Master Catalog](/master-catalog). A log event that suddenly spikes 100x with identical content is flagged.
 
 The key is distinguishing repetition from legitimate high volume. 100,000 different users hitting an endpoint is high volume. 100,000 identical timeout errors is repetition. Tero looks at content variance to tell the difference.

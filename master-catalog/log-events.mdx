@@ -5,7 +5,7 @@ icon: "file-lines"
 iconType: "duotone"
 ---
 
-A log event isn't a log line. It's a pattern that represents thousands or millions of logs that mean the same thing. Tero discovers these patterns from your [integrations](/integrations) and turns them into something you can reason about.
+A log event isn't a log line. It's a pattern that represents thousands or millions of logs that mean the same thing. Tero discovers these patterns from your [integrations](/integrations) and adds them to the catalog.
 
 ## Example
 
@@ -40,7 +40,7 @@ matchers:
 
 These matchers identify 47,000 logs. Each log has different order IDs, timestamps, amounts. But they all match the same attributes: `error_code: card_declined` and `decline_reason: insufficient_funds`. That's the event.
 
-<Expandable title="All fields">
+<Expandable title="Fields">
   <ResponseField name="name" type="string">
     A descriptive identifier like `card_declined_insufficient_funds` or `kafka_offset_committed`. Unique within the service.
   </ResponseField>
@@ -60,7 +60,7 @@ These matchers identify 47,000 logs. Each log has different order IDs, timestamp
 
 ## Exploring log events
 
-Open any log event to see what Tero learned: the description, matchers, sample logs, classification reasoning. You can browse by service or search across all events.
+Open any log event to see what Tero learned: the description, matchers, sample logs, classification reasoning. Browse by service or search across all events.
 
 Drill into the matchers to understand exactly which logs this event captures. See sample instances to verify the pattern makes sense.
 
@@ -76,7 +76,7 @@ Reference a log event with `@` to focus your questions:
 
 Tero pulls in the event's context: which service owns it, what attributes it has, how it relates to other events. Your question gets answered with that full picture.
 
-## Improving context
+## Refining log events
 
 Tero classifies events automatically, but you know your systems better:
 
@@ -84,4 +84,4 @@ Tero classifies events automatically, but you know your systems better:
 - **Edit descriptions** to add context Tero couldn't infer.
 - **Adjust matchers** if an event is capturing the wrong logs.
 
-Every correction improves future classifications.
+Every correction improves the catalog.

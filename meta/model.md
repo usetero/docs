@@ -4,147 +4,130 @@ The mental model users should build about what Tero is and how it works.
 
 ## What Tero Is
 
-Tero is an AI that understands your systems. You ask it questions, and it answers them using a deep semantic understanding of your telemetry data.
+Tero is a control plane for observability data.
 
-Not a dashboard platform. Not a pipeline. Not another place to send your data. An intelligence layer that connects to where your data already lives and builds understanding on top of it.
+A control plane manages desired state. Kubernetes has a control plane that enforces how workloads should run. Tero enforces how observability data should look: what's valuable, what's waste, what should be fixed.
 
-To users, Tero is the thing they interact with. There's no "workbench" or "platform"—there's Tero. They ask Tero questions. Tero shows them context. Tero helps them take action.
+To users, Tero is the thing they interact with. They connect their stack, Tero builds understanding, proposes policies, and enforces them.
 
-## Four Core Concepts
+## Two Core Concepts
 
-The product has four concepts that users need to understand:
+### Master Catalog
 
-### Questions
+The Master Catalog is Tero's unified view of all observability data (services, log events, metrics, traces) across every source you connect.
 
-Questions are the interface to value. They're curated, QA'd use cases that Tero can answer.
+Not sampling. Not partial visibility. Complete coverage, automatically maintained, semantically understood. Tero knows what each piece of data means, not just its format.
 
-The first question is: **"How much data is waste?"** This is the hardest question in observability—it requires complete visibility and semantic understanding of every piece of data. Answering it proves Tero actually understands.
+For each piece of telemetry, Tero builds understanding across four dimensions:
+- **Structure.** Fields, types, formats. What the data looks like.
+- **Semantics.** What it means. A `payment_failed` log is a business event, not just a string.
+- **Relationships.** Which service emits it. What other events correlate with it.
+- **Usage.** How often it's queried. Whether anyone actually looks at it.
 
-Each question is a first-class thing:
-- Announced when it launches
-- Has its own documentation section
-- Has a complete journey: understand the results, take action, scale to the org
-- Gets marketing, attention, buzz
+This is what makes policy generation possible. Without understanding what data means and how it's used, you can only do pattern matching. With it, you can reason about value.
 
-When you start a chat in Tero, the first thing that happens is routing. The AI determines which question you're asking, and your conversation happens within that use case. This lets us curate the experience, give the AI the right context, and guarantee quality.
+**Why this matters for docs:** Users need to understand that the catalog is the foundation. It's how Tero knows what's waste and what matters. The Master Catalog section explains services, log events, metrics, and trace spans.
 
-If someone asks a question we don't support yet ("Why is checkout broken?"), we say so clearly rather than giving a bad answer. Over time, we add more questions. Each one is an announcement, a new capability, a reason to pay attention.
+### Policies
 
-**Why this matters for docs:** Each question gets thorough documentation. The waste question has overview, understanding results, taking action, managing contracts, scaling to the org. Future questions get the same treatment.
+Policies are the artifact Tero produces. Each one is an atomic, portable statement about what's wrong with your data and how to fix it.
 
-### Context
+Policies are data quality as code: YAML documents you can inspect, version, and sync to repos.
 
-Context is what makes Tero the best place to ask questions. It's a semantic catalog of everything happening in your infrastructure.
+Two sources:
+- **Foundation policies** — Broad rules you write. Drop all debug logs. Redact CVV everywhere.
+- **Generated policies** — Specific rules Tero creates per log event based on what it sees in the catalog.
 
-Not raw data—compressed understanding:
-- **Log events**, not log lines. Billions of logs compressed into thousands of semantic events.
-- **Support themes**, not tickets. Patterns of customer issues, not individual conversations.
-- **Services** with meaning attached. What they do, how they relate, what they produce.
-- **Failure scenarios.** Patterns of what goes wrong and how it manifests.
-- **Relationships.** This error follows that timeout. This service depends on that one.
+Policy categories (what Tero detects):
+- Redundant attributes
+- Leftover debug logs
+- Health checks
+- PII leakage
+- Bot traffic
+- Malformed data
+- Excessive payloads
+- Debug mode left on
+- Logs in hot paths
+- Excessive repetition
+- High cardinality tags
 
-Context compounds. Every integration adds to it. Every conversation refines it. Relationships get established, understanding deepens. It's an investment that grows over time.
+Categories have risk levels that guide review. Low-risk (redundant attributes, malformed data) are obvious and safe. Higher-risk (PII, sampling) require more scrutiny.
 
-Context is transparent and explorable. Users can see what Tero knows about their systems, drill into any service or log event, and adjust classifications. It feels like *theirs*.
+**Why this matters for docs:** Users need to understand that policies are the output. The Policies section explains what they are, what categories exist, how they're enforced, and where they live.
 
-**Why this matters for docs:** Users need to understand what context Tero has, how it's structured, and how it grows. The Context section explains the semantic catalog.
+## Supporting Concepts
 
-### Capabilities
+### Enforcement
 
-Capabilities are what Tero can do. Actions it can take on your behalf.
-
-Examples:
-- **Block logs** — Stop waste from reaching your vendor
-- **Redact PII** — Scrub sensitive data before it leaves your network
-- **Open PRs** — Create pull requests to fix issues in code
-- **Create tickets** — File issues in your ticketing system
-- **Send alerts** — Notify the right people when something matters
-- **Configure exclusions** — Set up rules in your vendor's platform
-
-Capabilities are unlocked by integrations. Connect Datadog → you can configure exclusion rules. Connect GitHub → you can open PRs. Connect the Edge → you can block at line rate.
-
-Capabilities are shared across questions. "Block logs" isn't specific to waste—it's a capability that might be relevant for other questions too. The capability is the *what*; integrations provide the *how*.
-
-**Why this matters for docs:** Users need to know what actions are available and how to use them. Capabilities may be documented at the top level or within specific questions depending on relevance.
+Where policies get executed:
+- **Edge** — In your infrastructure, before data leaves
+- **Provider** — Via API in Datadog, Splunk, etc.
+- **Code** — PRs to fix instrumentation at the source
+- **Tickets** — Delegate to engineers
+- **Notify** — Alert without blocking
+- **SLOs** — Track progress over time
 
 ### Integrations
 
-Integrations are power-ups. They connect external systems to Tero, bringing in context and unlocking capabilities.
+Integrations connect external systems to Tero:
+- **Observability platforms** (Datadog, Splunk) → Context + provider enforcement
+- **Infrastructure** (Datadog Agent, OTel Collector) → Edge deployment
+- **Code** (GitHub) → PR creation
+- **AI** (Anthropic, OpenAI) → Bring your own AI provider
 
-Each integration has a clear value proposition:
-- **Datadog** → Context: services, log events, metrics. Capabilities: configure exclusions, search logs.
-- **Slack** → Capabilities: send alerts, notify teams.
-- **GitHub** → Capabilities: open PRs, link to code.
-- **Jira/Linear** → Capabilities: create tickets, track work.
-- **PagerDuty** → Capabilities: integrate with on-call, incident context.
+### Edge
 
-The Edge is also an integration. It's Tero's execution layer deployed in your infrastructure:
-- **Edge Proxy** → Capabilities: block at line rate, redact PII, enforce policies.
-- **OTel Collector distribution** → Same capabilities, different deployment.
-- **Vector distribution** → Same capabilities, for Vector users.
+Tero Edge is the execution layer. A lightweight proxy that enforces policies at line rate. Policies compile down to high-performance matching (Hyperscan).
 
-Integrations are how Tero becomes more valuable over time. Each one adds context and capabilities. The more you connect, the more Tero can do.
-
-**Why this matters for docs:** Each integration gets a page explaining what context it provides and what capabilities it unlocks.
+Edge is documented in its own tab because it's about operating infrastructure, not using Tero.
 
 ## How the Concepts Relate
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
-│   INTEGRATIONS bring in CONTEXT and unlock CAPABILITIES    │
+│   INTEGRATIONS bring in data and unlock capabilities        │
 │                                                             │
 │   ┌─────────────┐     ┌─────────────┐     ┌─────────────┐  │
-│   │   Datadog   │     │    Slack    │     │   GitHub    │  │
+│   │   Datadog   │     │   GitHub    │     │    Edge     │  │
 │   └──────┬──────┘     └──────┬──────┘     └──────┬──────┘  │
 │          │                   │                   │          │
 │          ▼                   ▼                   ▼          │
 │   ┌─────────────────────────────────────────────────────┐  │
-│   │                      CONTEXT                         │  │
-│   │   Services, Log Events, Metrics, Relationships...   │  │
+│   │                  MASTER CATALOG                      │  │
+│   │   Services, Log Events, Metrics, Trace Spans        │  │
 │   └─────────────────────────┬───────────────────────────┘  │
 │                             │                               │
 │                             ▼                               │
 │   ┌─────────────────────────────────────────────────────┐  │
-│   │                     QUESTIONS                        │  │
-│   │        "How much data is waste?"              │  │
-│   │        "Why is checkout broken?" (future)           │  │
+│   │                      POLICIES                        │  │
+│   │   Data quality as code — generated from catalog      │  │
 │   └─────────────────────────┬───────────────────────────┘  │
 │                             │                               │
 │                             ▼                               │
 │   ┌─────────────────────────────────────────────────────┐  │
-│   │                   CAPABILITIES                       │  │
-│   │     Block logs, Open PRs, Create tickets...         │  │
+│   │                    ENFORCEMENT                       │  │
+│   │       Edge, Provider, Code, Tickets, Notify          │  │
 │   └─────────────────────────────────────────────────────┘  │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 The user journey:
-1. **Connect integrations** → Context flows in, capabilities unlock
-2. **Context builds** → Tero understands your systems
-3. **Ask questions** → Get answers backed by semantic understanding
-4. **Take action** → Use capabilities to make changes
+1. **Connect integrations** → Data flows in, catalog builds
+2. **Catalog grows** → Tero understands your systems
+3. **Policies generate** → Specific statements about what's wrong
+4. **Review and approve** → By category, with examples from your data
+5. **Enforce** → Edge, provider, code, tickets
 
-## Components (Not Concepts)
+## The Master Catalog vs Data Catalog
 
-Separate from the product concepts are the components—the actual pieces of software:
-
-- **App** — The web interface where users interact with Tero
-- **CLI** — Terminal interface for automation and power users
-- **Control Plane** — The brain. Holds context, runs AI, generates policies. Cloud or self-hosted.
-- **Edge** — Policy execution in your infrastructure. Proxy, distributions, libraries.
-
-These are documented in separate tabs (Control Plane, Edge) because they're about operating Tero, not using it. The main Tero tab focuses on the product concepts; the component tabs focus on deployment and operations.
-
-## The Semantic Catalog vs Data Catalog
-
-Tero's context is not a data catalog. It's a semantic catalog.
+Tero's Master Catalog is not a data catalog. It's a semantic catalog.
 
 A data catalog tells you: "You have a field called `user_id` in a log called `payment_failed`."
 
 A semantic catalog tells you: "This is a business-critical error indicating a transaction didn't complete. The `user_id` field is context for debugging. This event often follows a timeout in payment-service. It's queried during incidents 4x more than average."
 
-The difference is understanding vs inventory. We don't just know what exists—we know what it means, when it matters, and how it connects.
+The difference is understanding vs inventory. We don't just know what exists. We know what it means, when it matters, and how it connects.
 
-This is what makes Tero the best place to ask questions. The context has meaning attached. Questions get answered with real understanding, not pattern matching.
+This is what makes policy generation possible. Policies aren't pattern matching. They're reasoning about value based on semantic understanding.

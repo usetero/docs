@@ -44,13 +44,13 @@ This isn't a policy you deploy. It's a configuration change the service owner ne
 Start by notifying the service owner. If the issue persists, escalate.
 
 <CardGroup cols={3}>
-  <Card title="Create tickets" icon="ticket" href="/data-quality/enforcement/create-tickets">
+  <Card title="Create tickets" icon="ticket" href="/policies/enforcement/create-tickets">
     Alert the service owner that debug mode is still enabled.
   </Card>
-  <Card title="Open PRs" icon="code-pull-request" href="/data-quality/enforcement/open-prs">
+  <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
     If log levels are config-as-code, change it directly.
   </Card>
-  <Card title="Enforce at edge" icon="server" href="/data-quality/enforcement/enforce-at-edge">
+  <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
     Block temporarily if tickets go unacknowledged. Auto-reverts.
   </Card>
 </CardGroup>
@@ -59,6 +59,6 @@ Most teams start with tickets. If a service has had debug mode on for 48+ hours 
 
 ## How it works
 
-Tero tracks log volume patterns per service in your [context graph](/context/overview). When a service's DEBUG log volume spikes and stays elevated for more than a few hours, it's flagged.
+Tero tracks log volume patterns per service in your [Master Catalog](/master-catalog). When a service's DEBUG log volume spikes and stays elevated for more than a few hours, it's flagged.
 
 The key signal is time. DEBUG logs during an active incident are normal. DEBUG logs that persist for days after the incident ended are a forgotten configuration.

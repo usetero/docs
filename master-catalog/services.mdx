@@ -5,7 +5,7 @@ icon: "circle-nodes"
 iconType: "duotone"
 ---
 
-Tero discovers services from your [integrations](/integrations). Each one becomes a hub in the context graph, owning [log events](/context/log-events), [trace spans](/context/trace-spans), and [metrics](/context/metrics), and relating to other services through dependencies.
+Tero discovers services from your [integrations](/integrations). Each one becomes a hub in the catalog, owning [log events](/master-catalog/log-events), [metrics](/master-catalog/metrics), and [trace spans](/master-catalog/trace-spans), and relating to other services through dependencies.
 
 ## What Tero knows
 
@@ -34,7 +34,7 @@ Tero doesn't just import names. It analyzes logs and traces to understand what e
 
 ## Exploring a service
 
-Open any service to see what Tero figured out: description, technologies, dependencies, failure scenarios, and log events. Everything connected to that service in the graph.
+Open any service to see what Tero figured out: description, technologies, dependencies, failure scenarios, log events. Everything connected to that service in the catalog.
 
 ## Using in chat
 
@@ -46,9 +46,9 @@ Reference a service with `@` to scope your questions:
 @kafka what log events does this produce?
 ```
 
-Tero pulls in everything connected: the service's description, dependencies, failure scenarios, log events. Your question gets answered in that full context.
+Tero pulls in everything connected: the service's description, dependencies, failure scenarios, log events. Your question gets answered with that full context.
 
-## Improving context
+## Refining a service
 
 Tero generates descriptions and infers technologies, but you can refine what it knows:
 
@@ -56,4 +56,4 @@ Tero generates descriptions and infers technologies, but you can refine what it 
 - **Add failure scenarios** your team knows about
 - **Note ownership** so Tero knows who to reference
 
-The more you refine, the better Tero's answers become.
+The more you refine, the better the catalog becomes.
