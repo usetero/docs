@@ -1,0 +1,89 @@
+---
+title: "Authentication"
+description: "SSO, social login, and directory sync"
+icon: "key"
+iconType: "duotone"
+---
+
+Tero supports multiple sign-in methods and integrates with your identity provider for SSO and automatic user provisioning.
+
+## Sign-in methods
+
+Configure which methods are available in **Settings → Authentication**. Enable any combination, or require SSO only.
+
+### Email and password
+
+Users create an account with their email. You can disable this method entirely if you require SSO.
+
+#### MFA
+
+For email/password accounts, you can require multi-factor authentication. Users signing in via SSO or social login use their provider's MFA instead.
+
+### Social login
+
+Users sign in with an existing account. Enable the providers you want to allow:
+
+<CardGroup cols={3}>
+  <Card title="Google" icon="google" />
+  <Card title="GitHub" icon="github" />
+  <Card title="Microsoft" icon="microsoft" />
+</CardGroup>
+
+### Single sign-on
+
+Connect your identity provider. Users authenticate through your IdP with your existing security policies.
+
+Tero supports SAML 2.0 and OpenID Connect with all major providers:
+
+<CardGroup cols={3}>
+  <Card title="Okta" icon="shield-check" />
+  <Card title="Azure AD" icon="microsoft" />
+  <Card title="Google Workspace" icon="google" />
+  <Card title="OneLogin" icon="key" />
+  <Card title="JumpCloud" icon="cloud" />
+  <Card title="PingFederate" icon="circle-nodes" />
+  <Card title="Auth0" icon="lock" />
+  <Card title="ADFS" icon="server" />
+  <Card title="Duo" icon="shield-halved" />
+</CardGroup>
+
+Any SAML 2.0 or OIDC-compatible provider works.
+
+#### Setup
+
+Go to **Settings → Authentication → Configure SSO** to open the admin portal.
+
+<Steps>
+  <Step title="Verify your domain">
+    Add a DNS TXT record to prove you own your domain.
+  </Step>
+  <Step title="Connect your IdP">
+    Follow the guided setup for your identity provider. The portal provides IdP-specific instructions.
+  </Step>
+  <Step title="Test the connection">
+    Verify SSO works before enabling for your organization.
+  </Step>
+</Steps>
+
+Once configured, you can require SSO for all users, disabling email/password and social login. Your IT team can access the admin portal directly to manage configuration, view connection status, and troubleshoot issues.
+
+## Directory sync
+
+Sync users and groups from your identity provider automatically. Enable directory sync in the admin portal after configuring SSO.
+
+- **User provisioning** — Users are created when they're added to your IdP and removed when they leave. No manual account management.
+- **Group sync** — Select which IdP groups to sync. Map them to Tero teams so users get access to the right services automatically.
+- **Real-time updates** — Changes propagate automatically. Your IdP is the source of truth.
+
+The admin portal shows sync status, connected users, and group mappings. Your IT team can manage this independently.
+
+## Roles
+
+- **Admin** — Full access. Manage settings, integrations, users, and teams. Approve any policy.
+- **Member** — Access to assigned services. Review and approve policies for those services.
+
+Roles can be assigned manually or mapped from IdP groups during directory sync.
+
+---
+
+For security details, data handling, and compliance, see the [Trust Center](/trust/overview).

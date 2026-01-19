@@ -1,0 +1,33 @@
+---
+title: "Account Management"
+sidebarTitle: "Overview"
+description: "Teams, access, and organizational structure"
+icon: "users"
+iconType: "duotone"
+---
+
+Tero starts with you. Connect your stack, build the catalog, review policies. This works, but you're the bottleneck. Every policy flows through you. Engineers producing the telemetry never see what you see.
+
+Tero is designed to work across your organization. Bring your teams in. Each team gets access to their services and sees what Tero found: specific issues, cost impact, data quality broken down by category. They review and approve policies for their own services.
+
+Data quality becomes something engineers own. You define the standard (every service under 15% waste, whatever makes sense) and teams see where they stand. It's a metric they manage like latency or error rate. When they look at a policy, they know their service: "that log is useless" or "we actually need that for debugging." They catch things you'd miss.
+
+Roll out gradually. Start with teams who are interested, prove it out, expand from there. Tero is designed for incremental adoption.
+
+<CardGroup cols={2}>
+  <Card title="Teams" icon="users" href="/account-management/teams">
+    Access and ownership. Engineers see their services and own their data quality.
+  </Card>
+  <Card title="Authentication" icon="key" href="/account-management/authentication">
+    SSO and SAML via WorkOS.
+  </Card>
+  <Card title="Data Quality SLOs" icon="bullseye" href="/account-management/data-quality-slos">
+    Measure data quality. Set targets. Integrate with Datadog, Grafana, or your SLO system.
+  </Card>
+  <Card title="Workspaces" icon="layer-group" href="/account-management/workspaces">
+    Shared catalog, separate policies. Different teams, different purposes.
+  </Card>
+  <Card title="Multi-Account" icon="building" href="/account-management/multi-account">
+    Hard boundaries. Separate catalogs, integrations, and policies for compliance.
+  </Card>
+</CardGroup>

@@ -96,6 +96,17 @@
             ]
           },
           {
+            "group": "Account Management",
+            "pages": [
+              "account-management/overview",
+              "account-management/teams",
+              "account-management/authentication",
+              "account-management/data-quality-slos",
+              "account-management/workspaces",
+              "account-management/multi-account"
+            ]
+          },
+          {
             "group": "Integrations",
             "pages": [
               {

@@ -1,0 +1,34 @@
+---
+title: "Teams"
+description: "Access and ownership for your engineering teams"
+icon: "users"
+iconType: "duotone"
+---
+
+Teams group users and link them to services. Users on a team see those services in their catalog, receive notifications for them, and review policies that affect them.
+
+Membership is flexible: users can belong to multiple teams, and services can belong to multiple teams. The platform team might have read access across all services while individual teams own their subset.
+
+Teams are optional. For small organizations, assign users directly to services.
+
+## Service ownership
+
+Services belong to teams. When Tero generates a policy for a service, it routes to the owning team. The engineers who know the service decide whether to approve it.
+
+A service can have multiple teams with different roles:
+- **Owners** review and approve policies, receive alerts, own data quality for the service
+- **Viewers** see data quality metrics and policies but don't receive review requests
+
+This lets platform or security teams have visibility without being in the approval flow.
+
+## Creating teams
+
+Create a team, add members, assign services. Members see those services immediately.
+
+For larger organizations, sync teams from your identity provider. Engineers are automatically added based on their groups in Okta, Azure AD, or Google Workspace. When someone joins your payments team in your IdP, they get access to the right services in Tero. See [Authentication](/account-management/authentication) for setup.
+
+## Rolling out
+
+Start with a team that's interested, often the one feeling the pain of log costs or debugging friction. Get them into Tero, let them see their services, have them approve a few policies. 
+
+Once they're seeing value, expand. You don't need to onboard everyone at once. Teams adopt independently while you keep visibility into everything.

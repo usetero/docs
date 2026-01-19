@@ -1,0 +1,45 @@
+---
+title: "Data Quality SLOs"
+description: "Measure data quality and set targets"
+icon: "bullseye"
+iconType: "duotone"
+---
+
+You can't set an SLO on something you can't measure. Traditional tools measure volume, but volume doesn't tell you what's waste and what's valuable.
+
+Tero quantifies waste per service. The [Master Catalog](/master-catalog/overview) classifies every log event, metric, and trace your services produce. Tero knows which are debug logs that never should have shipped, which are redundant fields, which are health checks firing every second. It adds them up and gives you a number: this service has 23% waste, costing $4,200/month. That's what makes data quality SLOs possible.
+
+## What Tero measures
+
+For each service, Tero calculates:
+
+- **Waste percentage** — How much of the service's telemetry is waste (debug logs, redundant fields, health checks, etc.)
+- **Breakdown by category** — Which policy categories contribute to waste
+- **Cost impact** — What the waste costs you
+
+Set a target, like "every service under 15% waste." Teams see where they stand. Tero tracks progress over time.
+
+## Pushing metrics to your platform
+
+Tero pushes data quality metrics to your observability platform, so you can create SLOs, dashboards, and alerts with your existing tooling.
+
+### Supported platforms
+
+<CardGroup cols={2}>
+  <Card title="Datadog" icon="chart-line" href="/integrations/datadog">
+    Push data quality metrics to Datadog. Create SLOs and monitors using Datadog's native features.
+  </Card>
+</CardGroup>
+
+More integrations coming.
+
+## What you can do
+
+Once metrics are in your platform:
+
+- **Set SLOs** — Track data quality targets alongside latency and error rate
+- **Create dashboards** — Visualize data quality across services and teams
+- **Alert on regression** — Get notified when a service's data quality drops
+- **Include in reviews** — Add data quality to service scorecards and operational reviews
+
+Data quality becomes a metric teams own and improve over time, not a quarterly cleanup someone has to drive.

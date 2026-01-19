@@ -1,0 +1,104 @@
+---
+title: "Workspaces"
+description: "Shared catalog, separate policies"
+icon: "layer-group"
+iconType: "duotone"
+---
+
+Workspaces let different teams manage the same data for different purposes. Security, observability, compliance: each gets their own policies for the same catalog.
+
+Most organizations don't need workspaces. One account, one set of policies, multiple teams. Workspaces become useful when teams have fundamentally different goals for the same telemetry.
+
+## When to use workspaces
+
+Your security team wants to keep all authentication logs with full context. Your observability team wants to sample them and drop the tokens. Your compliance team wants to archive everything for 90 days.
+
+Without workspaces, these goals conflict. Someone has to compromise. With workspaces, each team manages their own policies. Same catalog, different decisions.
+
+## How it works
+
+The [Master Catalog](/master-catalog/overview) is shared across workspaces. Every workspace sees the same services, log events, metrics, and traces. The catalog is built at the account level.
+
+Policies are per-workspace. Each workspace evaluates the catalog and creates its own policies. The security workspace keeps auth logs. The observability workspace samples them. No conflict.
+
+## Enforcement
+
+Workspaces map to destinations. How policies apply depends on your routing:
+
+<Tabs>
+  <Tab title="Separate destinations">
+    Security logs go to your SIEM, observability logs go to Datadog. Each workspace's policies apply to its destination.
+
+    ```mermaid
+    flowchart LR
+      Services --> Tero
+      Tero --> Security[Security Workspace]
+      Tero --> Observability[Observability Workspace]
+      Security -->|security policies| SIEM
+      Observability -->|observability policies| Datadog
+
+      style Services fill:#262626,stroke:#262626,color:#fafafa
+      style Tero fill:#10b981,stroke:#262626,color:#fff
+      style Security fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+      style Observability fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+      style SIEM fill:#262626,stroke:#262626,color:#fafafa
+      style Datadog fill:#632ca6,stroke:#262626,color:#fff
+    ```
+
+    Clean separation. Each team controls what reaches their destination.
+  </Tab>
+  <Tab title="Different indices">
+    Both teams use Datadog, but security uses a dedicated index. Tero tags security-relevant logs, and Datadog's index filters route them.
+
+    ```mermaid
+    flowchart LR
+      Services --> Tero
+      Tero -->|tag + policies| Datadog
+      Datadog -->|"tero.security:true"| SecurityIndex[Security Index]
+      Datadog -->|everything else| MainIndex[Main Index]
+
+      style Services fill:#262626,stroke:#262626,color:#fafafa
+      style Tero fill:#10b981,stroke:#262626,color:#fff
+      style Datadog fill:#632ca6,stroke:#262626,color:#fff
+      style SecurityIndex fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+      style MainIndex fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    ```
+
+    The security workspace configures which logs get tagged as security-relevant. You set up a Datadog index with filter `tero.security:true` and order it before your main index. Security logs route there, everything else falls through.
+
+    This can dramatically reduce security index costs since you're only sending what security actually needs, not all your observability data.
+  </Tab>
+  <Tab title="Same index">
+    Both teams query the same data. Tero unions the policies before enforcement.
+
+    ```mermaid
+    flowchart LR
+      Services --> Tero
+      Tero --> Security[Security Workspace]
+      Tero --> Observability[Observability Workspace]
+      Security --> Union
+      Observability --> Union
+      Union -->|combined policies| Datadog
+
+      style Services fill:#262626,stroke:#262626,color:#fafafa
+      style Tero fill:#10b981,stroke:#262626,color:#fff
+      style Security fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+      style Observability fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+      style Union fill:#10b981,stroke:#262626,color:#fff
+      style Datadog fill:#632ca6,stroke:#262626,color:#fff
+    ```
+
+    The more permissive policy wins. Security wants to keep auth logs, observability wants to drop them? They're kept.
+  </Tab>
+</Tabs>
+
+## Creating workspaces
+
+Create a workspace in **Settings → Workspaces**. Assign teams to it. Those teams manage policies for that workspace.
+
+Each workspace has its own:
+- Policy decisions and approvals
+- Enforcement configuration
+- Data quality metrics and SLOs
+
+The catalog, services, and integrations remain shared at the account level.
