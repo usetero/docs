@@ -2581,7 +2581,7 @@ export const ContextGraph = () => {
     <div className="not-prose my-6">
       <div
         ref={chartRef}
-        style={{ width: "100%", height: "650px" }}
+        style={{ width: "100%", height: "550px" }}
         className="rounded-xl border border-zinc-800 bg-zinc-950"
       />
       <p className="text-xs text-zinc-500 mt-2 text-center">
