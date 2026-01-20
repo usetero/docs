@@ -30,6 +30,18 @@ Tero generates the policies. You review and approve. They execute wherever you w
 
 If you don't have a pipeline, you might not need one. If you do, Tero makes it smarter.
 
+## AI-powered pipelines
+
+A newer category: pipelines with ML on top. They sit in the data path, sample your telemetry, use machine learning to decide what to drop, and store raw data in S3 for replay.
+
+The pitch is automatic cost reduction. The problem is confidence.
+
+When an engineer asks "where's my log?" you can't answer — it's somewhere in the black box. When something breaks, you can't audit what was dropped or why. "We can replay the data" isn't much comfort when you're in the middle of an incident. Your job is to make observability invisible, to keep engineers moving fast. Backfilling logs because ML guessed wrong is a failure mode, not a feature.
+
+There's a deeper issue: sampling doesn't give you the full picture. You get recommendations, reduce some volume, but you still don't know where you stand. What's all your data? What percentage is waste? Which specific things should change? Sampling can't answer these.
+
+Tero takes a census, not a sample. We don't sit in your data path. We connect read-only, analyze patterns across all your telemetry, and build a complete catalog. Every policy is visible, auditable, portable. Nothing is silently dropped by a model you can't inspect.
+
 ## Cost tools
 
 **CloudZero, Vantage**
@@ -38,8 +50,10 @@ Cost tools show you what you're spending. Dashboards, reports, breakdowns by tea
 
 Tero shows you what's wrong with your data and how to fix it. Costs drop as a consequence of cleaning up the waste. The goal isn't a better dashboard. It's better data.
 
-## AI observability tools
+## AI SREs
 
-Ask any of them: what percentage of my data is waste? They can't answer it. That question requires understanding every piece of data, not just pattern matching on queries.
+Copilots that help debug incidents, answer questions about your systems, and automate runbooks.
 
-Tero can answer it. And we don't just give you a number. We show you the policies, organized by type, with examples from your actual data. That's the proof of understanding. Everything else Tero does builds on that foundation.
+They're useful for what they do. But ask: what percentage of my data is waste? They can't tell you. That question requires comprehensive understanding of all your telemetry — what exists, what it means, whether it's used. Answering questions about your data isn't the same as understanding all of it.
+
+Tero has the [Master Catalog](/master-catalog). Every question is answered against complete knowledge, not partial views.
