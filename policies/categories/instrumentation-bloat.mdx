@@ -1,0 +1,151 @@
+---
+title: "Instrumentation bloat"
+description: "SDK and collector metadata no one asked for"
+icon: "box-open"
+iconType: "duotone"
+---
+
+Fields that SDKs, agents, and collectors inject automatically. Fields the developer didn't add and doesn't want. `telemetry.sdk.version`, `otel.library.name`, collector build strings. Cruft that bloats every log.
+
+## Why it happens
+
+Every tool in your observability stack adds metadata by default. The OTel SDK adds its version. Collectors add process information. Kubernetes operators add internal identifiers. Each tool assumes you might need this data.
+
+You don't. These fields exist on every log, get indexed, take up storage. No engineer searches for `telemetry.sdk.version` when debugging a production issue.
+
+## What counts as bloat
+
+Not all instrumentation fields are bloat. The test: **did a developer add this, and would any engineer ever query it?**
+
+**Bloat:**
+- `telemetry.sdk.name`, `telemetry.sdk.version`, `telemetry.sdk.language` — SDK metadata about the SDK itself
+- `otel.library.name`, `otel.library.version` — which instrumentation library emitted this
+- `telemetry.auto.version` — auto-instrumentation version
+- Collector version strings, build hashes
+- Internal Kubernetes UIDs (`k8s.pod.uid`, `k8s.deployment.uid`) when you already have the names
+
+**Not bloat:**
+- `service.name`, `service.version` — developers set these, engineers query them
+- `k8s.pod.name`, `k8s.namespace.name` — useful for debugging
+- `host.name`, `container.id` — infrastructure context that matters
+
+The distinction: bloat is metadata *about the instrumentation*, not metadata *about your system*.
+
+## Example
+
+<Tabs>
+  <Tab title="OTel SDK metadata">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "telemetry.sdk.name": "opentelemetry",
+          "telemetry.sdk.version": "1.24.0",
+          "telemetry.sdk.language": "python",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Tero generates the following policy:
+
+    ```yaml
+    id: remove-otel-sdk-metadata
+    name: Remove OTel SDK metadata
+    description: Drop OpenTelemetry SDK version info. Only useful when debugging the SDK itself.
+    log:
+      match:
+        - resource_attribute: telemetry.sdk.name
+          exists: true
+      transform:
+        remove:
+          - resource_attribute: telemetry.sdk.name
+          - resource_attribute: telemetry.sdk.version
+          - resource_attribute: telemetry.sdk.language
+          - resource_attribute: telemetry.auto.version
+    ```
+  </Tab>
+  <Tab title="Kubernetes UIDs">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "k8s.pod.name": "checkout-api-7d8f9",
+          "k8s.pod.uid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "k8s.deployment.name": "checkout-api",
+          "k8s.deployment.uid": "12345678-abcd-efgh-ijkl-mnopqrstuvwx",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "k8s.pod.name": "checkout-api-7d8f9",
+          "k8s.deployment.name": "checkout-api",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    You already have the human-readable names. The internal UIDs are noise.
+
+    ```yaml
+    id: remove-k8s-uids
+    name: Remove Kubernetes UIDs
+    description: Drop internal Kubernetes identifiers. Names are sufficient for debugging.
+    log:
+      match:
+        - resource_attribute: k8s.pod.uid
+          exists: true
+      transform:
+        remove:
+          - resource_attribute: k8s.pod.uid
+          - resource_attribute: k8s.replicaset.uid
+          - resource_attribute: k8s.deployment.uid
+          - resource_attribute: k8s.statefulset.uid
+          - resource_attribute: k8s.daemonset.uid
+          - resource_attribute: k8s.job.uid
+          - resource_attribute: k8s.cronjob.uid
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+  Instrumentation bloat is usually consistent across your entire fleet. If you don't need `telemetry.sdk.version` on one service, you don't need it anywhere. Apply these policies org-wide.
+</Tip>
+
+## Recommended enforcement
+
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
+  Strip bloat before data leaves your network. Immediate savings, no code changes.
+</Card>
+
+These fields are added by tooling, not your application code. Fixing at the source would mean reconfiguring agents and SDKs across your entire fleet. Stripping at the edge is simpler and faster.
+
+## How it works
+
+Tero identifies instrumentation bloat by looking at field origins and query patterns. Fields injected by SDKs and collectors—not set by application code—that never appear in any query, dashboard, or alert are flagged.
+
+If `telemetry.sdk.version` appears in even one dashboard, it won't be flagged. Tero only surfaces fields with zero usage.

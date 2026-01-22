@@ -1,19 +1,34 @@
 ---
 title: "Leftover debug logs"
-description: "Debug statements that shipped to production by accident"
+description: "Obviously accidental debug statements that shipped to production"
 icon: "bug"
 iconType: "duotone"
 ---
 
-<Badge color="green" icon="circle-check">Zero risk</Badge>
-
-Debug statements that weren't meant to ship. `console.log("here")`, `print(f"DEBUG: {x}")`, `TODO: remove this`. Developer breadcrumbs that made it to production.
+Debug statements that obviously weren't meant to ship. `console.log("here")`, `print("WTF")`, `logger.debug("asdf")`. Developer breadcrumbs that made it to production by accident.
 
 ## Why it happens
 
-Engineers add debug statements while developing. Most get removed before merge. Some don't. Code review catches obvious ones, but `logger.debug()` calls blend in. Over time, they accumulate.
+Engineers add throwaway debug statements while developing. Most get removed before merge. Some don't. Code review catches obvious ones, but quick fixes under pressure slip through.
 
-Nobody intends to ship debug logs. But every codebase has them.
+Nobody intends to ship these. But every codebase has them.
+
+## What counts as leftover
+
+This category is strict. We're not talking about legitimate DEBUG-level logging. We're talking about *obviously* accidental statements that any engineer would recognize as mistakes.
+
+**Leftover debug logs:**
+- Severity DEBUG or TRACE with throwaway messages
+- Messages like "got here", "hello world", "WTF", "asdf", "test", "xxx", "debugging"
+- Bare variable dumps: "user: {user}"
+- Placeholder messages that were never replaced
+
+**Not leftover debug logs:**
+- Legitimate DEBUG-level logging with meaningful content
+- Verbose logging that's intentionally enabled
+- TODO comments (those belong in code review, not log analysis)
+
+The test: **would any engineer look at this and immediately know it's a mistake?**
 
 ## Example
 
@@ -38,7 +53,7 @@ Tero generates a policy to drop this specific log event:
 ```yaml
 id: drop-debug-got-here-checkout-api
 name: Drop "got here" debug log from checkout-api
-description: Debug statement that shipped to production. Not used in any dashboard or alert.
+description: Accidental debug statement that shipped to production.
 log:
   match:
     - resource_attribute: service.name
@@ -51,13 +66,13 @@ log:
 ## Recommended enforcement
 
 <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
-  Fix at the source. These are code mistakes, not infrastructure decisions.
+  Fix at the source. These are code mistakes—remove them from the codebase.
 </Card>
 
-Unlike most policy types, leftover debug logs should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently.
+Unlike most categories, leftover debug logs should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently and cleans up the codebase.
 
 ## How it works
 
-Tero evaluates each [log event](/master-catalog/log-events) in your Master Catalog. It looks at the content, the severity, the service context, and whether the log appears in any dashboards or alerts.
+Tero evaluates each log event and looks for obvious debug patterns: DEBUG/TRACE severity combined with throwaway message content. Messages that contain common debug phrases ("got here", "testing", "WTF") or appear to be accidental (random characters, bare variable names) are flagged.
 
-A log with `severity_text: DEBUG` might be intentional. But a log that says "got here lol", has DEBUG severity, and never appears in any dashboard or alert? That's clearly a debug statement that shipped by accident. Tero flags it and generates a policy you can approve or dismiss.
+This is conservative by design. Tero only flags logs that are unambiguously mistakes. Legitimate debug logging—even if verbose—isn't flagged.

@@ -1,11 +1,9 @@
 ---
 title: "Excessive payloads"
-description: "Response bodies and large nested objects"
+description: "Response bodies, large objects, and data blobs in logs"
 icon: "weight-hanging"
 iconType: "duotone"
 ---
-
-<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
 
 Large data blobs embedded in logs. Full HTTP response bodies, entire database records, massive stack traces. Fields that add kilobytes to every log event.
 
@@ -18,45 +16,74 @@ One log event with a 10KB response body, fired 100,000 times a day, is 1GB of st
 ## Example
 
 <Tabs>
-  <Tab title="Before">
-    ```json
-    {
-      "@timestamp": "2024-01-15T10:30:00Z",
-      "service.name": "order-service",
-      "event": "order.created",
-      "order_id": "ORD-12345",
-      "http.response.body": "{\"id\":\"ORD-12345\",\"items\":[{\"sku\":\"SKU-001\",\"name\":\"Widget Pro\",\"quantity\":2,\"price\":29.99},{\"sku\":\"SKU-002\",\"name\":\"Gadget Plus\",\"quantity\":1,\"price\":49.99}],\"shipping\":{\"method\":\"express\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Seattle\",\"state\":\"WA\",\"zip\":\"98101\",\"country\":\"US\"}},\"billing\":{\"method\":\"card\",\"last4\":\"4242\"},\"totals\":{\"subtotal\":109.97,\"shipping\":12.99,\"tax\":10.45,\"total\":133.41}}"
-    }
+  <Tab title="Response body">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "order-service",
+          "event": "order.created",
+          "order_id": "ORD-12345",
+          "http.response.body": "{\"id\":\"ORD-12345\",\"items\":[{\"sku\":\"SKU-001\",\"name\":\"Widget Pro\",\"quantity\":2,\"price\":29.99},{\"sku\":\"SKU-002\",\"name\":\"Gadget Plus\",\"quantity\":1,\"price\":49.99}],\"shipping\":{\"method\":\"express\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Seattle\",\"state\":\"WA\",\"zip\":\"98101\",\"country\":\"US\"}},\"billing\":{\"method\":\"card\",\"last4\":\"4242\"},\"totals\":{\"subtotal\":109.97,\"shipping\":12.99,\"tax\":10.45,\"total\":133.41}}"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "order-service",
+          "event": "order.created",
+          "order_id": "ORD-12345"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    ```yaml
+    id: remove-response-body-order-service
+    name: Remove response body from order-service
+    description: Drop full HTTP response body. The order_id is sufficient for lookup.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: order-service
+        - log_attribute: event
+          exact: order.created
+      transform:
+        remove:
+          - log_attribute: http.response.body
     ```
   </Tab>
-  <Tab title="After">
-    ```json
-    {
-      "@timestamp": "2024-01-15T10:30:00Z",
-      "service.name": "order-service",
-      "event": "order.created",
-      "order_id": "ORD-12345"
-    }
-    ```
+  <Tab title="Stack trace">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "api-service",
+          "severity_text": "ERROR",
+          "error.message": "Connection refused",
+          "error.stack_trace": "Error: Connection refused\n    at Socket.connect (net.js:1141:16)\n    at DBClient.connect (db.js:89:12)\n    ... 200 more lines ..."
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "api-service",
+          "severity_text": "ERROR",
+          "error.message": "Connection refused"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    The full stack trace is preserved in your tracing backend. The log doesn't need a copy.
   </Tab>
 </Tabs>
-
-Tero generates a scoped policy for each service where excessive payloads exist:
-
-```yaml
-id: remove-response-body-order-service
-name: Remove response body from order-service
-description: Drop full HTTP response body. The order_id is preserved for lookup.
-log:
-  match:
-    - resource_attribute: service.name
-      exact: order-service
-    - log_attribute: event
-      exact: order.created
-  transform:
-    remove:
-      - log_attribute: http.response.body
-```
 
 <Tip>
   Review these carefully. Some teams intentionally log full payloads for compliance or debugging. Discuss with the service owner before approving.
@@ -68,10 +95,10 @@ log:
   Fix at the source. The developer who added this logging should decide what to keep.
 </Card>
 
-Unlike infrastructure noise, excessive payloads are usually intentional logging decisions. The right fix is often to log less in the first place, not to strip fields at the edge.
+Unlike infrastructure noise, excessive payloads are usually intentional logging decisions. The right fix is often to log less in the first place, not to strip fields at the edge. The developer knows whether that response body is actually useful.
 
 ## How it works
 
-Tero identifies excessive payloads by analyzing field sizes across your [Master Catalog](/master-catalog). Fields that consistently exceed a size threshold (like `http.response.body` or `request.payload`) are flagged.
+Tero identifies excessive payloads by analyzing field sizes. Fields that consistently exceed size thresholds—response bodies, request payloads, stack traces, serialized objects—are flagged.
 
 Tero also checks whether these large fields are ever queried. A 10KB field that nobody searches is a clear candidate for removal. A 10KB field that appears in dashboards might be intentional.

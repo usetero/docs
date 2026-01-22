@@ -70,12 +70,12 @@
                   "policies/categories/malformed-data",
                   "policies/categories/health-checks",
                   "policies/categories/bot-traffic",
-                  "policies/categories/unintended-tool-metadata",
+                  "policies/categories/instrumentation-bloat",
                   "policies/categories/pii-leakage",
                   "policies/categories/excessive-payloads",
                   "policies/categories/debug-mode-left-on",
                   "policies/categories/logs-in-hot-path",
-                  "policies/categories/excessive-repetition",
+                  "policies/categories/burst-protection",
                   "policies/categories/high-cardinality-tags"
                 ]
               },

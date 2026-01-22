@@ -5,9 +5,7 @@ icon: "robot"
 iconType: "duotone"
 ---
 
-<Badge color="orange" icon="circle-half-stroke">Low risk</Badge>
-
-Requests from crawlers, scrapers, and automated scanners. Googlebot indexing your pages, security scanners probing your endpoints, Slack unfurling your links. Real traffic, but not your users.
+Requests from crawlers, scrapers, and automated scanners. Googlebot indexing your pages, security scanners probing endpoints, Slack unfurling links. Real traffic, but not your users.
 
 ## Why it happens
 
@@ -15,43 +13,88 @@ Bots are a fact of life. Search engines crawl your site. Social platforms fetch 
 
 Each request generates logs. For public-facing services, bot traffic can be 30-50% of total volume. You're paying to store logs from Googlebot, not your customers.
 
+## How Tero handles it
+
+Tero identifies log events with a user-agent field that can distinguish bot traffic from real users. But it goes further than just dropping individual logs.
+
+**Lasso entire requests.** If a log has both a user-agent field and a correlation ID (like `request_id` or `trace_id`), Tero can drop all logs from that request—not just the one with the user-agent. The entry point identifies the bot, then every downstream log in that request gets dropped too.
+
+This matters because a single bot request might generate logs across multiple services. The initial HTTP handler logs the user-agent, but the downstream database queries, cache lookups, and service calls don't. Without correlation, you'd only drop the first log. With it, you drop the entire trace.
+
 ## Example
 
 <Tabs>
-  <Tab title="Before">
-    ```json
-    {
-      "@timestamp": "2024-01-15T10:30:00Z",
-      "service.name": "marketing-site",
-      "http.method": "GET",
-      "http.target": "/pricing",
-      "http.status_code": 200,
-      "http.user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
-    }
+  <Tab title="Single log">
+    A standalone log with a user-agent field:
+    
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "marketing-site",
+          "http.method": "GET",
+          "http.target": "/pricing",
+          "http.status_code": 200,
+          "http.user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1)"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        Dropped entirely.
+      </Tab>
+    </Tabs>
+
+    ```yaml
+    id: drop-bot-traffic-marketing-site
+    name: Drop bot traffic from marketing-site
+    description: Drop requests from known crawlers and scrapers.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: marketing-site
+        - log_attribute: http.user_agent
+          regex: "(Googlebot|bingbot|Slackbot|AhrefsBot|facebookexternalhit)"
+      keep: none
     ```
   </Tab>
-  <Tab title="After">
-    Dropped entirely.
+  <Tab title="Correlated request">
+    A request that spans multiple services, identified by `request_id`:
+
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        // Entry point - has user-agent
+        {"service.name": "api-gateway", "request_id": "req_abc123", "http.user_agent": "Googlebot/2.1", "path": "/products"}
+        
+        // Downstream - no user-agent, same request_id
+        {"service.name": "product-service", "request_id": "req_abc123", "event": "fetch_products"}
+        {"service.name": "cache-service", "request_id": "req_abc123", "event": "cache_miss"}
+        {"service.name": "database", "request_id": "req_abc123", "event": "query_executed"}
+        ```
+      </Tab>
+      <Tab title="After">
+        All four logs dropped. The bot was identified at the entry point, and every log with that `request_id` follows.
+      </Tab>
+    </Tabs>
+
+    ```yaml
+    id: drop-bot-traffic-correlated
+    name: Drop bot traffic with correlated logs
+    description: Drop entire request trace when entry point is identified as bot traffic.
+    log:
+      match:
+        - log_attribute: http.user_agent
+          regex: "(Googlebot|bingbot|Slackbot|AhrefsBot)"
+      correlation:
+        field: request_id
+      keep: none
+    ```
   </Tab>
 </Tabs>
 
-Tero generates a scoped policy for each service where bot traffic is detected:
-
-```yaml
-id: drop-bot-traffic-marketing-site
-name: Drop bot traffic from marketing-site
-description: Drop requests from known crawlers and scrapers.
-log:
-  match:
-    - resource_attribute: service.name
-      exact: marketing-site
-    - log_attribute: http.user_agent
-      regex: "(Googlebot|bingbot|Slackbot|AhrefsBot|facebookexternalhit)"
-  keep: none
-```
-
 <Tip>
-  Bot traffic patterns are consistent across services. You can expand the scope to apply org-wide.
+  Bot traffic patterns are consistent across services. You can expand scope to apply org-wide and use correlation to drop entire request traces.
 </Tip>
 
 ## Recommended enforcement
@@ -60,14 +103,10 @@ log:
   Drop bot traffic logs before they reach your provider. Immediate volume reduction.
 </Card>
 
-Bot traffic is external noise. Your application didn't decide to log these requests, they just happened. Dropping them at the edge is the simplest fix.
+Bot traffic is external noise. Your application didn't decide to log these requests—they just happened. Dropping at the edge is the simplest fix.
 
 ## How it works
 
-Tero identifies bot traffic through multiple signals:
+Tero identifies bot traffic through the user-agent field. Bots usually self-identify: `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves.
 
-- **Known user agents**: Bots usually self-identify. `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves in the user agent string.
-- **Missing browser signals**: Real browsers send cookies, referrers, and consistent header patterns. Requests missing these signals are likely automated.
-- **Request patterns**: Bots often crawl systematically: sequential paths, predictable timing, no session continuity.
-
-A request that matches bot patterns and comes from a public-facing endpoint is flagged. Internal service traffic is not flagged, even if it lacks browser signals.
+When Tero finds a log event with a user-agent field, it flags it for bot traffic filtering. If the event also has a correlation ID, Tero can extend the policy to drop all related logs—giving you complete request-level filtering, not just entry-point filtering.

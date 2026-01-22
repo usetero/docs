@@ -1,43 +1,66 @@
 ---
 title: "Logs in hot path"
-description: "Log statements in middleware, tight loops, or high-frequency code"
+description: "Log statements in middleware, loops, or high-frequency code"
 icon: "fire"
 iconType: "duotone"
 ---
 
-<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
+A log statement that fires on every request, every iteration, or every tick. Middleware that logs every incoming request. A loop that logs each item. Code that runs constantly and logs every time.
 
-Log statements that fire on every request, every iteration, or every tick. Middleware that logs every incoming request. Loops that log each item. Code that runs constantly and logs every time.
+The log statement isn't wrong. It's just in the wrong place.
 
 ## Why it happens
 
-A developer adds logging to understand how code behaves. The code runs more often than expected. A log statement in middleware fires on every request. A log inside a loop fires thousands of times per operation. A background job logs every tick.
+A developer adds logging to understand how code behaves. The code runs more often than expected. A log in middleware fires on every request. A log inside a loop fires thousands of times per operation. A background job logs every tick.
 
-The log statement isn't wrong. It's just in the wrong place.
+These logs made sense during development. They don't make sense at production scale.
+
+## How to identify it
+
+Hot path logs have two qualities:
+
+1. **The content is generic.** "Incoming request" or "Processing item" with no distinguishing context. If the log doesn't tell you *which* request or *why* this one matters, it's probably firing indiscriminately.
+
+2. **The volume is disproportionate to the information.** If a log fires 100,000 times and says essentially the same thing each time, it's not providing 100,000 pieces of information. It's providing one piece of information, repeated.
+
+This is different from [burst protection](/policies/categories/burst-protection). Burst protection is for logs that flood during failures—they're fine during normal operation but explode when something breaks. Hot path logs flood *all the time*, even when everything is healthy.
 
 ## Example
 
 <Tabs>
-  <Tab title="Before">
-    Middleware logging every request:
-    ```json
-    {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
-    {"body": "Incoming request", "http.target": "/api/orders", "service.name": "api-gateway"}
-    {"body": "Incoming request", "http.target": "/api/products", "service.name": "api-gateway"}
-    {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
-    ```
-    Thousands per minute. Every request. No additional context.
+  <Tab title="Middleware logging">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
+        {"body": "Incoming request", "http.target": "/api/orders", "service.name": "api-gateway"}
+        {"body": "Incoming request", "http.target": "/api/products", "service.name": "api-gateway"}
+        {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
+        ```
+        Thousands per minute. Every request. No additional context beyond what you'd get from metrics.
+      </Tab>
+      <Tab title="After">
+        Log removed from middleware entirely.
+      </Tab>
+    </Tabs>
   </Tab>
-  <Tab title="After">
-    Log removed from middleware, or sampled to reduce volume.
+  <Tab title="Loop logging">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {"body": "Processing item", "item_id": "1", "service.name": "batch-processor"}
+        {"body": "Processing item", "item_id": "2", "service.name": "batch-processor"}
+        {"body": "Processing item", "item_id": "3", "service.name": "batch-processor"}
+        // ... 10,000 more
+        ```
+        One log per item in a batch. The batch completion log would suffice.
+      </Tab>
+      <Tab title="After">
+        Single log at batch completion with item count.
+      </Tab>
+    </Tabs>
   </Tab>
 </Tabs>
-
-This is a code change. The log statement needs to be moved, removed, or made conditional.
-
-<Tip>
-  Tero detects this by identifying log events with extremely high volume but low variance. If a log fires 100,000 times with nearly identical content, it's probably in a hot path.
-</Tip>
 
 ## Recommended enforcement
 
@@ -50,10 +73,12 @@ This is a code change. The log statement needs to be moved, removed, or made con
   </Card>
 </CardGroup>
 
-The fix is usually in code: move the log outside the loop, add a condition, or remove it entirely. Sampling at the edge is a temporary fix but doesn't address the root cause.
+The fix is in code: move the log outside the loop, add a condition, or remove it entirely. These logs shouldn't exist at this frequency.
+
+Edge filtering is a temporary workaround, but it doesn't fix the underlying problem—the code is still doing unnecessary work to generate logs that get dropped.
 
 ## How it works
 
-Tero identifies hot path logs by analyzing volume and variance in your [Master Catalog](/master-catalog). A log event that fires at extremely high rates with low content variance is flagged.
+Tero identifies hot path logs by looking at both content and volume. A log event with generic content ("Processing request", "Handling item") combined with extremely high volume relative to its information content is flagged.
 
-The key signal is the ratio of volume to information. A log that fires 100,000 times and says the same thing each time isn't providing 100,000 pieces of information. It's providing one piece of information, repeated.
+The key insight: a well-placed log has context about *why* it fired—an error condition, a specific branch taken, a notable state. Hot path logs fire unconditionally on every pass with no distinguishing context.

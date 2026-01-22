@@ -1,19 +1,25 @@
 ---
 title: "PII leakage"
-description: "Sensitive data that ended up in logs by accident"
+description: "Sensitive data that ended up in logs"
 icon: "shield-exclamation"
 iconType: "duotone"
 ---
 
-<Badge color="green" icon="circle-check">Zero risk</Badge>
-
-Credit card numbers, emails, SSNs, access tokens. Sensitive data that ended up in logs by accident. A developer logs a request object. An error message includes data it shouldn't. A third-party library dumps more than you expected.
+Credit card numbers, emails, SSNs, API keys. Sensitive data that ended up in logs. A developer logs a request object. An error message includes user data. A third-party library dumps more than expected.
 
 ## Why it happens
 
 Developers log context for debugging. Sometimes that context includes sensitive fields. A payment service logs the full request body. An auth service logs tokens for troubleshooting. An error handler dumps the entire user object.
 
-Nobody intends to leak PII. But it happens. And once it's in your observability provider, you have a compliance problem.
+Nobody intends to leak PII. But it happens. And once it's in your observability platform, you have a compliance problem.
+
+## How Tero detects it
+
+Tero scans field values for PII patterns. Every field that could possibly contain sensitive data gets scanned—nothing slips through.
+
+The only fields Tero skips are ones where scanning is pointless: timestamps, log levels, status codes, PIDs, port numbers. There's no reason to scan a timestamp for credit card numbers, or check a severity level for email addresses.
+
+Everything else gets scanned. Message bodies, user-facing fields, request payloads, string fields of any kind. If PII could be there, Tero looks for it.
 
 ## Example
 
@@ -48,7 +54,7 @@ Nobody intends to leak PII. But it happens. And once it's in your observability 
     ```yaml
     id: redact-credit-card-payment-service
     name: Redact credit card numbers from payment-service
-    description: Drop card_number field containing credit card data.
+    description: Remove card_number field containing credit card data.
     log:
       match:
         - resource_attribute: service.name
@@ -60,16 +66,16 @@ Nobody intends to leak PII. But it happens. And once it's in your observability 
           - log_attribute: card_number
     ```
   </Tab>
-  <Tab title="Social Security numbers">
+  <Tab title="Email addresses">
     <Tabs>
       <Tab title="Before">
         ```json
         {
           "@timestamp": "2024-01-15T10:30:00Z",
-          "service.name": "identity-service",
-          "event": "identity.verified",
+          "service.name": "user-service",
+          "event": "user.updated",
           "user_id": "usr_abc123",
-          "ssn": "123-45-6789"
+          "email": "alice@example.com"
         }
         ```
       </Tab>
@@ -77,8 +83,8 @@ Nobody intends to leak PII. But it happens. And once it's in your observability 
         ```json
         {
           "@timestamp": "2024-01-15T10:30:00Z",
-          "service.name": "identity-service",
-          "event": "identity.verified",
+          "service.name": "user-service",
+          "event": "user.updated",
           "user_id": "usr_abc123"
         }
         ```
@@ -88,30 +94,28 @@ Nobody intends to leak PII. But it happens. And once it's in your observability 
     Tero generates the following policy:
 
     ```yaml
-    id: redact-ssn-identity-service
-    name: Redact SSNs from identity-service
-    description: Drop ssn field containing Social Security numbers.
+    id: redact-email-user-service
+    name: Redact email addresses from user-service
+    description: Remove email field containing user email addresses.
     log:
       match:
         - resource_attribute: service.name
-          exact: identity-service
-        - log_attribute: ssn
-          regex: "^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+          exact: user-service
+        - log_attribute: email
+          exists: true
       transform:
         remove:
-          - log_attribute: ssn
+          - log_attribute: email
     ```
   </Tab>
-  <Tab title="Email addresses">
+  <Tab title="API keys in messages">
     <Tabs>
       <Tab title="Before">
         ```json
         {
           "@timestamp": "2024-01-15T10:30:00Z",
-          "service.name": "notification-service",
-          "event": "email.sent",
-          "recipient": "alice@example.com",
-          "template": "welcome"
+          "service.name": "integration-service",
+          "body": "Request failed with key sk_live_abc123xyz789..."
         }
         ```
       </Tab>
@@ -119,9 +123,8 @@ Nobody intends to leak PII. But it happens. And once it's in your observability 
         ```json
         {
           "@timestamp": "2024-01-15T10:30:00Z",
-          "service.name": "notification-service",
-          "event": "email.sent",
-          "template": "welcome"
+          "service.name": "integration-service",
+          "body": "Request failed with key [REDACTED]"
         }
         ```
       </Tab>
@@ -130,18 +133,20 @@ Nobody intends to leak PII. But it happens. And once it's in your observability 
     Tero generates the following policy:
 
     ```yaml
-    id: redact-email-notification-service
-    name: Redact email addresses from notification-service
-    description: Drop recipient field containing email addresses.
+    id: redact-api-key-integration-service
+    name: Redact API keys from integration-service logs
+    description: Redact Stripe API keys found in log messages.
     log:
       match:
         - resource_attribute: service.name
-          exact: notification-service
-        - log_attribute: recipient
-          regex: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          exact: integration-service
+        - log_field: body
+          regex: "sk_live_[a-zA-Z0-9]+"
       transform:
-        remove:
-          - log_attribute: recipient
+        redact:
+          - log_field: body
+            pattern: "sk_live_[a-zA-Z0-9]+"
+            replacement: "[REDACTED]"
     ```
   </Tab>
 </Tabs>
@@ -152,26 +157,20 @@ Each PII pattern gets its own policy. You approve them individually based on you
 
 <CardGroup cols={2}>
   <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
-    Redact PII before data leaves your network. The data never reaches your provider.
+    Redact PII before data leaves your network. It never reaches your provider.
   </Card>
   <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
     Fix the instrumentation so PII is never logged in the first place.
   </Card>
 </CardGroup>
 
-Edge enforcement is critical here. Redacting at the edge means the sensitive data never leaves your infrastructure. No cleanup timeline. No breach notifications. The blast radius is zero because the data never reached your provider.
+Edge enforcement is critical. Redacting at the edge means sensitive data never leaves your infrastructure. No cleanup required. No breach notifications. The blast radius is zero because the data never reached your provider.
 
-But you should also fix the source. Open a PR to remove the sensitive fields from the log statement entirely.
+But also fix the source. Open a PR to remove sensitive fields from the log statement entirely.
 
-## How it works
+## Supported patterns
 
-Tero scans log content for patterns that match sensitive data using regex patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
-
-When Tero finds sensitive data, it identifies the field and the service. You can then redact (replace with `[REDACTED]`), hash (replace with a consistent hash for correlation), or drop the field entirely.
-
-### Supported patterns
-
-Each category below can be approved as a set of policies. Approve the categories relevant to your compliance requirements.
+Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
 
 <AccordionGroup>
   <Accordion title="Personal information">

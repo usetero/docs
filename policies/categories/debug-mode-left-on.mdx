@@ -5,15 +5,19 @@ icon: "toggle-on"
 iconType: "duotone"
 ---
 
-<Badge color="red" icon="circle-exclamation">Medium risk</Badge>
-
-A service set to DEBUG log level for troubleshooting that was never switched back. You're getting 10x the logs you need because someone forgot to turn off verbose logging.
+A service running at DEBUG log level in production. Someone enabled verbose logging to investigate an issue, then forgot to turn it off. Now you're getting 10x the logs you need.
 
 ## Why it happens
 
 An engineer enables DEBUG logging to investigate an issue. The issue gets resolved. The engineer moves on. The log level stays at DEBUG. Days pass. Weeks pass. The service keeps emitting massive volumes of logs nobody reads.
 
-This is surprisingly common. Log level changes often happen through environment variables or config files that don't go through normal code review.
+This is common. Log level changes often happen through environment variables or config files that don't go through normal code review. There's no reminder to switch back.
+
+## How Tero detects it
+
+This isn't a per-log-event analysis. Tero looks at service-level patterns: a sudden spike in DEBUG logs that persists beyond a reasonable troubleshooting window.
+
+If a service has been emitting elevated DEBUG volume for days, something's probably wrong. Either debug mode was left on, or there's a misconfiguration that needs attention.
 
 ## Example
 
@@ -27,21 +31,16 @@ This is surprisingly common. Log level changes often happen through environment 
     {"severity_text": "DEBUG", "body": "Query took 3ms", "service.name": "user-service"}
     {"severity_text": "DEBUG", "body": "Exiting getUserById", "service.name": "user-service"}
     ```
+    This pattern repeating for every request, for days.
   </Tab>
   <Tab title="After">
     Log level set back to INFO. Only meaningful events logged.
   </Tab>
 </Tabs>
 
-This isn't a policy you deploy. It's a configuration change the service owner needs to make.
-
-<Tip>
-  Tero detects this by noticing a sudden spike in DEBUG logs that persists beyond a reasonable troubleshooting window. If a service has been emitting DEBUG logs for days, something's probably wrong.
-</Tip>
+This isn't a policy you deploy to filter logs. It's a configuration problem that needs to be fixed at the source.
 
 ## Recommended enforcement
-
-Start by notifying the service owner. If the issue persists, escalate.
 
 <CardGroup cols={3}>
   <Card title="Create tickets" icon="ticket" href="/policies/enforcement/create-tickets">
@@ -51,14 +50,14 @@ Start by notifying the service owner. If the issue persists, escalate.
     If log levels are config-as-code, change it directly.
   </Card>
   <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
-    Block temporarily if tickets go unacknowledged. Auto-reverts.
+    Temporary blocking if the issue persists. Auto-reverts.
   </Card>
 </CardGroup>
 
-Most teams start with tickets. If a service has had debug mode on for 48+ hours with no response, temporary edge blocking gets attention without permanent consequences.
+Start with tickets. If a service has had debug mode on for 48+ hours with no response, edge blocking can get attention. But the real fix is changing the configuration.
 
 ## How it works
 
-Tero tracks log volume patterns per service in your [Master Catalog](/master-catalog). When a service's DEBUG log volume spikes and stays elevated for more than a few hours, it's flagged.
+Tero tracks log volume and severity patterns per service. When DEBUG-level volume spikes and stays elevated for longer than typical troubleshooting (hours, not minutes), it's flagged.
 
-The key signal is time. DEBUG logs during an active incident are normal. DEBUG logs that persist for days after the incident ended are a forgotten configuration.
+The signal is time. DEBUG logs during an active incident are normal. DEBUG logs that persist for days after the incident ended are a forgotten configuration.

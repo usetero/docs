@@ -1,11 +1,9 @@
 ---
 title: "Redundant attributes"
-description: "Fields that duplicate other fields in the same log"
+description: "The same data stored twice in one log"
 icon: "copy"
 iconType: "duotone"
 ---
-
-<Badge color="green" icon="circle-check">Zero risk</Badge>
 
 Two fields with the same value. Literal duplicates. You're paying to store the same data twice.
 
@@ -19,9 +17,26 @@ Different parts of your stack add the same information under different names:
 
 Nobody planned this. It just accumulated.
 
+## What counts as redundant
+
+The test: **do these fields contain the same information?**
+
+**Redundant:**
+- `time` and `@timestamp` with identical values
+- `level` and `severity_text` that map to the same thing (`ERROR` = `ERROR`, `9` = `INFO`)
+- `host` and `hostname` with the same value
+- `service` and `service.name` pointing to the same string
+
+**Not redundant:**
+- `time` in UTC and `@timestamp` in local time—different representations
+- `request_id` and `trace_id`—related but different identifiers
+- Fields that are similar but not semantically identical
+
+Tero only flags true duplicates where the values match exactly or map to the same meaning.
+
 ## Example
 
-The following log has three duplicate pairs: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`. Same values, different names. You're paying for each twice.
+The following log has three duplicate pairs: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`. Same values, different names.
 
 <Tabs>
   <Tab title="Before">
@@ -49,23 +64,16 @@ The following log has three duplicate pairs: `time` and `@timestamp`, `level` an
   </Tab>
 </Tabs>
 
-Tero generates a scoped policy for each service where this pattern exists:
+Tero generates a scoped policy:
 
 ```yaml
 id: remove-redundant-fields-checkout-api
 name: Remove redundant fields from checkout-api
-description: Drop duplicate timestamp, level, and host fields when they match their canonical equivalents.
+description: Drop duplicate fields that contain the same data as their canonical equivalents.
 log:
   match:
     - resource_attribute: service.name
       exact: checkout-api
-    - or:
-      - log_attribute: time
-        equals_field: "@timestamp"
-      - log_attribute: level
-        equals_field: severity_text
-      - log_attribute: host
-        equals_field: hostname
   transform:
     remove:
       - log_attribute: time
@@ -74,7 +82,7 @@ log:
 ```
 
 <Tip>
-  Want to apply this org-wide? You can expand the scope when you approve to enforce across all services, not just the ones where Tero detected the pattern.
+  Redundant attributes usually come from collectors and agents. Apply these policies org-wide—if a field is redundant in one service, it's probably redundant everywhere.
 </Tip>
 
 ## Recommended enforcement
@@ -83,10 +91,10 @@ log:
   Drop the redundant field before data leaves your network. Immediate savings, no code changes.
 </Card>
 
-These fields are typically added by agents and collectors, not your application code. Fixing at the source would mean reconfiguring your entire observability stack. It's simpler to drop them at the edge.
+These fields are typically added by agents and collectors, not your application code. Fixing at the source would mean reconfiguring your entire observability stack. Dropping at the edge is simpler.
 
 ## How it works
 
-Tero analyzes every log event in your [Master Catalog](/master-catalog). When two fields contain identical values consistently (exact string matches, timestamps that differ only in format, numeric fields with the same value) they're flagged as redundant.
+Tero analyzes every log event and compares field values. When two fields contain identical values consistently—exact string matches, timestamps that differ only in format, numeric fields with the same value—they're flagged as redundant.
 
-Fields that are *similar* but not identical aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not redundant. Tero only flags true duplicates.
+Tero keeps the canonical field (usually the more standard name like `@timestamp` or `severity_text`) and removes the duplicate.
