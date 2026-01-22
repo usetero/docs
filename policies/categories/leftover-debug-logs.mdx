@@ -7,28 +7,9 @@ iconType: "duotone"
 
 Debug statements that obviously weren't meant to ship. `console.log("here")`, `print("WTF")`, `logger.debug("asdf")`. Developer breadcrumbs that made it to production by accident.
 
-## Why it happens
+This category is strict. We're not talking about legitimate DEBUG-level logging. We're talking about obviously accidental statements that any engineer would recognize as mistakes: severity DEBUG or TRACE with throwaway messages like "got here", "hello world", "WTF", "asdf", bare variable dumps like `"user: {user}"`.
 
-Engineers add throwaway debug statements while developing. Most get removed before merge. Some don't. Code review catches obvious ones, but quick fixes under pressure slip through.
-
-Nobody intends to ship these. But every codebase has them.
-
-## What counts as leftover
-
-This category is strict. We're not talking about legitimate DEBUG-level logging. We're talking about *obviously* accidental statements that any engineer would recognize as mistakes.
-
-**Leftover debug logs:**
-- Severity DEBUG or TRACE with throwaway messages
-- Messages like "got here", "hello world", "WTF", "asdf", "test", "xxx", "debugging"
-- Bare variable dumps: `"user: {user}"`
-- Placeholder messages that were never replaced
-
-**Not leftover debug logs:**
-- Legitimate DEBUG-level logging with meaningful content
-- Verbose logging that's intentionally enabled
-- TODO comments (those belong in code review, not log analysis)
-
-The test: **would any engineer look at this and immediately know it's a mistake?**
+The test: would any engineer look at this and immediately know it's a mistake?
 
 ## Example
 
@@ -66,13 +47,13 @@ log:
 ## Recommended enforcement
 
 <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
-  Fix at the source. These are code mistakes—remove them from the codebase.
+  Fix at the source. These are code mistakes. Remove them from the codebase.
 </Card>
 
-Unlike most categories, leftover debug logs should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently and cleans up the codebase.
+Unlike most categories, leftover debug logs should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently.
 
 ## How it works
 
-Tero evaluates each log event and looks for obvious debug patterns: DEBUG/TRACE severity combined with throwaway message content. Messages that contain common debug phrases ("got here", "testing", "WTF") or appear to be accidental (random characters, bare variable names) are flagged.
+Tero looks for obvious debug patterns: DEBUG/TRACE severity combined with throwaway message content. Messages that contain common debug phrases ("got here", "testing", "WTF") or appear to be accidental (random characters, bare variable names) are flagged.
 
-This is conservative by design. Tero only flags logs that are unambiguously mistakes. Legitimate debug logging—even if verbose—isn't flagged.
+Conservative by design. Tero only flags logs that are unambiguously mistakes. Legitimate debug logging, even if verbose, isn't flagged.

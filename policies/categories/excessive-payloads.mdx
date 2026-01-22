@@ -7,10 +7,6 @@ iconType: "duotone"
 
 Large data blobs embedded in logs. Full HTTP response bodies, entire database records, massive stack traces. Fields that add kilobytes to every log event.
 
-## Why it happens
-
-Developers log context for debugging. Sometimes that context is a full API response. Or an entire user object. Or a 500-line stack trace. It helps when investigating issues, but it ships to production and stays there forever.
-
 One log event with a 10KB response body, fired 100,000 times a day, is 1GB of storage. For one log pattern. In one service.
 
 ## Example
@@ -85,20 +81,14 @@ One log event with a 10KB response body, fired 100,000 times a day, is 1GB of st
   </Tab>
 </Tabs>
 
-<Tip>
-  Review these carefully. Some teams intentionally log full payloads for compliance or debugging. Discuss with the service owner before approving.
-</Tip>
-
 ## Recommended enforcement
 
 <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
   Fix at the source. The developer who added this logging should decide what to keep.
 </Card>
 
-Unlike infrastructure noise, excessive payloads are usually intentional logging decisions. The right fix is often to log less in the first place, not to strip fields at the edge. The developer knows whether that response body is actually useful.
+Unlike infrastructure noise, excessive payloads are usually intentional logging decisions. The right fix is often to log less in the first place. The developer knows whether that response body is actually useful.
 
 ## How it works
 
-Tero identifies excessive payloads by analyzing field sizes. Fields that consistently exceed size thresholds—response bodies, request payloads, stack traces, serialized objects—are flagged.
-
-Tero also checks whether these large fields are ever queried. A 10KB field that nobody searches is a clear candidate for removal. A 10KB field that appears in dashboards might be intentional.
+Tero flags fields that are obviously too large. Full HTTP response bodies, entire serialized objects, 500-line stack traces. These aren't borderline cases - they're kilobytes of data embedded in every log. Obviously wrong.

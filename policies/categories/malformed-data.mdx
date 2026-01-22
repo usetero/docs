@@ -7,11 +7,7 @@ iconType: "duotone"
 
 Logs that aren't logs. Binary data, corrupted output, unparseable strings. They convey nothing and cost you money.
 
-## Why it happens
-
-Applications crash mid-write. Binary protocols get routed to text log pipelines. Encoding mismatches produce garbage. A process dumps core and the output ends up in your logs. Sometimes it's a misconfigured logger, sometimes it's a bug, sometimes it's just bad luck.
-
-These aren't edge cases. In a large enough system, something is always emitting garbage somewhere.
+Applications crash mid-write. Binary protocols get routed to text log pipelines. Encoding mismatches produce garbage. In a large enough system, something is always emitting garbage somewhere.
 
 ## Example
 
@@ -82,10 +78,4 @@ These aren't edge cases. In a large enough system, something is always emitting 
   Drop malformed logs before they reach your provider. No point paying to store garbage.
 </Card>
 
-There's no "fix at source" for most malformed data. It's usually a symptom of something breaking, not a logging decision someone made. Drop it and move on.
-
-## How it works
-
-Tero evaluates each log event and checks whether the content is parseable and meaningful. Binary content, truncated data, encoding errors, and garbled text are flagged as malformed.
-
-This is objective: the log either parses or it doesn't. If it doesn't, it has no debugging value.
+There's no "fix at source" for most malformed data. It's a symptom of something breaking, not a logging decision someone made.

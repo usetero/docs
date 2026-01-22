@@ -7,19 +7,9 @@ iconType: "duotone"
 
 Requests from crawlers, scrapers, and automated scanners. Googlebot indexing your pages, security scanners probing endpoints, Slack unfurling links. Real traffic, but not your users.
 
-## Why it happens
+For public-facing services, bot traffic can be 30-50% of total volume. You're paying to store logs from Googlebot, not your customers.
 
-Bots are a fact of life. Search engines crawl your site. Social platforms fetch previews. Security tools scan for vulnerabilities. Monitoring services check uptime.
-
-Each request generates logs. For public-facing services, bot traffic can be 30-50% of total volume. You're paying to store logs from Googlebot, not your customers.
-
-## How Tero handles it
-
-Tero identifies log events with a user-agent field that can distinguish bot traffic from real users. But it goes further than just dropping individual logs.
-
-**Lasso entire requests.** If a log has both a user-agent field and a correlation ID (like `request_id` or `trace_id`), Tero can drop all logs from that request—not just the one with the user-agent. The entry point identifies the bot, then every downstream log in that request gets dropped too.
-
-This matters because a single bot request might generate logs across multiple services. The initial HTTP handler logs the user-agent, but the downstream database queries, cache lookups, and service calls don't. Without correlation, you'd only drop the first log. With it, you drop the entire trace.
+Tero can drop entire request traces, not just individual logs. If a request has a user-agent field at the entry point and a correlation ID (like `request_id` or `trace_id`), Tero drops all logs from that request. The bot is identified once, and every downstream log follows.
 
 ## Example
 
@@ -93,20 +83,16 @@ This matters because a single bot request might generate logs across multiple se
   </Tab>
 </Tabs>
 
-<Tip>
-  Bot traffic patterns are consistent across services. You can expand scope to apply org-wide and use correlation to drop entire request traces.
-</Tip>
-
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Drop bot traffic logs before they reach your provider. Immediate volume reduction.
 </Card>
 
-Bot traffic is external noise. Your application didn't decide to log these requests—they just happened. Dropping at the edge is the simplest fix.
+Bot traffic is external noise. Your application didn't decide to log these requests. Dropping at the edge is the right place.
 
 ## How it works
 
 Tero identifies bot traffic through the user-agent field. Bots usually self-identify: `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves.
 
-When Tero finds a log event with a user-agent field, it flags it for bot traffic filtering. If the event also has a correlation ID, Tero can extend the policy to drop all related logs—giving you complete request-level filtering, not just entry-point filtering.
+If a log event has both a user-agent field and a correlation ID (like `request_id` or `trace_id`), Tero can drop the entire request trace, not just the entry point. The initial HTTP handler logs the user-agent, but downstream database queries, cache lookups, and service calls don't. Correlation lets you drop all of them.

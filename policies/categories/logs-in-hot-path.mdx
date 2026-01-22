@@ -7,23 +7,9 @@ iconType: "duotone"
 
 A log statement that fires on every request, every iteration, or every tick. Middleware that logs every incoming request. A loop that logs each item. Code that runs constantly and logs every time.
 
-The log statement isn't wrong. It's just in the wrong place.
+The log statement isn't wrong. It's just in the wrong place. These logs made sense during development. They don't make sense at production scale.
 
-## Why it happens
-
-A developer adds logging to understand how code behaves. The code runs more often than expected. A log in middleware fires on every request. A log inside a loop fires thousands of times per operation. A background job logs every tick.
-
-These logs made sense during development. They don't make sense at production scale.
-
-## How to identify it
-
-Hot path logs have two qualities:
-
-1. **The content is generic.** "Incoming request" or "Processing item" with no distinguishing context. If the log doesn't tell you *which* request or *why* this one matters, it's probably firing indiscriminately.
-
-2. **The volume is disproportionate to the information.** If a log fires 100,000 times and says essentially the same thing each time, it's not providing 100,000 pieces of information. It's providing one piece of information, repeated.
-
-This is different from [burst protection](/policies/categories/burst-protection). Burst protection is for logs that flood during failures—they're fine during normal operation but explode when something breaks. Hot path logs flood *all the time*, even when everything is healthy.
+This is different from [burst protection](/policies/categories/burst-protection). Burst protection is for logs that flood during failures. Hot path logs flood all the time, even when everything is healthy.
 
 ## Example
 
@@ -73,12 +59,10 @@ This is different from [burst protection](/policies/categories/burst-protection)
   </Card>
 </CardGroup>
 
-The fix is in code: move the log outside the loop, add a condition, or remove it entirely. These logs shouldn't exist at this frequency.
-
-Edge filtering is a temporary workaround, but it doesn't fix the underlying problem—the code is still doing unnecessary work to generate logs that get dropped.
+The fix is in code: move the log outside the loop, add a condition, or remove it entirely. Edge filtering is a temporary workaround, but it doesn't fix the underlying problem. The code is still doing unnecessary work to generate logs that get dropped.
 
 ## How it works
 
-Tero identifies hot path logs by looking at both content and volume. A log event with generic content ("Processing request", "Handling item") combined with extremely high volume relative to its information content is flagged.
+Tero identifies hot path logs by relative volume. If one event represents a disproportionate share of a service's logs - say 80% of total volume - it's in the hot path. That's the primary signal.
 
-The key insight: a well-placed log has context about *why* it fired—an error condition, a specific branch taken, a notable state. Hot path logs fire unconditionally on every pass with no distinguishing context.
+The content often confirms it: generic messages like "Processing request" or "Handling item" that fire unconditionally. But volume is what matters.

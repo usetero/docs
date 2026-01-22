@@ -5,31 +5,9 @@ icon: "box-open"
 iconType: "duotone"
 ---
 
-Fields that SDKs, agents, and collectors inject automatically. Fields the developer didn't add and doesn't want. `telemetry.sdk.version`, `otel.library.name`, collector build strings. Cruft that bloats every log.
+Fields that SDKs, agents, and collectors inject automatically. Fields the developer didn't add and doesn't want. `telemetry.sdk.version`, `otel.library.name`, collector build strings. Each one adds bytes to every log.
 
-## Why it happens
-
-Every tool in your observability stack adds metadata by default. The OTel SDK adds its version. Collectors add process information. Kubernetes operators add internal identifiers. Each tool assumes you might need this data.
-
-You don't. These fields exist on every log, get indexed, take up storage. No engineer searches for `telemetry.sdk.version` when debugging a production issue.
-
-## What counts as bloat
-
-Not all instrumentation fields are bloat. The test: **did a developer add this, and would any engineer ever query it?**
-
-**Bloat:**
-- `telemetry.sdk.name`, `telemetry.sdk.version`, `telemetry.sdk.language` — SDK metadata about the SDK itself
-- `otel.library.name`, `otel.library.version` — which instrumentation library emitted this
-- `telemetry.auto.version` — auto-instrumentation version
-- Collector version strings, build hashes
-- Internal Kubernetes UIDs (`k8s.pod.uid`, `k8s.deployment.uid`) when you already have the names
-
-**Not bloat:**
-- `service.name`, `service.version` — developers set these, engineers query them
-- `k8s.pod.name`, `k8s.namespace.name` — useful for debugging
-- `host.name`, `container.id` — infrastructure context that matters
-
-The distinction: bloat is metadata *about the instrumentation*, not metadata *about your system*.
+Not all instrumentation fields are bloat. The test: did a developer add this, and would any engineer ever query it? Bloat is metadata about the instrumentation, not metadata about your system. `telemetry.sdk.version` is bloat. `service.name` is not.
 
 ## Example
 
@@ -60,8 +38,6 @@ The distinction: bloat is metadata *about the instrumentation*, not metadata *ab
         ```
       </Tab>
     </Tabs>
-
-    Tero generates the following policy:
 
     ```yaml
     id: remove-otel-sdk-metadata
@@ -132,20 +108,14 @@ The distinction: bloat is metadata *about the instrumentation*, not metadata *ab
   </Tab>
 </Tabs>
 
-<Tip>
-  Instrumentation bloat is usually consistent across your entire fleet. If you don't need `telemetry.sdk.version` on one service, you don't need it anywhere. Apply these policies org-wide.
-</Tip>
-
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Strip bloat before data leaves your network. Immediate savings, no code changes.
 </Card>
 
-These fields are added by tooling, not your application code. Fixing at the source would mean reconfiguring agents and SDKs across your entire fleet. Stripping at the edge is simpler and faster.
+These fields come from tooling, not your application code. You often can't fix at the source. The edge is where you have control.
 
 ## How it works
 
-Tero identifies instrumentation bloat by looking at field origins and query patterns. Fields injected by SDKs and collectors—not set by application code—that never appear in any query, dashboard, or alert are flagged.
-
-If `telemetry.sdk.version` appears in even one dashboard, it won't be flagged. Tero only surfaces fields with zero usage.
+Tero maps your dependencies and instrumentation stack. Fields like `telemetry.sdk.version` and `otel.library.name` are obviously bloat - no engineer added them, no engineer wants them. Tero flags them automatically.

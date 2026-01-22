@@ -7,17 +7,7 @@ iconType: "duotone"
 
 A service running at DEBUG log level in production. Someone enabled verbose logging to investigate an issue, then forgot to turn it off. Now you're getting 10x the logs you need.
 
-## Why it happens
-
-An engineer enables DEBUG logging to investigate an issue. The issue gets resolved. The engineer moves on. The log level stays at DEBUG. Days pass. Weeks pass. The service keeps emitting massive volumes of logs nobody reads.
-
-This is common. Log level changes often happen through environment variables or config files that don't go through normal code review. There's no reminder to switch back.
-
-## How Tero detects it
-
-This isn't a per-log-event analysis. Tero looks at service-level patterns: a sudden spike in DEBUG logs that persists beyond a reasonable troubleshooting window.
-
-If a service has been emitting elevated DEBUG volume for days, something's probably wrong. Either debug mode was left on, or there's a misconfiguration that needs attention.
+Log level changes often happen through environment variables or config files that don't go through normal code review. There's no reminder to switch back. This is common.
 
 ## Example
 
@@ -50,7 +40,7 @@ This isn't a policy you deploy to filter logs. It's a configuration problem that
     If log levels are config-as-code, change it directly.
   </Card>
   <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
-    Temporary blocking if the issue persists. Auto-reverts.
+    Temporary blocking if the issue persists.
   </Card>
 </CardGroup>
 
@@ -58,6 +48,6 @@ Start with tickets. If a service has had debug mode on for 48+ hours with no res
 
 ## How it works
 
-Tero tracks log volume and severity patterns per service. When DEBUG-level volume spikes and stays elevated for longer than typical troubleshooting (hours, not minutes), it's flagged.
+This isn't a per-log-event analysis. Tero looks at service-level patterns: a sudden spike in DEBUG logs that persists beyond a configurable threshold.
 
-The signal is time. DEBUG logs during an active incident are normal. DEBUG logs that persist for days after the incident ended are a forgotten configuration.
+Tero defaults to 24 hours before flagging. You can configure thresholds to escalate: notify at 24 hours, block at 48. DEBUG logs during an active incident are normal. DEBUG logs that persist for days are a forgotten configuration.

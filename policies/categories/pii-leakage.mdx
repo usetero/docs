@@ -7,19 +7,7 @@ iconType: "duotone"
 
 Credit card numbers, emails, SSNs, API keys. Sensitive data that ended up in logs. A developer logs a request object. An error message includes user data. A third-party library dumps more than expected.
 
-## Why it happens
-
-Developers log context for debugging. Sometimes that context includes sensitive fields. A payment service logs the full request body. An auth service logs tokens for troubleshooting. An error handler dumps the entire user object.
-
 Nobody intends to leak PII. But it happens. And once it's in your observability platform, you have a compliance problem.
-
-## How Tero detects it
-
-Tero scans field values for PII patterns. Every field that could possibly contain sensitive data gets scanned—nothing slips through.
-
-The only fields Tero skips are ones where scanning is pointless: timestamps, log levels, status codes, PIDs, port numbers. There's no reason to scan a timestamp for credit card numbers, or check a severity level for email addresses.
-
-Everything else gets scanned. Message bodies, user-facing fields, request payloads, string fields of any kind. If PII could be there, Tero looks for it.
 
 ## Example
 
@@ -48,8 +36,6 @@ Everything else gets scanned. Message bodies, user-facing fields, request payloa
         ```
       </Tab>
     </Tabs>
-
-    Tero generates the following policy:
 
     ```yaml
     id: redact-credit-card-payment-service
@@ -91,8 +77,6 @@ Everything else gets scanned. Message bodies, user-facing fields, request payloa
       </Tab>
     </Tabs>
 
-    Tero generates the following policy:
-
     ```yaml
     id: redact-email-user-service
     name: Redact email addresses from user-service
@@ -130,8 +114,6 @@ Everything else gets scanned. Message bodies, user-facing fields, request payloa
       </Tab>
     </Tabs>
 
-    Tero generates the following policy:
-
     ```yaml
     id: redact-api-key-integration-service
     name: Redact API keys from integration-service logs
@@ -164,11 +146,15 @@ Each PII pattern gets its own policy. You approve them individually based on you
   </Card>
 </CardGroup>
 
-Edge enforcement is critical. Redacting at the edge means sensitive data never leaves your infrastructure. No cleanup required. No breach notifications. The blast radius is zero because the data never reached your provider.
+Edge enforcement is critical. Redacting at the edge means sensitive data never leaves your infrastructure. No cleanup required. No breach notifications. The blast radius is zero.
 
 But also fix the source. Open a PR to remove sensitive fields from the log statement entirely.
 
-## Supported patterns
+## How it works
+
+Tero scans field values for PII patterns. Every field that could possibly contain sensitive data gets scanned. Nothing slips through.
+
+The only fields Tero skips are ones where scanning is pointless: timestamps, log levels, status codes, PIDs, port numbers. There's no reason to scan a timestamp for credit card numbers, or check a severity level for email addresses. Everything else gets scanned.
 
 Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
 

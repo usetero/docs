@@ -5,9 +5,7 @@ icon: "copy"
 iconType: "duotone"
 ---
 
-Two fields with the same value. Literal duplicates. You're paying to store the same data twice.
-
-## Why it happens
+Two fields with the same value. Literal duplicates. Each one adds bytes to every log.
 
 Different parts of your stack add the same information under different names:
 
@@ -16,23 +14,6 @@ Different parts of your stack add the same information under different names:
 - Your service logs `host`, your agent adds `hostname`
 
 Nobody planned this. It just accumulated.
-
-## What counts as redundant
-
-The test: **do these fields contain the same information?**
-
-**Redundant:**
-- `time` and `@timestamp` with identical values
-- `level` and `severity_text` that map to the same thing (`ERROR` = `ERROR`, `9` = `INFO`)
-- `host` and `hostname` with the same value
-- `service` and `service.name` pointing to the same string
-
-**Not redundant:**
-- `time` in UTC and `@timestamp` in local time—different representations
-- `request_id` and `trace_id`—related but different identifiers
-- Fields that are similar but not semantically identical
-
-Tero only flags true duplicates where the values match exactly or map to the same meaning.
 
 ## Example
 
@@ -80,21 +61,18 @@ log:
       - log_attribute: level
       - log_attribute: host
 ```
-
-<Tip>
-  Redundant attributes usually come from collectors and agents. Apply these policies org-wide—if a field is redundant in one service, it's probably redundant everywhere.
-</Tip>
-
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
   Drop the redundant field before data leaves your network. Immediate savings, no code changes.
 </Card>
 
-These fields are typically added by agents and collectors, not your application code. Fixing at the source would mean reconfiguring your entire observability stack. Dropping at the edge is simpler.
+These fields come from multiple places: agents, collectors, SDKs. Not your application code. You often can't fix at the source. The edge is where you have control.
 
 ## How it works
 
-Tero analyzes every log event and compares field values. When two fields contain identical values consistently—exact string matches, timestamps that differ only in format, numeric fields with the same value—they're flagged as redundant.
+Tero compares field values across your logs. Exact string matches get flagged. Semantic equivalents too: `level: 9` and `severity_text: INFO` are the same thing, so one gets removed.
 
-Tero keeps the canonical field (usually the more standard name like `@timestamp` or `severity_text`) and removes the duplicate.
+Fields that look similar but contain different values aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not redundant. They're different representations. Same with `request_id` and `trace_id`. Related but distinct identifiers.
+
+Only true duplicates. Tero keeps the canonical field (usually the more standard name like `@timestamp` or `severity_text`) and removes the duplicate.
