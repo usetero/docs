@@ -20,7 +20,7 @@ This category is strict. We're not talking about legitimate DEBUG-level logging.
 **Leftover debug logs:**
 - Severity DEBUG or TRACE with throwaway messages
 - Messages like "got here", "hello world", "WTF", "asdf", "test", "xxx", "debugging"
-- Bare variable dumps: "user: {user}"
+- Bare variable dumps: `"user: {user}"`
 - Placeholder messages that were never replaced
 
 **Not leftover debug logs:**
@@ -52,7 +52,7 @@ Tero generates a policy to drop this specific log event:
 
 ```yaml
 id: drop-debug-got-here-checkout-api
-name: Drop "got here" debug log from checkout-api
+name: Drop got-here debug log from checkout-api
 description: Accidental debug statement that shipped to production.
 log:
   match:
