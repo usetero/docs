@@ -45,8 +45,34 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
 - Lambda function with Datadog monitoring configured (see
   [Datadog's Lambda setup guide](https://docs.datadoghq.com/serverless/installation/))
 - Tero account
+- Datadog Application key (create one in
+  [Organization Settings → Application Keys](https://app.datadoghq.com/organization-settings/application-keys))
+
+<Note>
+  Create a new Application key specifically for Tero. Don't reuse existing
+  keys—this makes it easier to rotate or revoke access later.
+</Note>
+
+## Quick deploy
+
+Deploy the Tero Lambda Extension stack with one click.
+
+<Card
+  title="Launch Stack"
+  icon="aws"
+  href="https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://raw.githubusercontent.com/usetero/datadog-lambda-extension/main/serverless.yaml"
+  horizontal
+>
+  Deploy via AWS CloudFormation
+</Card>
+
+You'll need your Datadog API key, Datadog Application key, and Tero API key
+during setup.
 
 ## Connect
+
+For manual setup or to integrate into existing infrastructure, follow these
+steps.
 
 <Steps>
   <Step title="Create an Edge API key">
