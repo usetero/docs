@@ -150,11 +150,9 @@ But also fix the source. Open a PR to remove sensitive fields from the log state
 
 ## How it works
 
-PII detection is hard when you don't know what you're scanning. A 16-digit number might be a credit card or a database ID. A string matching an email regex might be a test fixture. Without context, you need Luhn checksums, lookahead patterns, entity recognition, confidence scoring — techniques to disambiguate what you found.
+Tero uses the [Master Catalog](/master-catalog) to understand each field: what it represents, what values it contains, why it exists. This determines which fields get scanned for PII.
 
-Tero has context. The [Master Catalog](/master-catalog) contains every log event and attribute — what each field represents, what values it contains, why it exists. So Tero knows which fields to scan.
-
-Any field that could contain PII through normal developer error gets scanned: `error_message`, `request_body`, `user_input`, free-form text fields. The only fields skipped are structurally incompatible with PII — `timestamp`, `severity`, `status_code`, `pid`. These fields have fixed formats. PII can't end up there through a logging mistake.
+Any field that could contain PII through normal developer error gets scanned: `error_message`, `request_body`, `user_input`, free-form text fields. Fields that are structurally incompatible with PII are skipped: `timestamp`, `severity`, `status_code`, `pid`. These have fixed formats. PII can't end up there through a logging mistake.
 
 Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
 

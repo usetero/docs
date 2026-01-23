@@ -1,6 +1,6 @@
 ---
 title: "Bot traffic"
-description: "Log events with user-agent fields that enable bot filtering"
+description: "Log events where bot filtering is possible"
 icon: "robot"
 iconType: "duotone"
 ---
@@ -9,7 +9,7 @@ Requests from crawlers, scrapers, and automated scanners. Googlebot indexing you
 
 For public-facing services, bot traffic can be 30-50% of total volume. You're paying to store logs from Googlebot, not your customers.
 
-Tero flags log events that have a user-agent field, which enables filtering bot vs human traffic. The field's existence is what matters — it gives you the ability to distinguish bots from real users and drop the noise.
+Tero identifies log events that have a user-agent field. This field lets you distinguish bot traffic from real users. Once identified, you can create policies to drop requests from known crawlers.
 
 ## Example
 
@@ -93,6 +93,6 @@ Bot traffic is external noise. Your application didn't decide to log these reque
 
 ## How it works
 
-Tero flags log events that contain a user-agent field. The presence of this field means you can filter bot traffic — bots usually self-identify as `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others.
+Tero identifies log events that contain a user-agent field. Bots usually self-identify: `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves in this field. You decide which bots to filter.
 
 If the log event also has a correlation ID (like `request_id` or `trace_id`), you can drop the entire request trace, not just the entry point. The initial HTTP handler logs the user-agent, but downstream database queries, cache lookups, and service calls don't. Correlation lets you drop all of them.

@@ -5,7 +5,7 @@ icon: "bug"
 iconType: "duotone"
 ---
 
-Throwaway statements a developer wrote while debugging and forgot to delete. `console.log("here")`, `print("WTF")`, `logger.info("asdf")`. The message content is the giveaway — "got here", "hello world", "TODO remove", variable dumps like `"x = 42"`.
+Throwaway statements a developer wrote while debugging and forgot to delete. `console.log("here")`, `print("WTF")`, `logger.info("asdf")`. The message content is the signal: "got here", "hello world", "TODO remove", variable dumps like `"x = 42"`.
 
 Log severity is irrelevant. These can be INFO, DEBUG, or anything else. What matters is the message itself: obviously temporary debugging garbage that no one intended to keep.
 
@@ -54,4 +54,4 @@ Unlike most categories, accidental debug statements should be fixed in code. The
 
 Tero looks at message content, not severity. Messages containing common debug phrases ("got here", "testing", "WTF", "TODO remove") or that appear to be accidental (random characters, bare variable dumps) are flagged.
 
-Conservative by design. Tero only flags logs that are unambiguously mistakes — statements any engineer would look at and immediately recognize as garbage that shouldn't be in production. Legitimate logging, even verbose logging, isn't flagged.
+Conservative by design. Tero only flags logs that are unambiguously mistakes. Statements any engineer would look at and immediately recognize as garbage. Legitimate logging, even verbose logging, isn't flagged.
