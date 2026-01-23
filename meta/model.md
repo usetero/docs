@@ -40,7 +40,7 @@ Two sources:
 
 Policy categories (what Tero detects):
 - Duplicate fields
-- Leftover debug logs
+- Accidental debug statements
 - Health checks
 - PII leakage
 - Bot traffic

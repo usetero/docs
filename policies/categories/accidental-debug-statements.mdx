@@ -1,0 +1,57 @@
+---
+title: "Accidental debug statements"
+description: "Developer debugging garbage that shipped to production"
+icon: "bug"
+iconType: "duotone"
+---
+
+Throwaway statements a developer wrote while debugging and forgot to delete. `console.log("here")`, `print("WTF")`, `logger.info("asdf")`. The message content is the giveaway — "got here", "hello world", "TODO remove", variable dumps like `"x = 42"`.
+
+Log severity is irrelevant. These can be INFO, DEBUG, or anything else. What matters is the message itself: obviously temporary debugging garbage that no one intended to keep.
+
+## Example
+
+<Tabs>
+  <Tab title="Before">
+    ```json
+    {
+      "@timestamp": "2024-01-15T10:30:00Z",
+      "service.name": "checkout-api",
+      "severity_text": "DEBUG",
+      "body": "got here lol"
+    }
+    ```
+  </Tab>
+  <Tab title="After">
+    Dropped entirely.
+  </Tab>
+</Tabs>
+
+Tero generates a policy to drop this specific log event:
+
+```yaml
+id: drop-debug-got-here-checkout-api
+name: Drop got-here debug log from checkout-api
+description: Accidental debug statement that shipped to production.
+log:
+  match:
+    - resource_attribute: service.name
+      exact: checkout-api
+    - log_field: body
+      exact: "got here lol"
+  keep: none
+```
+
+## Recommended enforcement
+
+<Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
+  Fix at the source. These are code mistakes. Remove them from the codebase.
+</Card>
+
+Unlike most categories, accidental debug statements should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently.
+
+## How it works
+
+Tero looks at message content, not severity. Messages containing common debug phrases ("got here", "testing", "WTF", "TODO remove") or that appear to be accidental (random characters, bare variable dumps) are flagged.
+
+Conservative by design. Tero only flags logs that are unambiguously mistakes — statements any engineer would look at and immediately recognize as garbage that shouldn't be in production. Legitimate logging, even verbose logging, isn't flagged.
