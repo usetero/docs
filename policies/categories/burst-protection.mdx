@@ -7,7 +7,7 @@ iconType: "duotone"
 
 Protection against catastrophic log volume during outages. When a dependency fails, every request that touches it generates a log. One database going offline can produce millions of timeout errors in minutes.
 
-This isn't about signal quality. It's infrastructure protection. Uncontrolled bursts crash collectors, back up queues, overwhelm pipelines, and explode costs.
+This isn't about signal quality. It's infrastructure protection. Uncontrolled bursts can overwhelm your pipeline and spike costs.
 
 The test: could this log flood when something breaks? Infrastructure symptoms like database timeouts, connection refused, TLS failures can generate unbounded volume. Business events like payment failures are bounded by real customer traffic. Even on a bad day, you can't get a million payment failures unless you have a million customers trying to pay.
 

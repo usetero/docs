@@ -65,7 +65,7 @@
                 "group": "Categories",
                 "icon": "tags",
                 "pages": [
-                  "policies/categories/redundant-attributes",
+                  "policies/categories/duplicate-fields",
                   "policies/categories/leftover-debug-logs",
                   "policies/categories/malformed-data",
                   "policies/categories/health-checks",

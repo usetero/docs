@@ -39,7 +39,7 @@ Two sources:
 - **Generated policies** — Specific rules Tero creates per log event based on what it sees in the catalog.
 
 Policy categories (what Tero detects):
-- Redundant attributes
+- Duplicate fields
 - Leftover debug logs
 - Health checks
 - PII leakage

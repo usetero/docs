@@ -7,8 +7,6 @@ iconType: "duotone"
 
 Credit card numbers, emails, SSNs, API keys. Sensitive data that ended up in logs. A developer logs a request object. An error message includes user data. A third-party library dumps more than expected.
 
-Nobody intends to leak PII. But it happens. And once it's in your observability platform, you have a compliance problem.
-
 ## Example
 
 <Tabs>
@@ -152,9 +150,11 @@ But also fix the source. Open a PR to remove sensitive fields from the log state
 
 ## How it works
 
-Tero scans field values for PII patterns. Every field that could possibly contain sensitive data gets scanned. Nothing slips through.
+PII detection is hard when you don't know what you're scanning. A 16-digit number might be a credit card or a database ID. A string matching an email regex might be a test fixture. Without context, you need Luhn checksums, lookahead patterns, entity recognition, confidence scoring — techniques to disambiguate what you found.
 
-The only fields Tero skips are ones where scanning is pointless: timestamps, log levels, status codes, PIDs, port numbers. There's no reason to scan a timestamp for credit card numbers, or check a severity level for email addresses. Everything else gets scanned.
+Tero has context. The [Master Catalog](/master-catalog) contains every log event and attribute — what each field represents, what values it contains, why it exists. So Tero knows which fields to scan.
+
+Any field that could contain PII through normal developer error gets scanned: `error_message`, `request_body`, `user_input`, free-form text fields. The only fields skipped are structurally incompatible with PII — `timestamp`, `severity`, `status_code`, `pid`. These fields have fixed formats. PII can't end up there through a logging mistake.
 
 Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
 

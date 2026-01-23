@@ -1,5 +1,5 @@
 ---
-title: "Redundant attributes"
+title: "Duplicate fields"
 description: "The same data stored twice in one log"
 icon: "copy"
 iconType: "duotone"
@@ -48,8 +48,8 @@ The following log has three duplicate pairs: `time` and `@timestamp`, `level` an
 Tero generates a scoped policy:
 
 ```yaml
-id: remove-redundant-fields-checkout-api
-name: Remove redundant fields from checkout-api
+id: remove-duplicate-fields-checkout-api
+name: Remove duplicate fields from checkout-api
 description: Drop duplicate fields that contain the same data as their canonical equivalents.
 log:
   match:
@@ -64,7 +64,7 @@ log:
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
-  Drop the redundant field before data leaves your network. Immediate savings, no code changes.
+  Drop the duplicate field before data leaves your network. Immediate savings, no code changes.
 </Card>
 
 These fields come from multiple places: agents, collectors, SDKs. Not your application code. You often can't fix at the source. The edge is where you have control.
@@ -73,6 +73,6 @@ These fields come from multiple places: agents, collectors, SDKs. Not your appli
 
 Tero compares field values across your logs. Exact string matches get flagged. Semantic equivalents too: `level: 9` and `severity_text: INFO` are the same thing, so one gets removed.
 
-Fields that look similar but contain different values aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not redundant. They're different representations. Same with `request_id` and `trace_id`. Related but distinct identifiers.
+Fields that look similar but contain different values aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not a duplicate. They're different representations. Same with `request_id` and `trace_id`. Related but distinct identifiers.
 
 Only true duplicates. Tero keeps the canonical field (usually the more standard name like `@timestamp` or `severity_text`) and removes the duplicate.
