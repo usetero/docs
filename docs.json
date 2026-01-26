@@ -120,6 +120,7 @@
                 "pages": [
                   "integrations/datadog-agent",
                   "integrations/otel-collector",
+                  "integrations/prometheus",
                   "integrations/datadog-lambda-extension",
                   "integrations/datadog-lambda-forwarder"
                 ]

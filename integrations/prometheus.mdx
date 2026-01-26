@@ -1,0 +1,398 @@
+---
+title: "Prometheus"
+description:
+  "Deploy Edge as a sidecar proxy for Prometheus metrics scraping on Kubernetes"
+icon: "chart-line"
+iconType: "duotone"
+---
+
+Deploy Tero Edge as a sidecar to your application to filter Prometheus metrics
+before they're scraped. Edge sits between Prometheus and your application,
+applying policies to metrics in real-time.
+
+## How it works
+
+Edge runs as a sidecar container in the same pod as your application. Prometheus
+scrapes Edge instead of your application directly. Edge proxies the request to
+your app's `/metrics` endpoint, applies policies to filter metrics, and returns
+the filtered response.
+
+```mermaid
+flowchart LR
+    Prometheus --> Edge[Tero Edge]
+
+    subgraph Pod
+        Edge --> App[Your App]
+    end
+
+    style Prometheus fill:#e6522c,stroke:#e6522c,color:#fff
+    style Edge fill:#10b981,stroke:#10b981,color:#fff
+    style App fill:#262626,stroke:#262626,color:#fafafa
+```
+
+## Key features
+
+- **Streaming processing**: Metrics are filtered line-by-line as they stream
+  through Edge, keeping memory usage bounded regardless of response size
+- **Dual byte limits**: Configure `max_input_bytes_per_scrape` to bound memory
+  usage and `max_output_bytes_per_scrape` to cap filtered response size
+- **Zero-copy forwarding**: Metrics that pass policy checks are forwarded
+  without additional allocations
+- **Fail-open behavior**: If policy evaluation fails, metrics pass through
+  unchanged
+
+## Prerequisites
+
+- Application exposing Prometheus metrics on Kubernetes
+- Prometheus configured to scrape your pods
+- `kubectl` access to your cluster
+- Tero account
+
+## Connect
+
+<Steps>
+  <Step title="Create an Edge API key">
+    Open your terminal and run:
+
+    ```bash
+    tero
+    ```
+
+    Navigate to **Edge** -> **API Keys** -> **Create**. Name your key (e.g.,
+    "Prometheus Sidecar"). Copy the key when shown--it's only displayed once.
+
+  </Step>
+
+  <Step title="Create the secret">
+    Store your API key as a Kubernetes secret:
+
+    ```bash
+    kubectl create secret generic tero-edge \
+      --from-literal=api-key=YOUR_API_KEY
+    ```
+
+  </Step>
+
+  <Step title="Create the Edge ConfigMap">
+    Create a ConfigMap with your Edge configuration:
+
+    ```yaml tero-edge-config.yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: tero-edge-config
+    data:
+      config.json: |
+        {
+          "listen_address": "0.0.0.0",
+          "listen_port": 9090,
+          "upstream_url": "http://localhost:8080",
+          "log_level": "info",
+          "prometheus": {
+            "max_input_bytes_per_scrape": 10485760,
+            "max_output_bytes_per_scrape": 10485760
+          },
+          "policy_providers": [
+            {
+              "id": "tero",
+              "type": "http",
+              "url": "https://sync.usetero.com/v1/policy/sync",
+              "headers": [
+                { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+              ],
+              "poll_interval_secs": 60
+            }
+          ]
+        }
+    ```
+
+    ```bash
+    kubectl apply -f tero-edge-config.yaml
+    ```
+
+    <Note>
+    Set `upstream_url` to your application's metrics endpoint. If your app
+    exposes metrics on port 8080 at `/metrics`, use `http://localhost:8080`.
+    </Note>
+
+  </Step>
+
+  <Step title="Add Edge as a sidecar">
+    Add the Edge container to your application deployment:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: my-app
+    spec:
+      template:
+        spec:
+          containers:
+            # Your application container
+            - name: app
+              image: my-app:latest
+              ports:
+                - name: http
+                  containerPort: 8080
+                - name: metrics-internal
+                  containerPort: 8080  # Your app's metrics port
+
+            # Tero Edge sidecar
+            - name: tero-edge
+              image: ghcr.io/usetero/edge-prometheus:latest
+              args:
+                - /etc/tero/config.json
+              ports:
+                - name: metrics
+                  containerPort: 9090  # Prometheus scrapes this port
+              env:
+                - name: TERO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: tero-edge
+                      key: api-key
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 32Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi
+              volumeMounts:
+                - name: tero-edge-config
+                  mountPath: /etc/tero
+                  readOnly: true
+              livenessProbe:
+                httpGet:
+                  path: /_health
+                  port: 9090
+                initialDelaySeconds: 5
+                periodSeconds: 10
+              readinessProbe:
+                httpGet:
+                  path: /_health
+                  port: 9090
+                initialDelaySeconds: 2
+                periodSeconds: 5
+
+          volumes:
+            - name: tero-edge-config
+              configMap:
+                name: tero-edge-config
+    ```
+
+  </Step>
+
+  <Step title="Update Prometheus scrape config">
+    Update your Prometheus configuration to scrape the Edge sidecar port instead
+    of your application's metrics port:
+
+    ```yaml
+    scrape_configs:
+      - job_name: "my-app"
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          # Scrape the tero-edge metrics port (9090) instead of app port
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            action: keep
+            regex: tero-edge
+          - source_labels:
+              [__address__, __meta_kubernetes_pod_container_port_number]
+            action: replace
+            regex: ([^:]+):.*
+            replacement: $1:9090
+            target_label: __address__
+    ```
+
+    Or if using ServiceMonitor (Prometheus Operator):
+
+    ```yaml
+    apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: my-app
+    spec:
+      selector:
+        matchLabels:
+          app: my-app
+      endpoints:
+        - port: metrics  # Points to Edge's port 9090
+          interval: 30s
+    ```
+
+  </Step>
+
+  <Step title="Verify">
+    Check that both containers are running:
+
+    ```bash
+    kubectl get pods -l app=my-app
+    ```
+
+    Test the metrics endpoint through Edge:
+
+    ```bash
+    kubectl exec -it <pod-name> -c tero-edge -- wget -qO- http://localhost:9090/metrics | head -20
+    ```
+
+    Check Edge logs for filtering activity:
+
+    ```bash
+    kubectl logs <pod-name> -c tero-edge --tail=50
+    ```
+
+  </Step>
+</Steps>
+
+## Configuration
+
+### Prometheus settings
+
+Configure Prometheus-specific settings in the `prometheus` section:
+
+```json
+{
+  "prometheus": {
+    "max_input_bytes_per_scrape": 104857600,
+    "max_output_bytes_per_scrape": 10485760
+  }
+}
+```
+
+| Setting                       | Default | Description                                                                                    |
+| ----------------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `max_input_bytes_per_scrape`  | 10MB    | Maximum bytes to read from upstream per scrape. Limits memory for buffering input.             |
+| `max_output_bytes_per_scrape` | 10MB    | Maximum bytes to forward to client per scrape. Set lower than input if filtering reduces data. |
+
+**Example: High-cardinality filtering**
+
+If your application exposes 1GB of metrics but policies filter it down to 1MB,
+configure a high input limit with a lower output limit:
+
+```json
+{
+  "prometheus": {
+    "max_input_bytes_per_scrape": 1073741824,
+    "max_output_bytes_per_scrape": 10485760
+  }
+}
+```
+
+This allows Edge to process the full 1GB response while capping the filtered
+output at 10MB.
+
+### Policy providers
+
+Edge supports multiple policy sources. Configure them in the `policy_providers`
+array.
+
+#### File provider
+
+Load policies from a local file. Good for static policies bundled in the
+ConfigMap.
+
+```json
+{
+  "id": "local",
+  "type": "file",
+  "path": "/etc/tero/policies.json"
+}
+```
+
+#### HTTP provider
+
+Fetch policies from a remote endpoint. Good for dynamic policies managed via the
+Tero API.
+
+```json
+{
+  "id": "tero",
+  "type": "http",
+  "url": "https://sync.usetero.com/v1/policy/sync",
+  "headers": [{ "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }],
+  "poll_interval_secs": 60
+}
+```
+
+The `${TERO_API_KEY}` variable is injected from the Kubernetes secret via the
+container environment configuration.
+
+## Memory tuning
+
+Edge's streaming architecture keeps memory usage predictable. Key factors:
+
+1. **Input limit**: `max_input_bytes_per_scrape` caps how much data Edge reads
+   from upstream. This bounds memory for buffering input data.
+
+2. **Output limit**: `max_output_bytes_per_scrape` caps how much data Edge
+   forwards to clients. Set this high if you have aggressive filtering.
+
+3. **Line buffer**: Each metric line is processed individually with a 4KB
+   buffer. Lines exceeding this are passed through unfiltered.
+
+4. **Concurrent scrapes**: Memory scales linearly with concurrent scrapes. Each
+   active scrape uses approximately `max_input_bytes_per_scrape` worst-case.
+
+For high-cardinality workloads with aggressive filtering:
+
+```json
+{
+  "prometheus": {
+    "max_input_bytes_per_scrape": 1073741824,
+    "max_output_bytes_per_scrape": 52428800
+  }
+}
+```
+
+This allows processing up to 1GB of metrics while capping output at 50MB.
+
+## Troubleshooting
+
+**Prometheus can't scrape metrics**
+
+Verify Edge is running and healthy:
+
+```bash
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> -c tero-edge
+```
+
+Ensure Prometheus is configured to scrape port 9090 (Edge) not your app's
+metrics port directly.
+
+**Metrics not being filtered**
+
+Check that policies loaded successfully:
+
+```bash
+kubectl logs <pod-name> -c tero-edge | grep -i policy
+```
+
+Verify your policy targets `metric` telemetry type with `METRIC_FILTER` stage.
+
+**Scrapes timing out**
+
+If your app has high-cardinality metrics, increase resource limits:
+
+```yaml
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+```
+
+Also check `max_input_bytes_per_scrape` isn't truncating large responses
+prematurely.
+
+**Some metrics missing**
+
+Check if scrapes are being truncated due to input or output limits:
+
+```bash
+kubectl logs <pod-name> -c tero-edge | grep -i truncat
+```
+
+Increase the limit if needed, or add policies to drop unwanted metrics earlier
+in the stream.
