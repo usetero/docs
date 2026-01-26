@@ -1,0 +1,121 @@
+---
+title: "Instrumentation bloat"
+description: "SDK and collector metadata no one asked for"
+icon: "box-open"
+iconType: "duotone"
+---
+
+Fields that SDKs, agents, and collectors inject automatically. Fields the developer didn't add and doesn't want. `telemetry.sdk.version`, `otel.library.name`, collector build strings. Each one adds bytes to every log.
+
+Not all instrumentation fields are bloat. The test: did a developer add this, and would any engineer ever query it? Bloat is metadata about the instrumentation, not metadata about your system. `telemetry.sdk.version` is bloat. `service.name` is not.
+
+## Example
+
+<Tabs>
+  <Tab title="OTel SDK metadata">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "telemetry.sdk.name": "opentelemetry",
+          "telemetry.sdk.version": "1.24.0",
+          "telemetry.sdk.language": "python",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    ```yaml
+    id: remove-otel-sdk-metadata
+    name: Remove OTel SDK metadata
+    description: Drop OpenTelemetry SDK version info. Only useful when debugging the SDK itself.
+    log:
+      match:
+        - resource_attribute: telemetry.sdk.name
+          exists: true
+      transform:
+        remove:
+          - resource_attribute: telemetry.sdk.name
+          - resource_attribute: telemetry.sdk.version
+          - resource_attribute: telemetry.sdk.language
+          - resource_attribute: telemetry.auto.version
+    ```
+  </Tab>
+  <Tab title="Kubernetes UIDs">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "k8s.pod.name": "checkout-api-7d8f9",
+          "k8s.pod.uid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "k8s.deployment.name": "checkout-api",
+          "k8s.deployment.uid": "12345678-abcd-efgh-ijkl-mnopqrstuvwx",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "severity_text": "ERROR",
+          "service.name": "checkout-api",
+          "k8s.pod.name": "checkout-api-7d8f9",
+          "k8s.deployment.name": "checkout-api",
+          "message": "Connection timeout"
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    You already have the human-readable names. The internal UIDs are noise.
+
+    ```yaml
+    id: remove-k8s-uids
+    name: Remove Kubernetes UIDs
+    description: Drop internal Kubernetes identifiers. Names are sufficient for debugging.
+    log:
+      match:
+        - resource_attribute: k8s.pod.uid
+          exists: true
+      transform:
+        remove:
+          - resource_attribute: k8s.pod.uid
+          - resource_attribute: k8s.replicaset.uid
+          - resource_attribute: k8s.deployment.uid
+          - resource_attribute: k8s.statefulset.uid
+          - resource_attribute: k8s.daemonset.uid
+          - resource_attribute: k8s.job.uid
+          - resource_attribute: k8s.cronjob.uid
+    ```
+  </Tab>
+</Tabs>
+
+## Recommended enforcement
+
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
+  Strip bloat before data leaves your network. Immediate savings, no code changes.
+</Card>
+
+These fields come from tooling, not your application code. You often can't fix at the source. The edge is where you have control.
+
+## How it works
+
+Tero maps your dependencies and instrumentation stack. Fields like `telemetry.sdk.version` and `otel.library.name` are obviously bloat - no engineer added them, no engineer wants them. Tero flags them automatically.

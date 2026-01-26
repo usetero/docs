@@ -27,7 +27,9 @@ That's a policy. It does one thing. You read it and know exactly what it does. N
 
 Traditional pipeline configs have a problem. They start clean and grow into thousands of lines nobody fully understands. You need to understand the whole config to safely change any part. AI can't help because everything is interconnected.
 
-Policies are different. Each one is independent: no ordering dependencies, no shared state. Ten thousand policies execute as fast as ten. You can add a policy without understanding the others, remove one without fear. That independence is what makes them manageable at scale.
+We saw this repeatedly while building [Vector](https://vector.dev). Deployed across thousands of companies, same failure mode everywhere. Configs become unmaintainable not because people are careless, but because the architecture forces it.
+
+Policies fix this. Each one is independent: no ordering dependencies, no shared state. Ten thousand policies execute as fast as ten. You can add a policy without understanding the others, remove one without fear. That independence is what makes them manageable at scale.
 
 It's also what makes them portable. The same policy works whether you're enforcing at the [edge](/policies/enforcement/edge), pushing to your [provider's API](/policies/enforcement/provider), or syncing to a pipeline. The policy is the source of truth. Enforcement is just translation.
 
@@ -39,7 +41,7 @@ Two sources:
 
 **Generated policies** come from Tero. The [Master Catalog](/master-catalog) identifies your log events, understands what they mean, and generates specific policies for each. You might have hundreds: one per log event type that needs attention.
 
-You review policies by [category](/policies/categories). Start with low-risk categories: redundant attributes, malformed data, obvious debug logs. These are easy to verify and safe to approve. As trust builds, move into categories that require more judgment.
+You review policies by [category](/policies/categories). Every category is objective: duplicate fields, malformed data, health checks, PII in fields that obviously contain it. Each one is designed so any engineer looks at it and says "yes, that's obviously right." No judgment calls, no ambiguity.
 
 ## What policies can do
 

@@ -1,0 +1,78 @@
+---
+title: "Duplicate fields"
+description: "The same field stored in multiple locations"
+icon: "copy"
+iconType: "duotone"
+---
+
+The same field appearing in multiple places within a log. `service.name` in both attributes and resource_attributes. `level` and `severity_text` both present. The same data, stored redundantly.
+
+This happens when different parts of your stack add the same information:
+
+- Your application logs `time`, your collector adds `@timestamp`
+- Your SDK logs `level`, the OTel exporter adds `severity_text`
+- Your service logs `host`, your agent adds `hostname`
+
+Duplicates require the same field name or clear synonyms like `level`/`severity`. Two different fields that happen to have matching values aren't duplicates. That's coincidence, not redundancy.
+
+## Example
+
+The following log has three duplicate pairs: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`. Same values, different names.
+
+<Tabs>
+  <Tab title="Before">
+    ```json
+    {
+      "time": "2024-01-15T10:30:00Z",
+      "@timestamp": "2024-01-15T10:30:00Z",
+      "level": "ERROR",
+      "severity_text": "ERROR",
+      "host": "checkout-api-7d8f9",
+      "hostname": "checkout-api-7d8f9",
+      "message": "Connection timeout"
+    }
+    ```
+  </Tab>
+  <Tab title="After">
+    ```json
+    {
+      "@timestamp": "2024-01-15T10:30:00Z",
+      "severity_text": "ERROR",
+      "hostname": "checkout-api-7d8f9",
+      "message": "Connection timeout"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Tero generates a scoped policy:
+
+```yaml
+id: remove-duplicate-fields-checkout-api
+name: Remove duplicate fields from checkout-api
+description: Drop duplicate fields that contain the same data as their canonical equivalents.
+log:
+  match:
+    - resource_attribute: service.name
+      exact: checkout-api
+  transform:
+    remove:
+      - log_attribute: time
+      - log_attribute: level
+      - log_attribute: host
+```
+## Recommended enforcement
+
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
+  Drop the duplicate field before data leaves your network. Immediate savings, no code changes.
+</Card>
+
+These fields come from multiple places: agents, collectors, SDKs. Not your application code. You often can't fix at the source. The edge is where you have control.
+
+## How it works
+
+Tero compares field values across your logs. Exact string matches get flagged. Semantic equivalents too: `level: 9` and `severity_text: INFO` are the same thing, so one gets removed.
+
+Fields that look similar but contain different values aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not a duplicate. They're different representations. Same with `request_id` and `trace_id`. Related but distinct identifiers.
+
+Only true duplicates. Tero keeps the canonical field (usually the more standard name like `@timestamp` or `severity_text`) and removes the duplicate.

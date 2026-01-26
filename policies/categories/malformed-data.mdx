@@ -5,47 +5,72 @@ icon: "file-circle-xmark"
 iconType: "duotone"
 ---
 
-<Badge color="green" icon="circle-check">Zero risk</Badge>
-
 Logs that aren't logs. Binary data, corrupted output, unparseable strings. They convey nothing and cost you money.
 
-## Why it happens
-
-Applications crash mid-write. Binary protocols get routed to text log pipelines. Encoding mismatches produce garbage. A process dumps core and the output ends up in your logs. Sometimes it's a misconfigured logger, sometimes it's a bug, sometimes it's just bad luck.
-
-These aren't edge cases. In a large enough system, something is always emitting garbage somewhere.
+Applications crash mid-write. Binary protocols get routed to text log pipelines. Encoding mismatches produce garbage. In a large enough system, something is always emitting garbage somewhere.
 
 ## Example
 
 <Tabs>
-  <Tab title="Before">
-    ```json
-    {
-      "@timestamp": "2024-01-15T10:30:00Z",
-      "service.name": "image-processor",
-      "body": "\u0089PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR..."
-    }
+  <Tab title="Binary data">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "image-processor",
+          "body": "\u0089PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR..."
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        Dropped entirely.
+      </Tab>
+    </Tabs>
+
+    ```yaml
+    id: drop-binary-data-image-processor
+    name: Drop binary data from image-processor
+    description: PNG image data routed to log pipeline. Not parseable, not queryable.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: image-processor
+        - log_field: body
+          regex: "^\\x89PNG\\r\\n"
+      keep: none
     ```
   </Tab>
-  <Tab title="After">
-    Dropped entirely. No value to preserve.
+  <Tab title="Truncated JSON">
+    <Tabs>
+      <Tab title="Before">
+        ```json
+        {
+          "@timestamp": "2024-01-15T10:30:00Z",
+          "service.name": "api-service",
+          "body": "{\"user_id\": \"usr_123\", \"event\": \"login\", \"metadata\": {\"ip\":"
+        }
+        ```
+      </Tab>
+      <Tab title="After">
+        Dropped entirely.
+      </Tab>
+    </Tabs>
+
+    ```yaml
+    id: drop-truncated-json-api-service
+    name: Drop truncated JSON from api-service
+    description: Incomplete JSON from buffer overflow or crash. Unparseable.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: api-service
+        - log_field: body
+          malformed: json
+      keep: none
+    ```
   </Tab>
 </Tabs>
-
-Tero generates a policy to drop this specific log event:
-
-```yaml
-id: drop-png-binary-image-processor
-name: Drop PNG binary data from image-processor
-description: PNG image data routed to log pipeline. Not parseable, not queryable.
-log:
-  match:
-    - resource_attribute: service.name
-      exact: image-processor
-    - log_field: body
-      regex: "^\\x89PNG\\r\\n"
-  keep: none
-```
 
 ## Recommended enforcement
 
@@ -53,10 +78,4 @@ log:
   Drop malformed logs before they reach your provider. No point paying to store garbage.
 </Card>
 
-There's no "fix at source" for most malformed data. It's usually a symptom of something breaking, not a logging decision someone made.
-
-## How it works
-
-Tero evaluates each [log event](/master-catalog/log-events) in your Master Catalog. It looks at the content structure and whether the log is parseable.
-
-When Tero finds malformed data (binary content, unparseable strings, corrupted output), it generates a policy for that specific pattern. You approve the policy, and it gets enforced.
+There's no "fix at source" for most malformed data. It's a symptom of something breaking, not a logging decision someone made.

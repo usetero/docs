@@ -22,13 +22,11 @@ Swap platforms, add new ones, run multiple. Tero works across all of them. The p
 
 **Cribl, Vector, Fluent Bit, OTel Collector**
 
-Pipelines move data. They route, transform, filter. They're infrastructure.
+Pipelines move data. They're good at routing, buffering, and basic transforms. But when you use them for data quality at scale, the config model breaks down. Thousands of rules with ordering dependencies, no portability between tools, performance that degrades as complexity grows.
 
-The challenge is knowing what to write. You're guessing at what's safe to drop, maintaining regex lists that break when systems change, becoming a bottleneck for every filtering decision.
+Tero takes a different approach. [Policies](/policies) are atomic and independent. Ten thousand execute as fast as ten. They're portable across any runtime. And we're bringing the policy engine to pipelines directly, starting with OTel Collector and Vector, so you can enforce policies wherever your data already flows.
 
-Tero generates the policies. You review and approve. They execute wherever you want: in the pipeline, at the edge, in your provider, or in your code. The understanding lives in Tero. The execution lives wherever makes sense.
-
-If you don't have a pipeline, you might not need one. If you do, Tero makes it smarter.
+Tero generates the policies from the [Master Catalog](/master-catalog). You review and approve. They execute in your pipeline, at the edge, or via your provider's API. The understanding lives in Tero. Enforcement lives wherever makes sense.
 
 ## Cost tools
 
@@ -38,8 +36,10 @@ Cost tools show you what you're spending. Dashboards, reports, breakdowns by tea
 
 Tero shows you what's wrong with your data and how to fix it. Costs drop as a consequence of cleaning up the waste. The goal isn't a better dashboard. It's better data.
 
-## AI observability tools
+## AI SREs
 
-Ask any of them: what percentage of my data is waste? They can't answer it. That question requires understanding every piece of data, not just pattern matching on queries.
+Copilots that help debug incidents, answer questions about your systems, and automate runbooks.
 
-Tero can answer it. And we don't just give you a number. We show you the policies, organized by type, with examples from your actual data. That's the proof of understanding. Everything else Tero does builds on that foundation.
+They're useful for what they do. But ask: what percentage of my data is waste? They can't tell you. That requires comprehensive understanding of all your telemetry. What exists, what it means, whether it's used. Answering questions about your data isn't the same as understanding all of it.
+
+Tero has the [Master Catalog](/master-catalog). Every question is answered against complete knowledge, not partial views.

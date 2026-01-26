@@ -1,0 +1,69 @@
+---
+title: "Burst protection"
+description: "Circuit breakers for logs that explode during failures"
+icon: "shield-halved"
+iconType: "duotone"
+---
+
+Protection against catastrophic log volume during outages. When a dependency fails, every request that touches it generates a log. One database going offline can produce millions of timeout errors in minutes.
+
+This isn't about signal quality. It's infrastructure protection. Uncontrolled bursts can overwhelm your pipeline and spike costs.
+
+The test: could this log flood when something breaks? Infrastructure symptoms like database timeouts, connection refused, TLS failures can generate unbounded volume. Business events like payment failures are bounded by real customer traffic. Even on a bad day, you can't get a million payment failures unless you have a million customers trying to pay.
+
+## Example
+
+<Tabs>
+  <Tab title="Needs protection">
+    ```json
+    {
+      "severity_text": "ERROR",
+      "body": "Connection to postgres failed: timeout",
+      "service.name": "order-service",
+      "database": "products"
+    }
+    ```
+    Infrastructure failures generate unbounded volume. One connectivity issue, repeated endlessly.
+
+    ```yaml
+    id: burst-protection-postgres-timeout-order-service
+    name: Burst protection for postgres timeout in order-service
+    description: Rate limit infrastructure errors that flood during outages.
+    log:
+      match:
+        - resource_attribute: service.name
+          exact: order-service
+        - log_field: body
+          regex: "^Connection to postgres failed"
+      rate_limit: 100/s
+    ```
+  </Tab>
+  <Tab title="Doesn't need protection">
+    ```json
+    {
+      "severity_text": "ERROR",
+      "body": "Payment declined",
+      "service.name": "checkout-service",
+      "user_id": "usr_123",
+      "error": "card_expired"
+    }
+    ```
+    Each payment failure is a unique customer with a unique problem. Keep all of them.
+  </Tab>
+</Tabs>
+
+## Recommended enforcement
+
+<Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
+  Rate limit before data leaves your infrastructure. The flood never reaches your pipeline.
+</Card>
+
+This is pure infrastructure protection. The edge is the right place. Stop the flood as close to the source as possible.
+
+## How it works
+
+Tero analyzes each log event and asks: if something breaks, could this flood?
+
+For events at risk of bursting, Tero generates a policy with a default rate limit of 100/second. High enough to preserve signal during normal operation, low enough to prevent catastrophic floods. During normal operation, you probably see a handful of these per minute and the limit never triggers. During an outage, when you'd otherwise get 10,000/second, the circuit breaker kicks in.
+
+Traditional rate limiting caps your entire log stream, so you lose everything during a spike, including the business events you actually need. Tero does it per event. Infrastructure symptoms get circuit breakers. Business events flow through normally.

@@ -39,19 +39,20 @@ Two sources:
 - **Generated policies** — Specific rules Tero creates per log event based on what it sees in the catalog.
 
 Policy categories (what Tero detects):
-- Redundant attributes
-- Leftover debug logs
+- Duplicate fields
+- Accidental debug statements
 - Health checks
 - PII leakage
 - Bot traffic
 - Malformed data
+- Instrumentation bloat
 - Excessive payloads
 - Debug mode left on
 - Logs in hot paths
-- Excessive repetition
+- Burst protection
 - High cardinality tags
 
-Categories have risk levels that guide review. Low-risk (redundant attributes, malformed data) are obvious and safe. Higher-risk (PII, sampling) require more scrutiny.
+Every category is objective. Each one is designed so any engineer looks at it and says "yes, that's obviously right." No judgment calls, no ambiguity.
 
 **Why this matters for docs:** Users need to understand that policies are the output. The Policies section explains what they are, what categories exist, how they're enforced, and where they live.
 
