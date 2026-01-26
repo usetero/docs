@@ -164,6 +164,58 @@ Use cases:
   </Tab>
 </Tabs>
 
+## Triggers
+
+After deploying the forwarder, configure triggers to send AWS logs to it.
+
+<Tabs>
+  <Tab title="Automatic">
+    Use the Datadog AWS integration to automatically set up log collection.
+
+    <Steps>
+      <Step title="Get the forwarder ARN">
+        In the AWS console, go to **Lambda** → **Functions** and select your Datadog Forwarder. Copy the **Function ARN** from the function overview.
+      </Step>
+
+      <Step title="Configure the AWS integration">
+        In Datadog, go to [**Integrations** → **Amazon Web Services**](https://app.datadoghq.com/integrations/amazon-web-services). Select your AWS account and navigate to the **Log Collection** tab.
+
+        Paste the forwarder ARN and save.
+      </Step>
+
+      <Step title="Enable log sources">
+        In the same AWS integration page, enable the AWS services you want to collect logs from. Datadog automatically configures the triggers.
+      </Step>
+    </Steps>
+
+  </Tab>
+
+  <Tab title="Manual">
+    Manually add CloudWatch Log triggers to the forwarder.
+
+    <Steps>
+      <Step title="Open the forwarder">
+        In the AWS console, go to **Lambda** → **Functions** and select your Datadog Forwarder.
+      </Step>
+
+      <Step title="Add a trigger">
+        Click **Add trigger** and select **CloudWatch Logs**.
+      </Step>
+
+      <Step title="Configure the trigger">
+        Select the log group from the dropdown. Enter a name for your filter and optionally specify a filter pattern. Click **Add**.
+      </Step>
+
+      <Step title="Verify">
+        Go to the [Datadog Logs](https://app.datadoghq.com/logs) section to explore log events from your log group.
+      </Step>
+    </Steps>
+
+    For other log sources (S3, Kinesis, etc.), see [Datadog's trigger configuration guide](https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#collecting-logs-from-cloudwatch-log-group).
+
+  </Tab>
+</Tabs>
+
 ## Static policies
 
 For simple use cases, you can embed policies directly in the Lambda
