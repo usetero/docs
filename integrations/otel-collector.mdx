@@ -1,124 +1,80 @@
 ---
 title: "OpenTelemetry Collector"
-description:
-  "Deploy Edge as a sidecar to the OpenTelemetry Collector on Kubernetes"
+description: "Apply policies to logs in the OpenTelemetry Collector"
 icon: "telescope"
 iconType: "duotone"
 ---
 
-Deploy Tero Edge as a sidecar to your OpenTelemetry Collector to apply policies
-to logs, metrics, and traces before they leave your cluster.
+Apply Tero policies to logs passing through your OpenTelemetry Collector. Three
+options—pick what fits your environment.
 
-## How it works
+| Option               | Best for                                             |
+| -------------------- | ---------------------------------------------------- |
+| **Tero Distro**      | New deployments or replacing your existing collector |
+| **Edge Proxy**       | Adding to an existing collector without rebuilding   |
+| **Policy Processor** | Custom collector distributions you build yourself    |
 
-Edge runs as a sidecar container in the same pod as your OTel Collector. The
-collector exports telemetry through Edge via localhost, which applies policies
-and forwards to your backend.
+<Tabs>
+  <Tab title="Tero Distro">
+    Run the Tero Collector—a pre-built OpenTelemetry Collector distribution with the Policy Processor included.
 
-```mermaid
-flowchart LR
-    subgraph Pod
-        OTel[OTel Collector]
-        Edge[Tero Edge]
-        OTel --> Edge
-    end
+    ## How it works
 
-    Pods --> OTel
-    Edge --> Backend[Backend]
+    The Tero Collector is a standard OTel Collector with our Policy Processor baked in. Deploy it like any collector, configure policies, and it filters logs before they reach your backend.
 
-    style Pods fill:#262626,stroke:#262626,color:#fafafa
-    style OTel fill:#f59e0b,stroke:#f59e0b,color:#000
-    style Edge fill:#10b981,stroke:#10b981,color:#fff
-    style Backend fill:#262626,stroke:#262626,color:#fafafa
-```
+    ```mermaid
+    flowchart LR
+        Apps[Applications] --> Collector[Tero Collector]
+        Collector --> Backend[Backend]
 
-## Prerequisites
-
-- OpenTelemetry Collector running on Kubernetes (via
-  [Helm](https://opentelemetry.io/docs/kubernetes/helm/collector/) or
-  [OpenTelemetry Operator](https://opentelemetry.io/docs/kubernetes/operator/))
-- `kubectl` access to your cluster
-- Tero account
-
-## Connect
-
-<Steps>
-  <Step title="Create an Edge API key">
-    Open your terminal and run:
-
-    ```bash
-    tero
+        style Apps fill:#262626,stroke:#262626,color:#fafafa
+        style Collector fill:#10b981,stroke:#10b981,color:#fff
+        style Backend fill:#262626,stroke:#262626,color:#fafafa
     ```
 
-    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "OTel Collector"). Copy the key when shown—it's only displayed once.
+    The Policy Processor supports three actions:
+    - **Drop** — Remove logs matching patterns
+    - **Keep** — Retain only logs matching patterns
+    - **Sample** — Probabilistically sample at configurable rates
 
-  </Step>
+    Policies hot-reload without restarting the collector.
 
-  <Step title="Create the secret">
-    Store your API key as a Kubernetes secret:
+    ## Included components
 
-    ```bash
-    kubectl create secret generic tero-edge \
-      --from-literal=api-key=YOUR_API_KEY
-    ```
+    The Tero Collector includes standard OTel components:
 
-  </Step>
+    | Type | Components |
+    |------|------------|
+    | **Receivers** | OTLP (gRPC, HTTP) |
+    | **Processors** | Policy, Batch, Memory Limiter, Attributes, Filter, Resource |
+    | **Exporters** | Debug, OTLP (gRPC, HTTP) |
+    | **Connectors** | Forward |
+    | **Extensions** | Health Check v2, zPages, PProf, Basic Auth, Bearer Token Auth |
 
-  <Step title="Create the Edge ConfigMap">
-    Create a ConfigMap with your Edge configuration:
+    ## Prerequisites
 
-    ```yaml tero-edge-config.yaml
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: tero-edge-config
-    data:
-      config.json: |
-        {
-          "listen_address": "127.0.0.1",
-          "listen_port": 8080,
-          "upstream_url": "https://your-backend-endpoint.com",
-          "log_level": "info",
-          "max_body_size": 1048576,
-          "policy_providers": [
-            {
-              "id": "tero",
-              "type": "http",
-              "url": "https://sync.usetero.com/v1/policy/sync",
-              "headers": [
-                { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
-              ],
-              "poll_interval_secs": 60
-            }
-          ]
-        }
-    ```
+    - Docker or Kubernetes cluster
+    - Tero account
 
-    ```bash
-    kubectl apply -f tero-edge-config.yaml
-    ```
+    ## Deploy
 
-    <Note>
-    Set `upstream_url` to your telemetry backend endpoint (e.g., Datadog, Splunk, Grafana Cloud).
-    </Note>
+    <Steps>
+      <Step title="Create an API key">
+        Open your terminal and run:
 
-  </Step>
+        ```bash
+        tero
+        ```
 
-  <Step title="Add Edge as a sidecar">
-    Add the Edge container to your collector deployment.
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Tero Collector"). Copy the key when shown—it's only displayed once.
+      </Step>
 
-    <Tabs>
-      <Tab title="OpenTelemetry Operator">
-        Add the sidecar to your `OpenTelemetryCollector` CR:
+      <Step title="Deploy the collector">
+        <Tabs>
+          <Tab title="Docker">
+            Create a collector config:
 
-        ```yaml
-        apiVersion: opentelemetry.io/v1beta1
-        kind: OpenTelemetryCollector
-        metadata:
-          name: otel-collector
-        spec:
-          mode: deployment
-          config:
+            ```yaml config.yaml
             receivers:
               otlp:
                 protocols:
@@ -126,216 +82,1020 @@ flowchart LR
                     endpoint: 0.0.0.0:4317
                   http:
                     endpoint: 0.0.0.0:4318
+
+            processors:
+              policy:
+                providers:
+                  - type: http
+                    id: tero
+                    url: https://sync.usetero.com/v1/policy/sync
+                    headers:
+                      - name: Authorization
+                        value: Bearer ${TERO_API_KEY}
+                    poll_interval_secs: 60
+
             exporters:
               otlphttp:
-                endpoint: http://localhost:8080
+                endpoint: https://your-backend-endpoint.com
+
             service:
               pipelines:
                 logs:
                   receivers: [otlp]
+                  processors: [policy]
                   exporters: [otlphttp]
-                metrics:
-                  receivers: [otlp]
-                  exporters: [otlphttp]
-                traces:
-                  receivers: [otlp]
-                  exporters: [otlphttp]
-          volumes:
-            - name: tero-edge-config
-              configMap:
-                name: tero-edge-config
-          volumeMounts:
-            - name: tero-edge-config
-              mountPath: /etc/tero
-              readOnly: true
-          additionalContainers:
-            - name: tero-edge
-              image: ghcr.io/usetero/edge:latest
-              args:
-                - /etc/tero/config.json
+            ```
+
+            Run the collector:
+
+            ```bash
+            docker run --rm -p 4317:4317 -p 4318:4318 \
+              -e TERO_API_KEY=YOUR_API_KEY \
+              -v $(pwd)/config.yaml:/etc/tero-collector/config.yaml:ro \
+              ghcr.io/usetero/tero-collector-distro:latest
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Operator)">
+            Create the namespace and secret:
+
+            ```bash
+            kubectl create namespace observability
+
+            kubectl create secret generic tero-collector \
+              --namespace observability \
+              --from-literal=api-key=YOUR_API_KEY
+            ```
+
+            Deploy the collector:
+
+            ```yaml tero-collector.yaml
+            apiVersion: opentelemetry.io/v1beta1
+            kind: OpenTelemetryCollector
+            metadata:
+              name: tero-collector
+              namespace: observability
+            spec:
+              mode: deployment
+              image: ghcr.io/usetero/tero-collector-distro:latest
               env:
                 - name: TERO_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: tero-edge
+                      name: tero-collector
                       key: api-key
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 32Mi
-                limits:
-                  cpu: 200m
-                  memory: 64Mi
+              config:
+                receivers:
+                  otlp:
+                    protocols:
+                      grpc:
+                        endpoint: 0.0.0.0:4317
+                      http:
+                        endpoint: 0.0.0.0:4318
+                processors:
+                  policy:
+                    providers:
+                      - type: http
+                        id: tero
+                        url: https://sync.usetero.com/v1/policy/sync
+                        headers:
+                          - name: Authorization
+                            value: Bearer ${TERO_API_KEY}
+                        poll_interval_secs: 60
+                exporters:
+                  otlphttp:
+                    endpoint: https://your-backend-endpoint.com
+                service:
+                  pipelines:
+                    logs:
+                      receivers: [otlp]
+                      processors: [policy]
+                      exporters: [otlphttp]
+            ```
+
+            ```bash
+            kubectl apply -f tero-collector.yaml
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Helm)">
+            Create the namespace and secret:
+
+            ```bash
+            kubectl create namespace observability
+
+            kubectl create secret generic tero-collector \
+              --namespace observability \
+              --from-literal=api-key=YOUR_API_KEY
+            ```
+
+            Add to your `values.yaml`:
+
+            ```yaml values.yaml
+            mode: deployment
+            image:
+              repository: ghcr.io/usetero/tero-collector-distro
+              tag: latest
+
+            extraEnvs:
+              - name: TERO_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: tero-collector
+                    key: api-key
+
+            config:
+              receivers:
+                otlp:
+                  protocols:
+                    grpc:
+                      endpoint: 0.0.0.0:4317
+                    http:
+                      endpoint: 0.0.0.0:4318
+              processors:
+                policy:
+                  providers:
+                    - type: http
+                      id: tero
+                      url: https://sync.usetero.com/v1/policy/sync
+                      headers:
+                        - name: Authorization
+                          value: Bearer ${TERO_API_KEY}
+                      poll_interval_secs: 60
+              exporters:
+                otlphttp:
+                  endpoint: https://your-backend-endpoint.com
+              service:
+                pipelines:
+                  logs:
+                    receivers: [otlp]
+                    processors: [policy]
+                    exporters: [otlphttp]
+            ```
+
+            Install the chart:
+
+            ```bash
+            helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+            helm install tero-collector open-telemetry/opentelemetry-collector \
+              --namespace observability \
+              -f values.yaml
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+
+      <Step title="Verify">
+        <Tabs>
+          <Tab title="Docker">
+            Check the container is running:
+
+            ```bash
+            docker ps | grep tero-collector
+            ```
+
+            Check logs for policy sync:
+
+            ```bash
+            docker logs <container-id> 2>&1 | grep -i policy
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Operator)">
+            ```bash
+            kubectl get pods -n observability -l app.kubernetes.io/name=tero-collector-collector
+            kubectl logs -n observability -l app.kubernetes.io/name=tero-collector-collector | grep -i policy
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Helm)">
+            ```bash
+            kubectl get pods -n observability -l app.kubernetes.io/instance=tero-collector
+            kubectl logs -n observability -l app.kubernetes.io/instance=tero-collector | grep -i policy
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+    </Steps>
+
+    ## Policy providers
+
+    Configure where the collector loads policies from.
+
+    ### File provider
+
+    Load from a local file. Good for static policies or GitOps workflows.
+
+    ```yaml
+    processors:
+      policy:
+        providers:
+          - type: file
+            id: local
+            path: /etc/tero-collector/policies.json
+            poll_interval_secs: 30
+    ```
+
+    ### HTTP provider
+
+    Fetch from a remote endpoint. Good for dynamic policies managed via Tero.
+
+    ```yaml
+    processors:
+      policy:
+        providers:
+          - type: http
+            id: tero
+            url: https://sync.usetero.com/v1/policy/sync
+            headers:
+              - name: Authorization
+                value: Bearer ${TERO_API_KEY}
+            poll_interval_secs: 60
+    ```
+
+  </Tab>
+
+  <Tab title="Edge Proxy">
+    Run Edge as a sidecar to your existing OpenTelemetry Collector. Edge proxies telemetry, applies policies, and forwards to your backend.
+
+    ## How it works
+
+    Edge runs alongside your OTel Collector. The collector exports telemetry through Edge, which applies policies and forwards to your backend.
+
+    ```mermaid
+    flowchart LR
+        subgraph Deployment
+            OTel[OTel Collector]
+            Edge[Tero Edge]
+            OTel --> Edge
+        end
+
+        Apps --> OTel
+        Edge --> Backend[Backend]
+
+        style Apps fill:#262626,stroke:#262626,color:#fafafa
+        style OTel fill:#f59e0b,stroke:#f59e0b,color:#000
+        style Edge fill:#10b981,stroke:#10b981,color:#fff
+        style Backend fill:#262626,stroke:#262626,color:#fafafa
+    ```
+
+    ## Prerequisites
+
+    - Existing OpenTelemetry Collector
+    - Tero account
+
+    ## Deploy
+
+    <Steps>
+      <Step title="Create an API key">
+        Open your terminal and run:
+
+        ```bash
+        tero
+        ```
+
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "OTel Collector"). Copy the key when shown—it's only displayed once.
+      </Step>
+
+      <Step title="Deploy Edge alongside your collector">
+        <Tabs>
+          <Tab title="Docker">
+            Create an Edge config:
+
+            ```json edge-config.json
+            {
+              "listen_address": "0.0.0.0",
+              "listen_port": 8080,
+              "upstream_url": "https://your-backend-endpoint.com",
+              "log_level": "info",
+              "max_body_size": 1048576,
+              "policy_providers": [
+                {
+                  "id": "tero",
+                  "type": "http",
+                  "url": "https://sync.usetero.com/v1/policy/sync",
+                  "headers": [
+                    { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                  ],
+                  "poll_interval_secs": 60
+                }
+              ]
+            }
+            ```
+
+            Run Edge:
+
+            ```bash
+            docker run --rm -p 8080:8080 \
+              -e TERO_API_KEY=YOUR_API_KEY \
+              -v $(pwd)/edge-config.json:/etc/tero/config.json:ro \
+              ghcr.io/usetero/edge:latest /etc/tero/config.json
+            ```
+
+            Configure your collector to export to Edge:
+
+            ```yaml
+            exporters:
+              otlphttp:
+                endpoint: http://localhost:8080
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Operator)">
+            Create the secret and ConfigMap:
+
+            ```bash
+            kubectl create secret generic tero-edge \
+              --from-literal=api-key=YOUR_API_KEY
+            ```
+
+            ```yaml tero-edge-config.yaml
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: tero-edge-config
+            data:
+              config.json: |
+                {
+                  "listen_address": "127.0.0.1",
+                  "listen_port": 8080,
+                  "upstream_url": "https://your-backend-endpoint.com",
+                  "log_level": "info",
+                  "max_body_size": 1048576,
+                  "policy_providers": [
+                    {
+                      "id": "tero",
+                      "type": "http",
+                      "url": "https://sync.usetero.com/v1/policy/sync",
+                      "headers": [
+                        { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                      ],
+                      "poll_interval_secs": 60
+                    }
+                  ]
+                }
+            ```
+
+            ```bash
+            kubectl apply -f tero-edge-config.yaml
+            ```
+
+            Add Edge as a sidecar to your `OpenTelemetryCollector` CR:
+
+            ```yaml
+            apiVersion: opentelemetry.io/v1beta1
+            kind: OpenTelemetryCollector
+            metadata:
+              name: otel-collector
+            spec:
+              mode: deployment
+              config:
+                receivers:
+                  otlp:
+                    protocols:
+                      grpc:
+                        endpoint: 0.0.0.0:4317
+                      http:
+                        endpoint: 0.0.0.0:4318
+                exporters:
+                  otlphttp:
+                    endpoint: http://localhost:8080
+                service:
+                  pipelines:
+                    logs:
+                      receivers: [otlp]
+                      exporters: [otlphttp]
+                    metrics:
+                      receivers: [otlp]
+                      exporters: [otlphttp]
+                    traces:
+                      receivers: [otlp]
+                      exporters: [otlphttp]
+              volumes:
+                - name: tero-edge-config
+                  configMap:
+                    name: tero-edge-config
               volumeMounts:
                 - name: tero-edge-config
                   mountPath: /etc/tero
                   readOnly: true
-              livenessProbe:
-                httpGet:
-                  path: /_health
-                  port: 8080
-                initialDelaySeconds: 5
-                periodSeconds: 10
-              readinessProbe:
-                httpGet:
-                  path: /_health
-                  port: 8080
-                initialDelaySeconds: 2
-                periodSeconds: 5
-        ```
-      </Tab>
-      <Tab title="Helm">
-        Add to your `values.yaml`:
+              additionalContainers:
+                - name: tero-edge
+                  image: ghcr.io/usetero/edge:latest
+                  args:
+                    - /etc/tero/config.json
+                  env:
+                    - name: TERO_API_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: tero-edge
+                          key: api-key
+                  resources:
+                    requests:
+                      cpu: 50m
+                      memory: 32Mi
+                    limits:
+                      cpu: 200m
+                      memory: 64Mi
+                  volumeMounts:
+                    - name: tero-edge-config
+                      mountPath: /etc/tero
+                      readOnly: true
+                  livenessProbe:
+                    httpGet:
+                      path: /_health
+                      port: 8080
+                    initialDelaySeconds: 5
+                    periodSeconds: 10
+                  readinessProbe:
+                    httpGet:
+                      path: /_health
+                      port: 8080
+                    initialDelaySeconds: 2
+                    periodSeconds: 5
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Helm)">
+            Create the secret and ConfigMap:
 
-        ```yaml
-        extraVolumes:
-          - name: tero-edge-config
-            configMap:
+            ```bash
+            kubectl create secret generic tero-edge \
+              --from-literal=api-key=YOUR_API_KEY
+            ```
+
+            ```yaml tero-edge-config.yaml
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
               name: tero-edge-config
+            data:
+              config.json: |
+                {
+                  "listen_address": "127.0.0.1",
+                  "listen_port": 8080,
+                  "upstream_url": "https://your-backend-endpoint.com",
+                  "log_level": "info",
+                  "max_body_size": 1048576,
+                  "policy_providers": [
+                    {
+                      "id": "tero",
+                      "type": "http",
+                      "url": "https://sync.usetero.com/v1/policy/sync",
+                      "headers": [
+                        { "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }
+                      ],
+                      "poll_interval_secs": 60
+                    }
+                  ]
+                }
+            ```
 
-        extraVolumeMounts:
-          - name: tero-edge-config
-            mountPath: /etc/tero
-            readOnly: true
+            ```bash
+            kubectl apply -f tero-edge-config.yaml
+            ```
 
-        extraContainers:
-          - name: tero-edge
-            image: ghcr.io/usetero/edge:latest
-            args:
-              - /etc/tero/config.json
-            env:
-              - name: TERO_API_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: tero-edge
-                    key: api-key
-            resources:
-              requests:
-                cpu: 50m
-                memory: 32Mi
-              limits:
-                cpu: 200m
-                memory: 64Mi
-            volumeMounts:
+            Add to your collector `values.yaml`:
+
+            ```yaml
+            extraVolumes:
+              - name: tero-edge-config
+                configMap:
+                  name: tero-edge-config
+
+            extraVolumeMounts:
               - name: tero-edge-config
                 mountPath: /etc/tero
                 readOnly: true
-            livenessProbe:
-              httpGet:
-                path: /_health
-                port: 8080
-              initialDelaySeconds: 5
-              periodSeconds: 10
-            readinessProbe:
-              httpGet:
-                path: /_health
-                port: 8080
-              initialDelaySeconds: 2
-              periodSeconds: 5
 
-        config:
-          receivers:
-            otlp:
-              protocols:
-                grpc:
-                  endpoint: 0.0.0.0:4317
-                http:
-                  endpoint: 0.0.0.0:4318
-          exporters:
-            otlphttp:
-              endpoint: http://localhost:8080
-          service:
-            pipelines:
-              logs:
-                receivers: [otlp]
-                exporters: [otlphttp]
-              metrics:
-                receivers: [otlp]
-                exporters: [otlphttp]
-              traces:
-                receivers: [otlp]
-                exporters: [otlphttp]
+            extraContainers:
+              - name: tero-edge
+                image: ghcr.io/usetero/edge:latest
+                args:
+                  - /etc/tero/config.json
+                env:
+                  - name: TERO_API_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: tero-edge
+                        key: api-key
+                resources:
+                  requests:
+                    cpu: 50m
+                    memory: 32Mi
+                  limits:
+                    cpu: 200m
+                    memory: 64Mi
+                volumeMounts:
+                  - name: tero-edge-config
+                    mountPath: /etc/tero
+                    readOnly: true
+                livenessProbe:
+                  httpGet:
+                    path: /_health
+                    port: 8080
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                readinessProbe:
+                  httpGet:
+                    path: /_health
+                    port: 8080
+                  initialDelaySeconds: 2
+                  periodSeconds: 5
+
+            config:
+              receivers:
+                otlp:
+                  protocols:
+                    grpc:
+                      endpoint: 0.0.0.0:4317
+                    http:
+                      endpoint: 0.0.0.0:4318
+              exporters:
+                otlphttp:
+                  endpoint: http://localhost:8080
+              service:
+                pipelines:
+                  logs:
+                    receivers: [otlp]
+                    exporters: [otlphttp]
+                  metrics:
+                    receivers: [otlp]
+                    exporters: [otlphttp]
+                  traces:
+                    receivers: [otlp]
+                    exporters: [otlphttp]
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+
+      <Step title="Verify">
+        <Tabs>
+          <Tab title="Docker">
+            Check Edge is running:
+
+            ```bash
+            docker ps | grep edge
+            curl http://localhost:8080/_health
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Operator)">
+            Check that the collector pod has both containers running:
+
+            ```bash
+            kubectl get pods -l app.kubernetes.io/name=otel-collector
+            kubectl logs <collector-pod> -c tero-edge --tail=50
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Helm)">
+            Check that the collector pod has both containers running:
+
+            ```bash
+            kubectl get pods -l app.kubernetes.io/instance=otel-collector
+            kubectl logs <collector-pod> -c tero-edge --tail=50
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+    </Steps>
+
+    ## Policy providers
+
+    Edge supports multiple policy sources. Configure them in the `policy_providers` array.
+
+    ### File provider
+
+    Load policies from a local file. Good for static policies.
+
+    ```json
+    {
+      "id": "file",
+      "type": "file",
+      "path": "/etc/tero/policies.json"
+    }
+    ```
+
+    ### HTTP provider
+
+    Fetch policies from a remote endpoint. Good for dynamic policies managed via Tero.
+
+    ```json
+    {
+      "id": "tero",
+      "type": "http",
+      "url": "https://sync.usetero.com/v1/policy/sync",
+      "headers": [{ "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }],
+      "poll_interval_secs": 60
+    }
+    ```
+
+  </Tab>
+
+  <Tab title="Policy Processor">
+    Add the Policy Processor to your own custom OpenTelemetry Collector distribution using the OpenTelemetry Collector Builder (OCB).
+
+    ## How it works
+
+    Build a custom collector with the Policy Processor included. This gives you full control over which components to include while adding Tero's filtering capabilities.
+
+    ```mermaid
+    flowchart LR
+        Apps[Applications] --> Collector[Your Custom Collector]
+        Collector --> Backend[Backend]
+
+        style Apps fill:#262626,stroke:#262626,color:#fafafa
+        style Collector fill:#10b981,stroke:#10b981,color:#fff
+        style Backend fill:#262626,stroke:#262626,color:#fafafa
+    ```
+
+    <Warning>
+    The Policy Processor uses [Hyperscan](https://www.hyperscan.io/) for high-performance regex matching. This requires CGO and platform-specific libraries.
+    </Warning>
+
+    ## Prerequisites
+
+    - Go 1.24+
+    - [OpenTelemetry Collector Builder](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/cmd/builder) (ocb)
+    - CGO-compatible build environment
+    - Hyperscan/Vectorscan libraries
+    - Tero account
+
+    ### Install Hyperscan
+
+    <Tabs>
+      <Tab title="macOS">
+        ```bash
+        brew install vectorscan
+        ```
+      </Tab>
+      <Tab title="Ubuntu/Debian">
+        ```bash
+        apt-get install libhyperscan-dev
+        ```
+      </Tab>
+      <Tab title="Alpine">
+        ```bash
+        apk add vectorscan-dev
         ```
       </Tab>
     </Tabs>
 
-    The collector exports to `localhost:8080`, which is the Edge sidecar. Edge applies policies and forwards to your configured upstream.
+    ## Build
 
-  </Step>
+    <Steps>
+      <Step title="Create an API key">
+        Open your terminal and run:
 
-  <Step title="Verify">
-    Check that the collector pod has both containers running:
+        ```bash
+        tero
+        ```
 
-    ```bash
-    kubectl get pods -l app.kubernetes.io/name=otel-collector
-    ```
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Custom Collector"). Copy the key when shown—it's only displayed once.
+      </Step>
 
-    Check Edge logs for incoming traffic:
+      <Step title="Create the OCB manifest">
+        ```yaml manifest.yaml
+        dist:
+          name: my-collector
+          description: Custom OTel Collector with Policy Processor
+          output_path: ./build
+          otelcol_version: 0.115.0
+          # Required for Hyperscan
+          cgo_enabled: true
 
-    ```bash
-    kubectl logs <collector-pod> -c tero-edge --tail=50
-    ```
+        receivers:
+          - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.115.0
 
-  </Step>
-</Steps>
+        processors:
+          - gomod: github.com/usetero/tero-collector-distro/processor/policyprocessor v0.2.0
 
-## Policy providers
+        exporters:
+          - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.115.0
+          - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.115.0
 
-Edge supports multiple policy sources. Configure them in the `policy_providers`
-array in your ConfigMap.
+        extensions:
+          - gomod: go.opentelemetry.io/collector/extension/healthcheckextension v0.115.0
+        ```
 
-### File provider
+        <Note>
+        `cgo_enabled: true` is required. Without it, the build will fail due to Hyperscan dependencies.
+        </Note>
+      </Step>
 
-Load policies from a local file. Good for static policies bundled in the
-ConfigMap.
+      <Step title="Build the collector">
+        ```bash
+        ocb --config manifest.yaml
+        ```
+
+        The built binary will be in `./build/my-collector`.
+      </Step>
+
+      <Step title="Create the collector config">
+        ```yaml config.yaml
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+                endpoint: 0.0.0.0:4317
+              http:
+                endpoint: 0.0.0.0:4318
+
+        processors:
+          policy:
+            providers:
+              - type: http
+                id: tero
+                url: https://sync.usetero.com/v1/policy/sync
+                headers:
+                  - name: Authorization
+                    value: Bearer ${TERO_API_KEY}
+                poll_interval_secs: 60
+
+        exporters:
+          otlphttp:
+            endpoint: https://your-backend-endpoint.com
+
+        service:
+          pipelines:
+            logs:
+              receivers: [otlp]
+              processors: [policy]
+              exporters: [otlphttp]
+        ```
+      </Step>
+
+      <Step title="Deploy">
+        <Tabs>
+          <Tab title="Binary">
+            ```bash
+            export TERO_API_KEY=YOUR_API_KEY
+            ./build/my-collector --config config.yaml
+            ```
+          </Tab>
+          <Tab title="Docker">
+            Create a Dockerfile:
+
+            ```dockerfile Dockerfile
+            FROM golang:1.24-bookworm AS builder
+
+            # Install Hyperscan
+            RUN apt-get update && apt-get install -y libhyperscan-dev
+
+            # Install OCB
+            RUN go install go.opentelemetry.io/collector/cmd/builder@latest
+
+            WORKDIR /build
+            COPY manifest.yaml .
+
+            # Build with CGO enabled
+            ENV CGO_ENABLED=1
+            RUN builder --config manifest.yaml
+
+            FROM debian:bookworm-slim
+
+            # Install runtime dependencies
+            RUN apt-get update && apt-get install -y libhyperscan5 ca-certificates && rm -rf /var/lib/apt/lists/*
+
+            COPY --from=builder /build/build/my-collector /collector
+            COPY config.yaml /etc/collector/config.yaml
+
+            ENTRYPOINT ["/collector"]
+            CMD ["--config", "/etc/collector/config.yaml"]
+            ```
+
+            Build and run:
+
+            ```bash
+            docker build -t my-collector .
+            docker run --rm -p 4317:4317 -p 4318:4318 \
+              -e TERO_API_KEY=YOUR_API_KEY \
+              my-collector
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Operator)">
+            After building and pushing your image, deploy with the OpenTelemetry Operator:
+
+            ```bash
+            kubectl create namespace observability
+
+            kubectl create secret generic tero-collector \
+              --namespace observability \
+              --from-literal=api-key=YOUR_API_KEY
+            ```
+
+            ```yaml my-collector.yaml
+            apiVersion: opentelemetry.io/v1beta1
+            kind: OpenTelemetryCollector
+            metadata:
+              name: my-collector
+              namespace: observability
+            spec:
+              mode: deployment
+              image: your-registry/my-collector:latest
+              env:
+                - name: TERO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: tero-collector
+                      key: api-key
+              config:
+                receivers:
+                  otlp:
+                    protocols:
+                      grpc:
+                        endpoint: 0.0.0.0:4317
+                      http:
+                        endpoint: 0.0.0.0:4318
+                processors:
+                  policy:
+                    providers:
+                      - type: http
+                        id: tero
+                        url: https://sync.usetero.com/v1/policy/sync
+                        headers:
+                          - name: Authorization
+                            value: Bearer ${TERO_API_KEY}
+                        poll_interval_secs: 60
+                exporters:
+                  otlphttp:
+                    endpoint: https://your-backend-endpoint.com
+                service:
+                  pipelines:
+                    logs:
+                      receivers: [otlp]
+                      processors: [policy]
+                      exporters: [otlphttp]
+            ```
+
+            ```bash
+            kubectl apply -f my-collector.yaml
+            ```
+          </Tab>
+          <Tab title="Kubernetes (Helm)">
+            After building and pushing your image, deploy with Helm:
+
+            ```bash
+            kubectl create namespace observability
+
+            kubectl create secret generic tero-collector \
+              --namespace observability \
+              --from-literal=api-key=YOUR_API_KEY
+            ```
+
+            ```yaml values.yaml
+            mode: deployment
+            image:
+              repository: your-registry/my-collector
+              tag: latest
+
+            extraEnvs:
+              - name: TERO_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: tero-collector
+                    key: api-key
+
+            config:
+              receivers:
+                otlp:
+                  protocols:
+                    grpc:
+                      endpoint: 0.0.0.0:4317
+                    http:
+                      endpoint: 0.0.0.0:4318
+              processors:
+                policy:
+                  providers:
+                    - type: http
+                      id: tero
+                      url: https://sync.usetero.com/v1/policy/sync
+                      headers:
+                        - name: Authorization
+                          value: Bearer ${TERO_API_KEY}
+                      poll_interval_secs: 60
+              exporters:
+                otlphttp:
+                  endpoint: https://your-backend-endpoint.com
+              service:
+                pipelines:
+                  logs:
+                    receivers: [otlp]
+                    processors: [policy]
+                    exporters: [otlphttp]
+            ```
+
+            ```bash
+            helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+            helm install my-collector open-telemetry/opentelemetry-collector \
+              --namespace observability \
+              -f values.yaml
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+    </Steps>
+
+    ## Policy configuration
+
+    The processor accepts a `providers` array for policy sources.
+
+    ### Provider types
+
+    | Type | Description |
+    |------|-------------|
+    | `file` | Load from local file |
+    | `http` | Fetch from HTTP endpoint |
+    | `grpc` | Fetch from gRPC endpoint |
+
+    ### Provider fields
+
+    | Field | Type | Description |
+    |-------|------|-------------|
+    | `type` | string | Provider type: `file`, `http`, or `grpc` |
+    | `id` | string | Unique identifier for this provider |
+    | `path` | string | File path (file provider only) |
+    | `url` | string | Remote endpoint (http/grpc only) |
+    | `poll_interval_secs` | int | How often to check for updates |
+    | `headers` | array | HTTP headers (http provider only) |
+
+    ## Telemetry support
+
+    | Signal | Status |
+    |--------|--------|
+    | Logs | Alpha |
+    | Metrics | Not yet supported |
+    | Traces | Not yet supported |
+
+    ## Metrics
+
+    The processor emits `processor_policy_records` (Counter) with attributes:
+    - `telemetry_type`: `logs`, `metrics`, or `traces`
+    - `result`: `dropped`, `kept`, `sampled`, or `no_match`
+
+  </Tab>
+</Tabs>
+
+## Example policies
+
+Policies use JSON format. Here are common patterns:
 
 ```json
 {
-  "id": "file",
-  "type": "file",
-  "path": "/etc/tero/policies.json"
+  "policies": [
+    {
+      "id": "drop-debug-logs",
+      "name": "drop-debug-logs",
+      "enabled": true,
+      "log": {
+        "match": [{ "log_field": "severity_text", "regex": "DEBUG" }],
+        "keep": "none"
+      }
+    },
+    {
+      "id": "sample-noisy-service",
+      "name": "sample-noisy-service",
+      "enabled": true,
+      "log": {
+        "match": [
+          { "resource_attribute": "service.name", "regex": "noisy-service" }
+        ],
+        "sample_rate": 0.1
+      }
+    },
+    {
+      "id": "keep-errors",
+      "name": "keep-errors",
+      "enabled": true,
+      "log": {
+        "match": [
+          { "log_field": "severity_text", "regex": "ERROR" },
+          { "log_field": "severity_text", "regex": "CRITICAL" }
+        ],
+        "keep": "all"
+      }
+    }
+  ]
 }
 ```
 
-### HTTP provider
-
-Fetch policies from a remote endpoint. Good for dynamic policies managed via the
-Tero API.
-
-```json
-{
-  "id": "tero",
-  "type": "http",
-  "url": "https://sync.usetero.com/v1/policy/sync",
-  "headers": [{ "name": "Authorization", "value": "Bearer ${TERO_API_KEY}" }],
-  "poll_interval_secs": 60
-}
-```
-
-The `${TERO_API_KEY}` variable is injected from the Kubernetes secret via the
-container environment configuration.
+See [Policy Reference](/edge/policy-reference/log-filter) for all filtering
+options.
 
 ## Troubleshooting
 
-**Collector can't reach Edge**
+**Collector won't start**
 
-Verify both containers are running in the same pod:
-
-```bash
-kubectl describe pod <collector-pod>
-```
-
-Ensure the collector is exporting to `http://localhost:8080`.
-
-**Policies not applying**
-
-Check Edge loaded policies successfully:
+Check the config syntax:
 
 ```bash
-kubectl logs <collector-pod> -c tero-edge | grep -i policy
+./collector --config config.yaml --dry-run
 ```
 
-**Traffic not reaching backend**
+**Policies not loading**
 
-Verify `upstream_url` in the ConfigMap points to your backend. Check Edge logs
-for upstream connection errors.
+Verify the policy file path is correct and the file is valid JSON. Check
+collector logs for policy-related errors.
+
+**CGO build errors (Policy Processor)**
+
+Ensure Hyperscan/Vectorscan is installed and `CGO_ENABLED=1` is set. On macOS,
+you may need to set `PKG_CONFIG_PATH`:
+
+```bash
+export PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig:$PKG_CONFIG_PATH"
+```
