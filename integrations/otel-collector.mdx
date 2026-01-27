@@ -48,6 +48,7 @@ options—pick what fits your environment.
     | **Receivers** | OTLP (gRPC, HTTP) |
     | **Processors** | Policy, Batch, Memory Limiter, Attributes, Filter, Resource |
     | **Exporters** | Debug, OTLP (gRPC, HTTP) |
+    | **Connectors** | Forward |
     | **Extensions** | Health Check v2, zPages, PProf, Basic Auth, Bearer Token Auth |
 
     ## Prerequisites
@@ -754,9 +755,7 @@ options—pick what fits your environment.
           description: Custom OTel Collector with Policy Processor
           output_path: ./build
           otelcol_version: 0.115.0
-
-        # Required for Hyperscan
-        flags:
+          # Required for Hyperscan
           cgo_enabled: true
 
         receivers:
