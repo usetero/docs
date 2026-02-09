@@ -23,27 +23,22 @@ iconType: "duotone"
     </CodeGroup>
   </Step>
 
-  <Step title="Connect">
+  <Step title="Run">
     ```bash
     tero
     ```
 
-    Connect your observability platform. Datadog, Splunk, or wherever your data lives. Read-only by default.
+    The CLI walks you through everything: authentication, connecting your Datadog account, and discovering your services. Have your Datadog API key and Application key ready — you'll find both under **Organization Settings → API Keys** / **Application Keys** in Datadog.
+
+    Discovery takes about a minute to analyze your services and log patterns.
   </Step>
 
-  <Step title="See your first policies">
-    ```
-    /policies
-    ```
+  <Step title="Explore">
+    Once setup finishes, you're in. Ask questions, browse policies, or just look around:
 
-    Tero surfaces policies organized by type: duplicate fields, health checks, accidental debug statements. Pick something obvious. Approve it.
-  </Step>
-
-  <Step title="That's it">
-    Your first policy is enforced. Explore from here:
-
+    - `/policies` to see what Tero found
     - `/services`, `/logs` to navigate the Master Catalog
     - `@checkout-api` to reference any service
-    - Ask naturally: "What's the noisiest service?" "Why is this flagged?"
+    - Ask naturally: *"What's the noisiest service?"*
   </Step>
 </Steps>
