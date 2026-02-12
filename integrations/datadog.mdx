@@ -5,9 +5,10 @@ icon: "dog"
 iconType: "duotone"
 ---
 
-import { DatadogConnectSteps } from '/snippets/datadog-connect-steps.jsx';
+import { DatadogConnectSteps } from "/snippets/datadog-connect-steps.jsx";
 
-Connect Datadog to give Tero context and enable actions directly in your account.
+Connect Datadog to give Tero context and enable actions directly in your
+account.
 
 ## Connect
 
@@ -35,24 +36,50 @@ Connect Datadog to give Tero context and enable actions directly in your account
         <DatadogConnectSteps region="US1-FED" host="app.ddog-gov.com" />
       </Tab>
     </Tabs>
+
   </Tab>
 </Tabs>
 
 ## Context
 
-When you connect Datadog, Tero adds to your [context graph](/context/overview). Your logs, metrics, traces, and services become connected and understood.
+When you connect Datadog, Tero adds to your [context graph](/context/overview).
+Your logs, metrics, traces, and services become connected and understood.
 
 <CardGroup cols={1}>
-  <Card title="Services" icon="circle-nodes" iconType="duotone" href="/context/services" horizontal>
+  <Card
+    title="Services"
+    icon="circle-nodes"
+    iconType="duotone"
+    href="/context/services"
+    horizontal
+  >
     Your services, their dependencies, and who owns them.
   </Card>
-  <Card title="Log Events" icon="file-lines" iconType="duotone" href="/context/log-events" horizontal>
+  <Card
+    title="Log Events"
+    icon="file-lines"
+    iconType="duotone"
+    href="/context/log-events"
+    horizontal
+  >
     Your logs compressed into semantic events Tero can reason about.
   </Card>
-  <Card title="Metrics" icon="chart-line" iconType="duotone" href="/context/metrics" horizontal>
+  <Card
+    title="Metrics"
+    icon="chart-line"
+    iconType="duotone"
+    href="/context/metrics"
+    horizontal
+  >
     Your custom metrics, their cardinality, and usage patterns.
   </Card>
-  <Card title="Trace Spans" icon="diagram-subtask" iconType="duotone" href="/context/trace-spans" horizontal>
+  <Card
+    title="Trace Spans"
+    icon="diagram-subtask"
+    iconType="duotone"
+    href="/context/trace-spans"
+    horizontal
+  >
     Your request flows mapped to services and operations.
   </Card>
 </CardGroup>
@@ -62,29 +89,49 @@ When you connect Datadog, Tero adds to your [context graph](/context/overview). 
 With write access, Tero can take action directly in Datadog:
 
 <Frame>
-  <img src="/images/how-it-works-datadog-4-in-provider.svg" alt="Tero configuring Datadog" />
+  <img
+    src="/images/how-it-works-datadog-4-in-provider.svg"
+    alt="Tero configuring Datadog"
+  />
 </Frame>
 
 <CardGroup cols={1}>
-  <Card title="Exclusion filters" icon="filter" iconType="duotone" href="https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters" horizontal>
+  <Card
+    title="Exclusion filters"
+    icon="filter"
+    iconType="duotone"
+    href="https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters"
+    horizontal
+  >
     Tero configures filters to prevent waste logs from being indexed.
   </Card>
-  <Card title="Pipelines" icon="pipe-section" iconType="duotone" href="https://docs.datadoghq.com/logs/log_configuration/pipelines/" horizontal>
+  <Card
+    title="Pipelines"
+    icon="pipe-section"
+    iconType="duotone"
+    href="https://docs.datadoghq.com/logs/log_configuration/pipelines/"
+    horizontal
+  >
     Tero modifies pipelines to change how logs are parsed and routed.
   </Card>
 </CardGroup>
 
-These are Datadog-specific. You can always take action other ways: deploy policies to your infrastructure with [Edge](/edge/overview), adjust instrumentation in your code, or configure Datadog manually. See [Taking action](/questions/waste/taking-action) for all options.
+These are Datadog-specific. You can always take action other ways: deploy
+policies to your infrastructure with [Edge](/edge/overview), adjust
+instrumentation in your code, or configure Datadog manually. See
+[Taking action](/questions/waste/taking-action) for all options.
 
 ## Permissions
 
-Datadog has three [managed roles](https://docs.datadoghq.com/account_management/rbac/#datadog-default-roles). Pick one when creating your service account.
+Datadog has three
+[managed roles](https://docs.datadoghq.com/account_management/rbac/#datadog-default-roles).
+Pick one when creating your service account.
 
-| Role | What it gives Tero |
-|------|-------------------|
-| **Standard** | Full context and actions |
+| Role          | What it gives Tero                       |
+| ------------- | ---------------------------------------- |
+| **Standard**  | Full context and actions                 |
 | **Read-Only** | Context only — you take action elsewhere |
-| **Custom** | You decide — see below |
+| **Custom**    | You decide — see below                   |
 
 ### Custom role permissions
 
@@ -115,5 +162,38 @@ Create a custom role if you need fine-grained control.
 </AccordionGroup>
 
 <Note>
-Start minimal and add permissions later. Update the service account's role in Datadog and Tero picks up the changes automatically.
+  Start minimal and add permissions later. Update the service account's role in
+  Datadog and Tero picks up the changes automatically.
+</Note>
+
+### Scoping to specific services
+
+If you want to limit Tero's access to logs from specific services, use Datadog's
+[restriction queries](https://docs.datadoghq.com/account_management/rbac/permissions/?tab=ui#logs_read_data).
+Restriction queries filter which logs a role can read through the
+`logs_read_data` permission.
+
+<Steps>
+  <Step title="Add a restriction query">
+    In Datadog, go to **Organization Settings > Data Access** and click **Add Restriction Query**.
+  </Step>
+  <Step title="Enter a query">
+    Scope access to the services you want Tero to see. Examples:
+
+    | Goal | Query |
+    |------|-------|
+    | Single service | `service:api` |
+    | Multiple services | `service:api OR service:web` |
+    | Service + environment | `service:api AND env:production` |
+    | Exclude a service | `service:* AND NOT service:internal-audit` |
+
+  </Step>
+  <Step title="Assign to Tero's role">
+    Attach the restriction query to your Tero service account's role.
+  </Step>
+</Steps>
+
+<Note>
+  Each role can only have one restriction query. Use `OR` operators in a single
+  query to scope to multiple services.
 </Note>
