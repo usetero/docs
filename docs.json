@@ -227,6 +227,7 @@
             "pages": [
               "trust/policies/index",
               "trust/policies/authentication-password-standard",
+              "trust/policies/cloud-services-security-standard",
               "trust/policies/data-classification",
               "trust/policies/data-retention",
               "trust/policies/dlp-standard",

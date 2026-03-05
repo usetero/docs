@@ -1,0 +1,83 @@
+---
+title: "Cloud Services Security Standard"
+sidebarTitle: "Cloud Services Standard"
+description: "Approval and operating security baseline for cloud services used to deliver Tero."
+icon: "cloud-check"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This standard defines how cloud services are approved, configured, and operated with a consistent security baseline.
+
+## What this standard answers
+
+- How new cloud services are approved before production use
+- What minimum security requirements apply to cloud configuration and operations
+- How cloud security alerts and material service changes are handled
+
+## Current state (as of March 5, 2026)
+
+Tero uses a defined cloud-service approval and operations baseline for hosted delivery.
+
+## Approval requirements before production use
+
+| Requirement | Baseline |
+|-------------|----------|
+| Business and data-scope review | Required before production onboarding |
+| Security capability review | Required for identity, logging, encryption, and access controls |
+| Subprocessor and contractual review | Required where third-party processing applies |
+| Owner assignment | Security and engineering ownership assigned for each service |
+
+## Minimum cloud security baseline
+
+| Area | Requirement |
+|------|-------------|
+| Access control | Least-privilege IAM with role-scoped access and periodic review |
+| Identity security | SSO-backed administrative access and MFA for privileged paths |
+| Encryption | Encryption in transit and at rest using managed cloud security controls |
+| Logging and auditability | Administrative and security-relevant events are logged and retained per policy |
+| Network controls | Internet edge and service boundary controls with monitored ingress paths |
+| Change management | Production-impacting changes follow controlled rollout and validation practices |
+| Backup and recovery | Encrypted backup and recovery procedures for hosted control-plane operations |
+
+## Monitoring and response baseline
+
+| Area | Baseline |
+|------|----------|
+| Cloud security alert intake | Security alerts from cloud/provider controls are monitored and triaged |
+| Incident handling | Security-relevant events follow documented incident workflows |
+| Escalation | Material incidents are escalated and communicated through customer communication paths |
+
+## Material change communication
+
+- Material security, availability, or data-handling changes are communicated in advance where required by contract or plan terms.
+- Incident-driven or emergency changes are communicated as quickly as practical with impact and remediation context.
+
+## Hosted vs self-hosted boundary
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Cloud service approval and operation | Tero-operated | Customer-operated for customer runtime |
+| Infrastructure monitoring and alert triage | Tero-operated | Customer-operated for customer runtime |
+| Product-level security controls | Tero-operated | Tero product controls plus customer runtime controls |
+
+## Evidence map
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Architecture and trust boundaries | [Security Architecture](/trust/architecture) |
+| Network and perimeter controls | [Network Security](/trust/controls/network-security) |
+| Incident workflow and customer communication | [Incident Response](/trust/controls/incident-response) |
+| Third-party service scope | [Subprocessors and Third Parties](/trust/assurance/subprocessors-third-parties) |
+
+## Exceptions and governance
+
+Any baseline exception requires documented risk acceptance, compensating controls, owner approval, and a time-bound remediation plan.
+
+Questions: [{securityEmail}](mailto:{securityEmail})
