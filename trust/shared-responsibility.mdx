@@ -36,6 +36,25 @@ Control ownership changes by model, primarily at infrastructure and network laye
 - Baseline operation does not require vendor-initiated inbound connectivity into customer environments.
 - Identity policy inside the customer IdP remains customer-owned in both models.
 
+## Ownership model diagram
+
+```mermaid
+flowchart LR
+    subgraph Hosted[Tero-hosted]
+      H_INFRA[Infrastructure + Network: Tero]
+      H_APP[Application Controls: Tero]
+      H_IDP[IdP Policy: Customer]
+      H_DATA[Retention + Deletion Ops: Tero]
+    end
+
+    subgraph SelfHosted[Self-hosted]
+      S_INFRA[Infrastructure + Network: Customer]
+      S_APP[Application Controls: Tero Software + Customer Runtime]
+      S_IDP[IdP Policy: Customer]
+      S_DATA[Retention + Deletion Ops: Customer Runtime]
+    end
+```
+
 ## Responsibility matrix
 
 | Control area | Tero-hosted | Self-hosted |

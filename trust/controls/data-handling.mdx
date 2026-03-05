@@ -25,6 +25,18 @@ This page defines the hosted default data scope, retention behavior, and how tha
 
 Tero is designed to minimize retained data. The control plane stores the metadata required to operate the product, not full raw telemetry payloads as the default system-of-record model.
 
+## Data lifecycle diagram (hosted default)
+
+```mermaid
+flowchart LR
+    IN[Ingested Product Data] --> CL[Classify and Scope]
+    CL --> MD[Metadata Processing and Storage]
+    MD --> RT[Retention Window Applied]
+    RT --> DEL[Deletion from Active Systems]
+    RT --> BK[Encrypted Backups]
+    BK --> EXP[Backup Expiry]
+```
+
 ## Data classes and handling model (hosted default)
 
 | Data class | Stored in Tero-hosted | Typical purpose |

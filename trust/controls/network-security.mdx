@@ -25,6 +25,19 @@ This page describes the network baseline for integrations, including TLS, edge p
 
 Hosted APIs are exposed through controlled public endpoints behind Cloudflare edge protections. Self-hosted deployments are customer-controlled for perimeter and routing policy.
 
+## Network path diagram
+
+```mermaid
+flowchart LR
+    C[Customer System] --> P[Public Internet / Allowlisted Path]
+    P --> E[Cloudflare Edge]
+    E --> I[Tero API Ingress]
+    I --> S[Internal Service Boundary]
+
+    C -. Enterprise option .-> X[Private Connectivity Path]
+    X -. customer or enterprise configured .-> I
+```
+
 ## Connectivity baseline
 
 | Topic | Tero-hosted | Self-hosted |

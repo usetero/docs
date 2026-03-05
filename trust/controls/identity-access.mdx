@@ -25,6 +25,18 @@ This page covers how users and integrations authenticate, how access is scoped, 
 
 Tero uses enterprise authentication patterns with tenant and workspace scoped authorization. Integration credentials are scoped to required operations and support rotation and revocation.
 
+## Authentication and token flow
+
+```mermaid
+flowchart LR
+    U[User or Integration] --> A[Authentication]
+    A --> S[Session or Token Validation]
+    S --> Z[Tenant/Workspace Authorization]
+    Z --> X[Scoped Action Execution]
+    K[Credential Rotation / Revocation] --> S
+    R[Role or Lifecycle Change] --> Z
+```
+
 ## Authentication model
 
 | Access path | Model |
