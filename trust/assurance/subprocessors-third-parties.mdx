@@ -1,0 +1,52 @@
+---
+title: "Subprocessors and Third Parties"
+sidebarTitle: "Subprocessors"
+description: "Third-party services used in hosted deployments and their processing roles."
+icon: "building"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page lists core third-party services used in Tero-hosted deployments and the role each service plays.
+
+## What this page answers
+
+- Which third parties are involved in hosted delivery
+- What data category each subprocessor handles
+- How subprocessor scope changes in self-hosted deployments
+
+## Current subprocessors (hosted)
+
+| Service | Purpose | Data category | Location |
+|---------|---------|---------------|----------|
+| Google Cloud Platform | Infrastructure runtime, storage, backups | Control-plane operational data | US |
+| WorkOS | Authentication and identity workflows | Identity and authentication metadata | US |
+| Anthropic or OpenAI (deployment-dependent) | AI-assisted classification workflows | AI workflow input scope | US |
+| Stripe (self-service only) | Billing operations | Billing metadata | US |
+
+## Self-hosted model boundary
+
+In self-hosted deployments, customers choose and operate their own infrastructure and provider stack. Subprocessor scope is therefore customer-defined for customer-hosted components.
+
+## Change management baseline
+
+- Subprocessor changes follow internal review before customer use.
+- Material changes are communicated through standard customer communication paths.
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Ownership split | Shared Responsibility |
+| Data scope and retention baseline | Data Handling, Data Retention |
+| Compliance context | Compliance and Assurance |
+
+## Questions
+
+For subprocessor detail requests, email [{securityEmail}](mailto:{securityEmail}).

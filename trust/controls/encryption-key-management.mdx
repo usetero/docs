@@ -1,0 +1,62 @@
+---
+title: "Encryption and Key Management"
+sidebarTitle: "Encryption and Keys"
+description: "Encryption in transit and at rest, key ownership model, rotation, and key event visibility."
+icon: "lock-keyhole"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page summarizes encryption controls for cloud data and how key ownership and operations differ between hosted and self-hosted deployments.
+
+## What this page answers
+
+- How data is encrypted in transit and at rest
+- Who owns and administers encryption keys by deployment model
+- How key usage visibility, rotation, and revocation are handled
+
+## Current state (as of March 5, 2026)
+
+Sensitive and confidential data paths are encrypted in transit and at rest in hosted environments.
+
+## Encryption controls
+
+| Area | Implementation |
+|------|----------------|
+| Data in transit | TLS-protected external API and service communication |
+| Data at rest | Cloud-provider encryption for databases, storage, and backups |
+| Secrets storage | Managed secret systems with restricted access |
+
+## Key ownership and access model
+
+| Topic | Tero-hosted | Self-hosted |
+|-------|-------------|-------------|
+| Key ownership model | Cloud-provider managed keys in hosted stack | Customer-selected key model |
+| Key and secret administration | Restricted by IAM and RBAC with least privilege | Customer-defined |
+| Key usage visibility | Cloud logging and monitoring paths | Customer-defined |
+
+## Rotation and revocation baseline
+
+- Key lifecycle follows cloud-provider rotation and lifecycle controls.
+- Integration credentials and secrets are rotatable and revocable.
+- Emergency revocation path is supported for compromised credentials.
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Detailed policy language | Encryption Standard |
+| Architecture controls | Security Architecture |
+| Data scope and retention | Data Handling, Data Retention |
+
+## Exceptions and governance
+
+Any exception requires documented approval, compensating controls, and a time-bound remediation plan.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

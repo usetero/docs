@@ -1,0 +1,81 @@
+---
+title: "Security Architecture"
+sidebarTitle: "Architecture"
+description: "End-to-end security architecture, trust boundaries, and enforcement model."
+icon: "diagram-project"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page explains how requests move through Tero, where trust boundaries exist, and which controls enforce those boundaries.
+
+## What this page answers
+
+- Where authentication, authorization, encryption, and logging controls are enforced
+- How traffic is terminated and whether inbound connectivity is required
+- Which architecture layers are Tero-owned vs customer-owned in self-hosted deployments
+
+## Current state (as of March 5, 2026)
+
+Tero operates as a control plane. Customer users and systems call Tero APIs over HTTPS, operations are executed within tenant and workspace scope, and security-relevant activity is logged for audit and response.
+
+## End-to-end request flow (hosted default)
+
+1. A user or integration authenticates to approved endpoints.
+2. Traffic reaches Tero over TLS-protected connections.
+3. Requests are authorized to tenant and workspace scope.
+4. Services execute control-plane workflows and metadata processing.
+5. Required data is stored in encrypted managed services.
+6. Security and operational events are recorded for detection and audit.
+
+## Trust boundaries and enforcement points
+
+| Boundary | What it separates | Key controls |
+|----------|-------------------|--------------|
+| Identity | Authenticated users and integrations vs unauthenticated requests | Auth provider integration, token and session validation, scoped access |
+| Network | Internet edge vs application ingress | TLS-required connections, edge protections, controlled endpoint exposure |
+| Application | Tenant and workspace operations | Tenant-scoped authorization and role-based access patterns |
+| Data | Control-plane metadata vs customer source telemetry systems | Data minimization model and bounded storage scope |
+| Secrets | Runtime services vs credential material | Managed secret stores with least-privilege access |
+
+## Traffic and termination model
+
+| Path | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| External API traffic | HTTPS to Tero-managed endpoints | Customer-defined ingress path |
+| TLS termination | Hosted edge reverse-proxy layer | Customer-defined termination model |
+| Service-to-service traffic | Managed cloud networking controls | Customer networking controls |
+| Inbound connectivity into customer environment | Not required for baseline API integration | Customer-controlled |
+
+## Hosted vs self-hosted ownership
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Infrastructure runtime ownership | Tero | Customer |
+| Environment hardening | Tero platform controls | Customer environment controls |
+| Secrets backend operations | Tero-managed implementation | Customer-managed implementation |
+| Private connectivity model | Tero-managed hosted model | Customer-defined |
+| Incident ownership for infrastructure events | Tero | Customer |
+
+## Evidence you can request
+
+| Control domain | Implementation summary | Primary evidence |
+|---------------|------------------------|------------------|
+| Authentication and session controls | Enterprise auth provider integration and scoped session handling | Identity and Access |
+| Authorization | Tenant and workspace scoped access and role enforcement | Identity and Access |
+| Encryption in transit and at rest | TLS-required communication and encrypted managed storage | Encryption and Key Management, Encryption Standard |
+| Secrets management | Centralized secret stores with least-privilege access | Identity and Access, Encryption and Key Management |
+| Monitoring and response | Centralized logging and security event monitoring | Incident Response and Resilience |
+| Change control | Peer review, CI checks, controlled deployment paths | Secure Development |
+
+## Exceptions and governance
+
+Any architecture-control exception requires documented risk, explicit Security and Engineering approval, compensating controls, and a time-bound remediation date.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

@@ -1,0 +1,70 @@
+---
+title: "Data Handling"
+sidebarTitle: "Data Handling"
+description: "What data Tero handles, what is stored, and how retention and deletion work."
+icon: "database"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page defines the hosted default data scope, retention behavior, and how that changes in self-hosted deployments.
+
+## What this page answers
+
+- Which data classes are stored in the hosted model
+- What the default retention and deletion behavior is
+- How ownership changes between hosted and self-hosted environments
+
+## Current state (as of March 5, 2026)
+
+Tero is designed to minimize retained data. The control plane stores the metadata required to operate the product, not full raw telemetry payloads as the default system-of-record model.
+
+## Data classes and handling model (hosted default)
+
+| Data class | Stored in Tero-hosted | Typical purpose |
+|------------|-----------------------|-----------------|
+| Account and workspace configuration | Yes | Service setup and access control |
+| Telemetry metadata (schema, field types, volume patterns) | Yes | Catalog, analysis, and policy generation |
+| Full raw telemetry content | No (default model) | Source of record remains customer observability platform |
+| Authentication and session metadata | Yes | Authentication and authorization workflows |
+| Billing metadata (self-service) | Limited scope only | Billing operations |
+
+## Retention and deletion baseline
+
+| Data type | Default retention |
+|-----------|-------------------|
+| Account and workspace data | While account or workspace is active |
+| Metadata required for service operation | While workspace is active |
+| Backups | 30 days |
+
+When a customer account or workspace is deleted, data is removed from active systems within 30 days. Backup copies age out under backup-retention windows.
+
+## Hosted vs self-hosted boundary
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Data locality control | Tero-hosted region model | Customer-selected region and infrastructure |
+| Infrastructure boundary | Tero-operated | Customer-operated |
+| Subprocessor scope | Tero-managed service stack | Customer-selected stack |
+| Data deletion execution | Tero-operated | Customer-operated runtime |
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| High-level storage model | Overview |
+| Ownership split by deployment | Shared Responsibility |
+| Retention and deletion expectations | Data Retention |
+| Subprocessor scope | Subprocessors and Third Parties |
+
+## Exceptions and governance
+
+Any exception to standard handling or retention behavior requires documented risk, Security and Engineering approval, compensating controls, and a time-bound remediation plan.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

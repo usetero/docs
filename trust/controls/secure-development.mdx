@@ -1,0 +1,65 @@
+---
+title: "Secure Development"
+sidebarTitle: "Secure Development"
+description: "How code, dependencies, secrets, and deployments are controlled in the SDLC."
+icon: "code"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page covers the engineering controls that reduce security and reliability risk before changes reach production.
+
+## What this page answers
+
+- How code changes are reviewed and validated
+- How dependency and secret risks are managed in CI and deployment workflows
+- How production changes are controlled and rolled back when needed
+
+## Current state (as of March 5, 2026)
+
+Tero uses reviewed change workflows, automated checks, and controlled deployment paths.
+
+## SDLC control baseline
+
+| Control | Implementation |
+|---------|----------------|
+| Code review | Peer review is required before merge |
+| CI checks | Automated checks are required before merge and deploy |
+| Testing | Automated tests run in CI workflows |
+| Dependency risk | Vulnerability scanning in development and security workflows |
+| Secrets hygiene | Secrets are managed in dedicated secret systems |
+| Deployment control | Controlled CI/CD paths and environment controls |
+
+## Change management expectations
+
+- Changes are reviewed before merge.
+- Production-impacting changes follow controlled rollout behavior.
+- Rollback and post-incident follow-up are part of operational response.
+
+## Hosted vs self-hosted boundary
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Product SDLC controls | Tero | Tero |
+| Runtime deployment controls | Tero-operated | Customer-operated runtime |
+| Infrastructure patching controls | Tero-operated | Customer-operated |
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Runtime and architecture boundaries | Security Architecture |
+| Access and secret handling | Identity and Access, Encryption and Key Management |
+| Assurance posture | Compliance and Assurance |
+
+## Exceptions and governance
+
+Any SDLC control exception requires documented approval, compensating controls, and remediation timing.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

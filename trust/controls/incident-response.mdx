@@ -1,0 +1,72 @@
+---
+title: "Incident Response and Resilience"
+sidebarTitle: "Incident Response"
+description: "Detection, triage, communication, and recovery expectations for security incidents."
+icon: "bell"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page describes how incidents are detected, triaged, communicated, and followed through to corrective action.
+
+## What this page answers
+
+- How Tero responds to security-relevant incidents
+- What customers can expect for communication during material incidents
+- How resilience controls support recovery and continuity
+
+## Current state (as of March 5, 2026)
+
+Security and operational events are monitored, triaged, and handled through incident-response workflows.
+
+## Incident-response lifecycle
+
+| Phase | Expected behavior |
+|-------|-------------------|
+| Detection | Security-relevant signals are monitored and investigated |
+| Triage | Severity and impact are assessed quickly |
+| Containment and recovery | Containment and service-restoration actions are executed |
+| Communication | Affected customers are notified for material incidents |
+| Post-incident follow-through | Corrective actions and improvements are tracked |
+
+## Customer communication baseline
+
+- Material customer-impacting incidents are communicated promptly.
+- Communication includes impact scope, current status, and next steps.
+- Ongoing updates continue until customer-impacting risk is resolved.
+
+## Resilience controls
+
+| Area | Approach |
+|------|----------|
+| Backups | Encrypted backups with retention controls |
+| Recovery | Operational recovery procedures and runbooks |
+| Deployment resilience | Managed cloud service patterns and operational controls |
+
+## Hosted vs self-hosted boundary
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Product incident support | Tero | Tero |
+| Infrastructure incident ownership | Tero | Customer |
+| Runtime recovery execution | Tero | Customer |
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Architecture and monitoring controls | Security Architecture |
+| Data durability and retention behavior | Data Handling, Data Retention |
+| Assurance posture | Compliance and Assurance |
+
+## Exceptions and governance
+
+Any incident-handling exception requires explicit risk acceptance and time-bound remediation.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

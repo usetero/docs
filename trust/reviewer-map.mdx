@@ -1,0 +1,50 @@
+---
+title: "Reviewer Map"
+sidebarTitle: "Reviewer Map"
+description: "Fast lookup for common security questionnaire topics."
+icon: "list-check"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="blue">Status: Reference</Badge>
+
+Use this page as the index for questionnaire completion. It maps common prompts to the right trust pages without requiring deep navigation.
+
+## How to use this map
+
+1. Find the closest questionnaire topic.
+2. Start with the listed primary page.
+3. Use supporting pages only if the reviewer asks for more detail.
+
+## Quick map
+
+| Questionnaire topic | Primary page | Supporting page(s) |
+|---------------------|--------------|--------------------|
+| Architecture and trust boundaries | Security Architecture | Shared Responsibility |
+| Hosted vs self-hosted ownership | Shared Responsibility | Overview |
+| Encryption in transit and at rest | Encryption Standard | Encryption and Key Management |
+| Key management and key rotation | Encryption and Key Management | Encryption Standard |
+| Subprocessors and third-party services | Subprocessors and Third Parties | Shared Responsibility |
+| Data handling scope and stored data | Data Handling | Overview |
+| Integration directionality and connectivity model | Network Security | Shared Responsibility, Security Architecture |
+| API identity and token controls | Identity and Access | Shared Responsibility |
+| AI provider handling and deployment options | AI Data Controls | Overview |
+| Compliance status and current assurances | Compliance and Assurance | Documents and Requests |
+
+## How we answer in-progress controls
+
+When a control is not fully complete, we answer with:
+
+- current implementation status,
+- compensating controls currently in place,
+- target completion timing,
+- and where evidence will be provided when complete.
+
+## Need a full review packet?
+
+Email [{securityEmail}](mailto:{securityEmail}) with your checklist and timeline. We can provide additional evidence under NDA.

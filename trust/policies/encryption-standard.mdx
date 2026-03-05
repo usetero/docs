@@ -1,0 +1,54 @@
+---
+title: "Encryption Standard"
+sidebarTitle: "Encryption Standard"
+description: "Encryption and key-management requirements for hosted deployments."
+icon: "lock-keyhole"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This standard defines encryption and key-management requirements for hosted deployments.
+
+## What this standard answers
+
+- Where encryption is required in transit and at rest
+- Which key-management controls are required
+- How exceptions are reviewed and approved
+
+## Current state (as of March 5, 2026)
+
+The encryption and key-management requirements on this page are active in hosted production systems.
+
+## Scope
+
+Applies to production systems, data stores, backups, service-to-service paths, and secrets handling.
+
+## Encryption requirements
+
+| Area | Requirement |
+|------|-------------|
+| Data in transit | TLS is required for external API and service traffic |
+| Data at rest | Cloud-provider encryption controls are required for databases, storage, and backups |
+| Secrets | Managed secret systems are required; secrets are not stored in source code |
+
+## Key-management requirements
+
+| Area | Requirement |
+|------|-------------|
+| Key services | Cloud key-management services |
+| Access control | Least-privilege IAM and RBAC for key and secret administration |
+| Rotation | Key lifecycle follows cloud-provider rotation and lifecycle controls |
+| Credential lifecycle | Integration credentials are rotatable and revocable |
+| Visibility | Key and encryption events are available through logging and monitoring paths |
+
+## Exceptions and governance
+
+Exceptions require documented risk acceptance, Security and Engineering approval, compensating controls, and a time-bound remediation plan.
+
+Questions: [{securityEmail}](mailto:{securityEmail})

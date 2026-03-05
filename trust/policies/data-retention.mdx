@@ -1,0 +1,53 @@
+---
+title: "Data Retention"
+sidebarTitle: "Data Retention"
+description: "Retention periods and deletion behavior for core hosted data classes."
+icon: "clock"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This policy defines baseline retention windows and deletion behavior for core hosted data classes.
+
+## What this policy answers
+
+- Which hosted data classes are retained and for how long
+- How deletion is enforced in active systems and backups
+- How retention ownership differs in self-hosted deployments
+
+## Current state (as of March 5, 2026)
+
+Retention and deletion controls described on this page are active in the hosted deployment model.
+
+## Retention schedule (hosted default)
+
+| Data type | Retention |
+|-----------|-----------|
+| Account and workspace records | While active |
+| Telemetry metadata required for operation | While workspace is active |
+| Backups | 30 days |
+
+## Deletion behavior
+
+- On account or workspace deletion, data is removed from active systems within 30 days.
+- Backup copies are deleted as backup-retention windows expire.
+
+## Hosted vs self-hosted scope
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Retention enforcement | Tero-operated | Customer-operated |
+| Backup lifecycle controls | Tero-operated | Customer-operated |
+| Infrastructure-level retention configuration | Tero-defined baseline | Customer-defined |
+
+## Exceptions and governance
+
+Retention exceptions require documented risk acceptance, approval, and time-bound remediation.
+
+Questions: [{securityEmail}](mailto:{securityEmail})

@@ -1,0 +1,63 @@
+---
+title: "AI Data Controls"
+sidebarTitle: "AI Data Controls"
+description: "How AI provider paths are configured, what data is sent, and deployment-dependent control options."
+icon: "microchip-ai"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page explains how AI provider integrations are configured and what controls apply to AI-related data paths.
+
+## What this page answers
+
+- Which provider models are supported in hosted and self-hosted deployments
+- What AI workflow data scope looks like in practice
+- How provider ownership and control boundaries change by deployment model
+
+## Current state (as of March 5, 2026)
+
+Tero supports a hosted default provider path, bring-your-own provider options, and deployment-dependent customer-controlled provider configurations.
+
+## Provider options
+
+| Deployment model | Provider path |
+|------------------|---------------|
+| Tero-hosted | Hosted default provider and configured alternatives |
+| Self-hosted | Customer-controlled provider path in customer environment |
+
+## AI data-handling model
+
+| Topic | Approach |
+|-------|----------|
+| Input scope | Limited to data required for AI-assisted classification workflows |
+| Storage behavior | Workflow data is handled for processing; long-term storage is minimized by design |
+| Provider governance | Customers can select provider paths aligned to their requirements (deployment-dependent) |
+
+## Hosted vs self-hosted control boundary
+
+| Control | Tero-hosted | Self-hosted |
+|---------|-------------|-------------|
+| Provider account boundary | Tero-managed hosted configuration | Customer provider and account configuration |
+| Network and data boundary | Tero-hosted architecture boundary | Customer infrastructure boundary |
+| Compliance alignment | Tero contractual and control posture | Customer environment controls |
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| High-level data scope | Overview, Data Handling |
+| Ownership split | Shared Responsibility |
+| Provider-specific setup | Integration pages for supported AI providers |
+
+## Exceptions and governance
+
+Any AI data-path exception requires documented approval and compensating controls.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

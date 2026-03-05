@@ -1,88 +1,99 @@
 ---
 title: "Overview"
 sidebarTitle: "Overview"
-description: "How Tero handles your data."
+description: "Security, privacy, and compliance posture for Tero-hosted and self-hosted deployments."
 icon: "shield-check"
 iconType: "duotone"
 ---
 
 import { securityEmail } from '/snippets/variables.mdx';
 
-<img src="/images/trust-hero.svg" alt="Tero" />
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="orange">Status: In progress</Badge>
 
-Tero connects to your observability platform, analyzes your telemetry, and helps you understand what's valuable and what's waste. This page explains what we see, what we store, and how you stay in control.
+This page is written for security reviewers who need fast, concrete answers: what Tero operates, what data is handled, where responsibilities split, and what evidence is available.
 
-## What Tero sees
+## What this page answers
 
-Tero connects via API to your observability platform (Datadog, Splunk, etc.). We read your telemetry to understand its structure and patterns.
+- What is live today versus still in progress
+- What changes between Tero-hosted and self-hosted deployments
+- Where to go next for architecture, ownership, and evidence details
 
-From this analysis, we build a **semantic catalog**: field names, types, volume patterns, quality classifications. This metadata powers everything Tero does: identifying waste, answering questions, suggesting optimizations.
+## Current state (as of March 5, 2026)
+
+| Topic | Current state |
+|-------|---------------|
+| SOC 2 Type II | In progress (target: March 2026) |
+| Encryption | Enabled in transit and at rest |
+| Deployment models | Tero-hosted and self-hosted |
+| AI provider options | Hosted default provider plus bring-your-own provider options |
 
 <Note>
-**We don't store your log content, metric values, or trace data.** The catalog describes the shape and patterns of your telemetry, not the content itself. We can tell you "this log event costs $8,000/month" without storing what those logs say.
+We prioritize clear, auditable statements over marketing language. If a control is in progress, we mark it as in progress.
 </Note>
 
-For AI classification, we send samples to an AI provider. Samples are processed in memory and discarded, not persisted in our systems or the provider's. This is enforced through API contracts with zero-retention guarantees.
+## Start your review
 
-Each [integration](/integrations/datadog) documents exactly what permissions it requires. You control what access to grant, and you can revoke or scope it down anytime. See [How Tero works](/introduction/how-tero-works) for the full picture.
+<CardGroup cols={3}>
+  <Card title="Security Architecture" icon="diagram-project" href="/trust/architecture" horizontal>
+    End-to-end request flow, trust boundaries, and control points.
+  </Card>
+  <Card title="Shared Responsibility" icon="people-arrows" href="/trust/shared-responsibility" horizontal>
+    Ownership split by deployment model.
+  </Card>
+  <Card title="Reviewer Map" icon="list-check" href="/trust/reviewer-map" horizontal>
+    Questionnaire topic to page lookup.
+  </Card>
+</CardGroup>
 
-## Self-hosted: we never see your data
+## Deployment boundary at a glance
 
-If you can't send data to Tero Cloud, self-host instead.
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Control plane runtime | Operated by Tero | Operated by customer |
+| Network perimeter | Managed by Tero baseline controls | Managed by customer |
+| Data locality control | Tero-hosted region model | Customer-chosen region/infrastructure |
+| AI provider path | Hosted default and configured options | Customer-controlled provider path |
+| Infrastructure patching and operations | Tero | Customer |
 
-The control plane runs in your infrastructure. AI classification uses your provider: AWS Bedrock, Azure OpenAI, or anything compatible. Your network, your security boundary, your compliance certifications.
+## Default hosted data scope
 
-Tero provides the software. You run it. We never see your telemetry, your samples, or your metadata. We provide updates and support; you control everything else.
+| Data class | Stored | Why |
+|------------|--------|-----|
+| Account and workspace configuration | Yes | Service configuration and access control |
+| Telemetry metadata (schemas, field types, volume patterns) | Yes | Catalog, analysis, and policy generation |
+| Full raw telemetry content | No (default model) | Source of record remains your observability platform |
+| Authentication metadata | Yes | Session and access control |
+| Billing records (self-service) | Limited scope only | Billing operations |
 
-This isn't a limited version. It's the same product, running where you need it.
+## What this means in practice
 
-<Tip>
-**Need SOC 2 or HIPAA compliance now?** Self-host the control plane. Your existing certifications apply, no waiting on ours.
-</Tip>
+- Baseline integration does not require vendor-initiated inbound connectivity into your environment.
+- Full raw telemetry is not the default hosted system-of-record data model.
+- Control ownership shifts materially in self-hosted mode at the infrastructure and network layers.
 
-## Bring your own AI
+## Evidence path
 
-Even with Tero Cloud, you can use your own AI provider.
+| Topic | Public evidence | Additional evidence (on request) |
+|-------|-----------------|-----------------------------------|
+| Architecture and trust boundaries | Security Architecture | Architecture walkthrough and control notes |
+| Responsibility split | Shared Responsibility | Deployment-specific control allocation review |
+| Encryption controls | Encryption Standard | Platform control evidence and security review package |
+| Subprocessors and data handling | Subprocessors and Third Parties | Subprocessor and data-flow detail under NDA |
+| AI data handling options | AI Data Controls | Deployment-specific model and provider configuration review |
 
-By default, we use Anthropic Claude with zero-retention API agreements. If you prefer your own provider (AWS Bedrock, Azure OpenAI, or others), configure Tero to use your API keys and your data agreements.
+## In progress
 
-Your samples go to your approved provider, under your compliance terms.
-
-## Security
-
-**Application security**: All code changes require review. Automated tests run before deploy. Dependencies are scanned for vulnerabilities and patched promptly. Secrets are managed through Doppler and GCP Secret Manager, never in code.
-
-**Infrastructure security**: Everything runs on GCP with encryption in transit (TLS 1.3) and at rest (AES-256). Access requires SSO with MFA. Production access is time-limited and logged. See [Details](/trust/details) for specifics.
-
-**Incident response**: We monitor for security issues continuously. If something affects your data, we notify you within 24 hours.
-
-**Vulnerability reporting**: Found an issue? Email [{securityEmail}](mailto:{securityEmail}). We respond within 24 hours.
-
-## Compliance
-
-| Framework | Status |
-|-----------|--------|
-| GDPR / CCPA | Compliant (DPA available) |
-| SOC 2 Type 2 | 2026 |
-| Penetration testing | Q1 2025 |
-
-If you need SOC 2 today, self-host. Your existing certifications cover Tero running in your infrastructure.
-
-## Get what you need
-
-We respond to security questionnaires (SIG, CAIQ, VSA) and provide:
-
-- Data Processing Agreement with SCCs
-- Architecture documentation
-- Security questionnaire responses
+- SOC 2 Type II is in progress.
+- Target issuance window: March 2026.
 
 <Card
-  title="Request documents"
+  title="Request security artifacts"
   icon="envelope"
   href={`mailto:${securityEmail}`}
   horizontal
 >
-  Email **{securityEmail}** with what you need and your timeline.
+  Email **{securityEmail}** with your checklist, deployment model, and review timeline.
 </Card>
-
-For infrastructure details, sub-processors, and compliance specifics, see [Details](/trust/details).

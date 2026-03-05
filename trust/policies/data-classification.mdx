@@ -1,0 +1,52 @@
+---
+title: "Data Classification"
+sidebarTitle: "Data Classification"
+description: "Classification levels and required handling controls."
+icon: "tags"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="orange">Status: In progress</Badge>
+
+This policy defines data classification levels and handling requirements used across product and operations.
+
+## What this policy answers
+
+- Which classification levels are used
+- What baseline handling controls apply to each level
+- What is already operating versus still being formalized
+
+## Current state (as of March 5, 2026)
+
+Classification controls are active operationally. Policy formalization and evidence mapping are being finalized as part of the SOC 2 workstream.
+
+## Classification levels
+
+| Level | Examples | Handling baseline |
+|-------|----------|-------------------|
+| Public | Public documentation and published materials | No confidentiality restrictions |
+| Internal | Operational runbooks and internal non-sensitive records | Internal access controls |
+| Confidential | Customer configuration and operational metadata | Least privilege and encrypted storage and transport |
+| Sensitive | Credentials, security artifacts, regulated identifiers where present | Restricted access, strict storage controls, heightened monitoring |
+
+## Handling controls currently enforced
+
+- Access by least privilege and role scope
+- Encryption in transit and at rest
+- Secrets in managed secret systems
+- Retention and deletion per policy expectations
+
+## In progress
+
+- Final policy language and control-to-evidence mapping completion target: March 2026.
+
+## Exceptions and governance
+
+Classification exceptions require documented risk, approval, and a time-bound remediation plan.
+
+Questions: [{securityEmail}](mailto:{securityEmail})

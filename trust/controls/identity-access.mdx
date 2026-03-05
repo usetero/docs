@@ -1,0 +1,75 @@
+---
+title: "Identity and Access"
+sidebarTitle: "Identity and Access"
+description: "Authentication, authorization, credential scope, and access lifecycle controls."
+icon: "key"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This page covers how users and integrations authenticate, how access is scoped, and how credentials are protected, rotated, and revoked.
+
+## What this page answers
+
+- Which identity types are used for users and integrations
+- How least-privilege authorization is enforced
+- How credentials are stored, rotated, and revoked
+
+## Current state (as of March 5, 2026)
+
+Tero uses enterprise authentication patterns with tenant and workspace scoped authorization. Integration credentials are scoped to required operations and support rotation and revocation.
+
+## Authentication model
+
+| Access path | Model |
+|-------------|-------|
+| User access | SSO and OIDC-capable authentication with session controls |
+| API integrations | Scoped token-based authentication |
+| Administrative actions | Restricted administrative access model |
+
+## Authorization and least privilege
+
+| Control | Implementation |
+|---------|----------------|
+| Tenant isolation | Requests are evaluated in tenant and workspace context |
+| Role-based access | Access is constrained by role and permitted operations |
+| Scope constraints | Integration credentials are limited to required functions |
+| Access lifecycle | Access is provisioned for approved need and removed when no longer needed |
+
+## Credential lifecycle controls
+
+| Area | Practice |
+|------|----------|
+| Creation | Issued through controlled integration and admin workflows |
+| Storage | Credentials are stored in managed secret systems |
+| Rotation | Supported on demand and through operational workflows |
+| Revocation | Immediate disable and revocation supported |
+| Source control hygiene | Secrets are not committed to source code |
+
+## Hosted vs self-hosted boundary
+
+| Area | Tero-hosted | Self-hosted |
+|------|-------------|-------------|
+| Runtime identity controls | Tero-operated | Customer-operated runtime |
+| IdP policy and lifecycle rules | Customer-controlled | Customer-controlled |
+| Secret backend ownership | Tero-managed services | Customer-managed services |
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Ownership split | Shared Responsibility |
+| Secret handling and key model | Encryption and Key Management |
+| Architecture boundaries | Security Architecture |
+
+## Exceptions and governance
+
+Any identity or access exception requires documented approval, scoped compensating controls, and a target remediation date.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

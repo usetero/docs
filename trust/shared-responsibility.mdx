@@ -1,0 +1,79 @@
+---
+title: "Shared Responsibility"
+sidebarTitle: "Shared Responsibility"
+description: "Control ownership between Tero and customers in hosted and self-hosted deployments."
+icon: "people-arrows"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+Security reviews move faster when ownership is explicit. This page defines who owns what in each deployment model.
+
+## What this page answers
+
+- Which controls are Tero-owned vs customer-owned
+- How baseline integration traffic flows between customer systems and Tero
+- Where enterprise teams typically add stricter controls
+
+## Current state (as of March 5, 2026)
+
+Tero supports two deployment models:
+
+- Tero-hosted control plane
+- Self-hosted control plane in customer-managed infrastructure
+
+Control ownership changes by model, primarily at infrastructure and network layers.
+
+## Scope and integration boundary
+
+- Baseline integration model is customer-initiated outbound API traffic over HTTPS.
+- Baseline operation does not require vendor-initiated inbound connectivity into customer environments.
+- Identity policy inside the customer IdP remains customer-owned in both models.
+
+## Responsibility matrix
+
+| Control area | Tero-hosted | Self-hosted |
+|-------------|-------------|-------------|
+| Infrastructure security and patching | Tero | Customer |
+| Network perimeter and private connectivity | Tero-managed baseline | Customer |
+| Identity provider policy (IdP side) | Customer | Customer |
+| Application authn and authz implementation | Tero | Tero software with customer runtime controls |
+| Secrets and key administration | Tero-managed services | Customer-managed services |
+| Data retention and deletion operations | Tero | Customer-operated runtime with product-defined behavior |
+| Incident response for platform operations | Tero | Customer for environment ops, Tero for product support |
+| Subprocessor management | Tero | Customer (for customer-chosen stack) |
+
+## Where enterprise teams usually tighten controls
+
+- Self-hosted deployment for full environment ownership
+- Customer IdP policy enforcement for authentication lifecycle controls
+- Destination allowlisting and private routing in customer networks
+- Customer-selected AI provider path where required
+
+## Go-live checklist (recommended)
+
+1. Confirm identity and role mapping model.
+2. Confirm network allowlisting and routing requirements.
+3. Confirm data handling and retention expectations.
+4. Confirm incident communication paths and named contacts.
+
+## Evidence you can request
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Ownership split by deployment model | This page |
+| Architecture and trust boundary | Security Architecture |
+| Data handling scope and storage model | Overview, Data Handling |
+| Encryption and key management | Encryption and Key Management, Encryption Standard |
+
+## Exceptions and governance
+
+If a control allocation does not match customer policy requirements, we document the gap, agree on compensating controls, and define a time-bound resolution plan before production use.
+
+Evidence requests: [{securityEmail}](mailto:{securityEmail})

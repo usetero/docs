@@ -1,0 +1,51 @@
+---
+title: "DLP Standard"
+sidebarTitle: "DLP Standard"
+description: "Current and planned controls for preventing and detecting sensitive data exfiltration risk."
+icon: "shield-exclamation"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="orange">Status: In progress</Badge>
+
+This standard defines baseline prevention and detection controls for sensitive-data handling and exfiltration risk.
+
+## What this standard answers
+
+- Which DLP-relevant controls are active today
+- Which policy artifacts are still being formalized
+- How this standard should be interpreted during review
+
+## Current state (as of March 5, 2026)
+
+Core preventive controls are implemented through product design and access controls. Formal policy mapping is in progress.
+
+## Current control baseline
+
+| Area | Current control |
+|------|-----------------|
+| Data minimization | Product design limits persistent storage scope |
+| Access control | Tenant and role-scoped authorization model |
+| Secrets protection | Managed secret systems and restricted access |
+| Transport and storage | Encryption in transit and at rest |
+| Monitoring | Security and operational event monitoring |
+
+## In progress
+
+- Formalized DLP policy mapping and control-to-evidence matrix completion.
+- Target completion: March 2026.
+
+## Scope note
+
+This page describes control baseline and policy maturity status. It is not a standalone endpoint DLP product claim.
+
+## Exceptions and governance
+
+Any DLP-control exception requires documented risk, compensating controls, and remediation timing.
+
+Questions: [{securityEmail}](mailto:{securityEmail})

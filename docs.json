@@ -192,8 +192,45 @@
         "icon": "shield-check",
         "groups": [
           {
-            "group": "Trust Center",
-            "pages": ["trust/overview", "trust/details"]
+            "group": "Overview",
+            "pages": ["trust/overview", "trust/reviewer-map"]
+          },
+          {
+            "group": "Foundations",
+            "pages": [
+              "trust/architecture",
+              "trust/shared-responsibility"
+            ]
+          },
+          {
+            "group": "Controls",
+            "pages": [
+              "trust/controls/data-handling",
+              "trust/controls/identity-access",
+              "trust/controls/network-security",
+              "trust/controls/encryption-key-management",
+              "trust/controls/secure-development",
+              "trust/controls/incident-response",
+              "trust/controls/ai-data-controls"
+            ]
+          },
+          {
+            "group": "Assurance",
+            "pages": [
+              "trust/assurance/compliance-and-assurance",
+              "trust/assurance/subprocessors-third-parties",
+              "trust/assurance/documents-and-requests"
+            ]
+          },
+          {
+            "group": "Policies",
+            "pages": [
+              "trust/policies/index",
+              "trust/policies/data-classification",
+              "trust/policies/data-retention",
+              "trust/policies/dlp-standard",
+              "trust/policies/encryption-standard"
+            ]
           }
         ]
       }

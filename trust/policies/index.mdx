@@ -1,0 +1,46 @@
+---
+title: "Policies"
+sidebarTitle: "Policies"
+description: "Policy library for trust controls and handling standards."
+icon: "folder-tree"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="blue">Status: Reference</Badge>
+
+This library backs Trust Center control statements with policy-level requirements and status.
+
+## Policy status snapshot
+
+| Policy | Status |
+|--------|--------|
+| Data Classification | In progress |
+| Data Retention | Implemented |
+| DLP Standard | In progress |
+| Encryption Standard | Implemented |
+
+## Policy set
+
+<CardGroup cols={2}>
+  <Card title="Data Classification" icon="tags" href="/trust/policies/data-classification" horizontal>
+    Classification levels and handling requirements.
+  </Card>
+  <Card title="Data Retention" icon="clock" href="/trust/policies/data-retention" horizontal>
+    Retention periods and deletion behavior.
+  </Card>
+  <Card title="DLP Standard" icon="shield-exclamation" href="/trust/policies/dlp-standard" horizontal>
+    Prevention and detection expectations for sensitive-data exfiltration risk.
+  </Card>
+  <Card title="Encryption Standard" icon="lock-keyhole" href="/trust/policies/encryption-standard" horizontal>
+    Encryption and key-management requirements.
+  </Card>
+</CardGroup>
+
+## Need policy evidence?
+
+For policy evidence mapping or control-language questions, email [{securityEmail}](mailto:{securityEmail}).
