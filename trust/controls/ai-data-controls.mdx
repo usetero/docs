@@ -17,36 +17,76 @@ This page explains how AI provider integrations are configured and what controls
 
 ## What this page answers
 
-- Which provider models are supported in hosted and self-hosted deployments
-- What AI workflow data scope looks like in practice
-- How provider ownership and control boundaries change by deployment model
+- What data is sent to AI providers for classification and analysis workflows
+- Which provider and key-ownership modes are supported
+- How retention and training controls differ by provider and configuration
 
 ## Current state (as of March 5, 2026)
 
-Tero supports a hosted default provider path, bring-your-own provider options, and deployment-dependent customer-controlled provider configurations.
+Tero supports three AI deployment modes: hosted default provider path, bring-your-own provider credentials, and customer-controlled self-hosted provider routing.
 
-## Provider options
+## AI workflow data scope
 
-| Deployment model | Provider path |
-|------------------|---------------|
-| Tero-hosted | Hosted default provider and configured alternatives |
-| Self-hosted | Customer-controlled provider path in customer environment |
+AI workflows use data needed for classification and analysis tasks. By default, this includes control-plane-relevant context and telemetry samples required for the task, not unrestricted ingestion of all customer telemetry.
 
-## AI data-handling model
+| Topic | Baseline approach |
+|-------|-------------------|
+| Prompt scope | Task-scoped inputs for classification and analysis workflows |
+| Data minimization | Inputs are bounded to workflow requirements |
+| Model output handling | Outputs are used for product classification and recommendation workflows |
+| Governance | Provider path and key ownership can be customer-controlled by deployment model |
 
-| Topic | Approach |
-|-------|----------|
-| Input scope | Limited to data required for AI-assisted classification workflows |
-| Storage behavior | Workflow data is handled for processing; long-term storage is minimized by design |
-| Provider governance | Customers can select provider paths aligned to their requirements (deployment-dependent) |
+## Provider and key ownership modes
 
-## Hosted vs self-hosted control boundary
+| Mode | Description | Typical use case |
+|------|-------------|------------------|
+| Tero-managed provider path | Tero-hosted default provider configuration | Fastest onboarding |
+| Bring-your-own provider credentials | Customer API credentials used for provider calls | Customer-controlled commercial relationship with OpenAI/Anthropic |
+| Self-hosted provider path | Runtime and provider routing controlled in customer environment | Maximum infrastructure and network control |
 
-| Control | Tero-hosted | Self-hosted |
-|---------|-------------|-------------|
-| Provider account boundary | Tero-managed hosted configuration | Customer provider and account configuration |
-| Network and data boundary | Tero-hosted architecture boundary | Customer infrastructure boundary |
-| Compliance alignment | Tero contractual and control posture | Customer environment controls |
+## Provider data controls (external policy alignment)
+
+| Provider path | Training usage baseline | Retention baseline | Zero-retention option |
+|---------------|-------------------------|--------------------|-----------------------|
+| OpenAI API | API data is not used for model training by default (unless customer opts in) | Abuse-monitoring and application-state retention depends on endpoint/configuration (default policies apply) | Available for approved organizations on eligible configurations/endpoints |
+| Anthropic API | Commercial/API data is not used for model training by default | Standard API retention baseline applies (commercial policy default) | Available by agreement for eligible enterprise API use cases |
+| AWS Bedrock | Prompts/outputs are not used to train base models and are not shared with model providers | Bedrock service data-protection model applies | Private connectivity and customer-managed encryption controls available |
+
+## Deployment boundary
+
+| Control area | Tero-hosted | Self-hosted |
+|--------------|-------------|-------------|
+| Provider account boundary | Tero-managed or customer-provided credentials | Customer-controlled |
+| Runtime/network boundary | Tero-hosted boundary | Customer infrastructure boundary |
+| Provider policy configuration | Configured per provider path | Customer-configured |
+| Compliance posture | Tero controls + selected provider controls | Customer environment + selected provider controls |
+
+## Model and provider coverage
+
+- Recommended frontier providers for production quality are Anthropic and OpenAI.
+- Bedrock and additional provider paths are supported as deployment-dependent integration options.
+- Additional open-source/local model paths (for example, Ollama-compatible) are possible, with quality validated case-by-case.
+
+## Recommended enterprise hardening profile
+
+| Control | Recommended setting |
+|--------|---------------------|
+| Provider account boundary | Use customer-provided credentials or self-hosted provider routing for strict boundary control |
+| Data retention mode | Use provider zero-retention mode where eligible and contractually enabled |
+| Training controls | Keep provider training opt-in disabled for API data |
+| Prompt scope control | Limit prompts to minimum task-relevant context and avoid unrestricted raw payload submission |
+| Secret management | Store provider credentials in managed secret stores with scoped runtime access |
+| Key lifecycle | Rotate provider credentials on a defined cadence and on any incident trigger |
+| Network controls | Restrict outbound destinations to approved AI provider endpoints |
+| Auditability | Log AI request metadata and outcome events without exposing sensitive prompt text in operational logs |
+
+## External references
+
+- [OpenAI data controls](https://platform.openai.com/docs/guides/your-data)
+- [Anthropic retention and zero data retention FAQs](https://privacy.anthropic.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data)
+- [Anthropic zero data retention scope](https://privacy.anthropic.com/en/articles/8956058-i-have-a-zero-data-retention-agreement-with-anthropic-what-products-does-it-apply-to)
+- [Amazon Bedrock data protection](https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html)
+- [Amazon Bedrock security/privacy overview](https://aws.amazon.com/bedrock/security-privacy-responsible-ai/)
 
 ## Evidence you can request
 
@@ -54,10 +94,11 @@ Tero supports a hosted default provider path, bring-your-own provider options, a
 |-------|------------------|
 | High-level data scope | [Overview](/trust/overview), [Data Handling](/trust/controls/data-handling) |
 | Ownership split | [Shared Responsibility](/trust/shared-responsibility) |
-| Provider-specific setup | Integration pages for supported AI providers |
+| Identity and credential controls | [Identity and Access](/trust/controls/identity-access) |
+| Encryption and key controls | [Encryption and Key Management](/trust/controls/encryption-key-management) |
 
 ## Exceptions and governance
 
-Any AI data-path exception requires documented approval and compensating controls.
+Any AI data-path exception requires documented approval, compensating controls, and a time-bound remediation plan.
 
 Evidence requests: [{securityEmail}](mailto:{securityEmail})
