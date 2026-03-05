@@ -19,23 +19,44 @@ Use this page as the index for questionnaire completion. It maps common prompts 
 
 1. Find the closest questionnaire topic.
 2. Start with the listed primary page.
-3. Use supporting pages only if the reviewer asks for more detail.
+3. Use the secondary page only if the reviewer asks for more depth.
 
-## Quick map
+## Architecture and boundaries
 
-| Questionnaire topic | Primary page | Supporting page(s) |
-|---------------------|--------------|--------------------|
+| Questionnaire topic | Primary page | Secondary page |
+|---------------------|--------------|----------------|
 | Architecture and trust boundaries | [Security Architecture](/trust/architecture) | [Shared Responsibility](/trust/shared-responsibility) |
 | Hosted vs self-hosted ownership | [Shared Responsibility](/trust/shared-responsibility) | [Overview](/trust/overview) |
+| Tenant isolation and logical separation | [Security Architecture](/trust/architecture) | [Identity and Access](/trust/controls/identity-access) |
 | Encryption in transit and at rest | [Encryption Standard](/trust/policies/encryption-standard) | [Encryption and Key Management](/trust/controls/encryption-key-management) |
 | Key management and key rotation | [Encryption and Key Management](/trust/controls/encryption-key-management) | [Encryption Standard](/trust/policies/encryption-standard) |
-| Subprocessors and third-party services | [Subprocessors and Third Parties](/trust/assurance/subprocessors-third-parties) | [Shared Responsibility](/trust/shared-responsibility) |
-| Data handling scope and stored data | [Data Handling](/trust/controls/data-handling) | [Overview](/trust/overview) |
-| Integration directionality and connectivity model | [Network Security](/trust/controls/network-security) | [Shared Responsibility](/trust/shared-responsibility), [Security Architecture](/trust/architecture) |
-| Tenant isolation and logical separation | [Security Architecture](/trust/architecture) | [Identity and Access](/trust/controls/identity-access), [Data Handling](/trust/controls/data-handling) |
+
+## Identity and access
+
+| Questionnaire topic | Primary page | Secondary page |
+|---------------------|--------------|----------------|
 | API identity and token controls | [Identity and Access](/trust/controls/identity-access) | [Shared Responsibility](/trust/shared-responsibility) |
 | Login and SSO protocol support | [Authentication and Password Standard](/trust/policies/authentication-password-standard) | [Identity and Access](/trust/controls/identity-access) |
+| Session timeout and reauthentication controls | [Authentication and Password Standard](/trust/policies/authentication-password-standard) | [Identity and Access](/trust/controls/identity-access) |
+
+## Data governance
+
+| Questionnaire topic | Primary page | Secondary page |
+|---------------------|--------------|----------------|
+| Data handling scope and stored data | [Data Handling](/trust/controls/data-handling) | [Overview](/trust/overview) |
+| Subprocessors and third-party services | [Subprocessors and Third Parties](/trust/assurance/subprocessors-third-parties) | [Shared Responsibility](/trust/shared-responsibility) |
+| Integration directionality and connectivity model | [Network Security](/trust/controls/network-security) | [Security Architecture](/trust/architecture) |
+
+## AI and model governance
+
+| Questionnaire topic | Primary page | Secondary page |
+|---------------------|--------------|----------------|
 | AI provider handling and deployment options | [AI Data Controls](/trust/controls/ai-data-controls) | [Overview](/trust/overview) |
+
+## Assurance and legal
+
+| Questionnaire topic | Primary page | Secondary page |
+|---------------------|--------------|----------------|
 | Compliance status and current assurances | [Compliance and Assurance](/trust/assurance/compliance-and-assurance) | [Documents and Requests](/trust/assurance/documents-and-requests) |
 
 ## How we answer in-progress controls
