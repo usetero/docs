@@ -25,6 +25,20 @@ This page explains how requests move through Tero, where trust boundaries exist,
 
 Tero operates as a control plane. Customer users and systems call Tero APIs over HTTPS, operations are executed within tenant and workspace scope, and security-relevant activity is logged for audit and response.
 
+## System flow diagram (hosted default)
+
+```mermaid
+flowchart LR
+    U[Customer Users] --> E[Cloudflare Edge]
+    I[Customer Integrations] --> E
+    E --> A[Auth + Session Validation]
+    A --> Z[Tenant/Workspace Authorization]
+    Z --> C[Tero Control Plane]
+    C --> D[(Encrypted Control-Plane Data Stores)]
+    C --> L[(Security + Audit Logs)]
+    C -. Optional provider path .-> P[AI Provider Integration]
+```
+
 ## End-to-end request flow (hosted default)
 
 1. A user or integration authenticates to approved endpoints.
@@ -43,6 +57,48 @@ Tero operates as a control plane. Customer users and systems call Tero APIs over
 | Application | Tenant and workspace operations | Tenant-scoped authorization and role-based access patterns |
 | Data | Control-plane metadata vs customer source telemetry systems | Data minimization model and bounded storage scope |
 | Secrets | Runtime services vs credential material | Managed secret stores with least-privilege access |
+
+## Tenant isolation model (hosted)
+
+| Layer | Isolation approach |
+|-------|--------------------|
+| Application | Requests are authorized in tenant and workspace scope; role and operation checks are enforced before execution |
+| Data | Tenant and workspace context is enforced in control-plane data access paths; bounded data model reduces cross-tenant exposure risk |
+| Network | Managed ingress and service boundaries isolate Internet edge, application ingress, and internal service communication paths |
+
+## Isolation boundary diagram
+
+```mermaid
+flowchart TB
+    subgraph Identity_Boundary[Identity Boundary]
+        AUTH[Authenticated User/Session or Integration Token]
+    end
+
+    subgraph Network_Boundary[Network Boundary]
+        EDGE[Internet Edge + Ingress Controls]
+    end
+
+    subgraph Application_Boundary[Application Boundary]
+        APP[Tenant/Workspace Authorization Layer]
+    end
+
+    subgraph Data_Boundary[Data Boundary]
+        META[(Control-Plane Metadata Stores)]
+        SRC[(Customer Source Telemetry Systems)]
+    end
+
+    subgraph Secrets_Boundary[Secrets Boundary]
+        SEC[Managed Secret Store with Scoped Access]
+    end
+
+    AUTH --> EDGE --> APP --> META
+    APP -. no baseline vendor-initiated inbound connectivity .-> SRC
+    APP --> SEC
+```
+
+## Architecture diagrams and review artifacts
+
+We maintain architecture documentation that describes trust boundaries, tenant isolation, and data-flow separation. Public overview material is available in this Trust Center; deeper architecture walkthrough material is available for security review under NDA.
 
 ## Traffic and termination model
 
@@ -67,12 +123,12 @@ Tero operates as a control plane. Customer users and systems call Tero APIs over
 
 | Control domain | Implementation summary | Primary evidence |
 |---------------|------------------------|------------------|
-| Authentication and session controls | Enterprise auth provider integration and scoped session handling | Identity and Access |
-| Authorization | Tenant and workspace scoped access and role enforcement | Identity and Access |
-| Encryption in transit and at rest | TLS-required communication and encrypted managed storage | Encryption and Key Management, Encryption Standard |
-| Secrets management | Centralized secret stores with least-privilege access | Identity and Access, Encryption and Key Management |
-| Monitoring and response | Centralized logging and security event monitoring | Incident Response and Resilience |
-| Change control | Peer review, CI checks, controlled deployment paths | Secure Development |
+| Authentication and session controls | Enterprise auth provider integration and scoped session handling | [Identity and Access](/trust/controls/identity-access) |
+| Authorization | Tenant and workspace scoped access and role enforcement | [Identity and Access](/trust/controls/identity-access) |
+| Encryption in transit and at rest | TLS-required communication and encrypted managed storage | [Encryption and Key Management](/trust/controls/encryption-key-management), [Encryption Standard](/trust/policies/encryption-standard) |
+| Secrets management | Centralized secret stores with least-privilege access | [Identity and Access](/trust/controls/identity-access), [Encryption and Key Management](/trust/controls/encryption-key-management) |
+| Monitoring and response | Centralized logging and security event monitoring | [Incident Response and Resilience](/trust/controls/incident-response) |
+| Change control | Peer review, CI checks, controlled deployment paths | [Secure Development](/trust/controls/secure-development) |
 
 ## Exceptions and governance
 
