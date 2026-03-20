@@ -80,6 +80,19 @@ AI workflows use data needed for classification and analysis tasks. By default, 
 | Network controls | Restrict outbound destinations to approved AI provider endpoints |
 | Auditability | Log AI request metadata and outcome events without exposing sensitive prompt text in operational logs |
 
+## Model quality and oversight
+
+AI outputs are used as decision support and remain under human control for customer-impacting actions.
+
+| Area | Baseline approach |
+|------|-------------------|
+| Drift monitoring | Track output quality trends (for example classification consistency and recommendation usefulness) and review regressions after model/provider changes |
+| Hallucination management | Constrain prompts to task-scoped context and require user validation before high-impact actions |
+| Alerting | Monitor quality, error-rate, latency, and provider-failure signals through standard operational alerting paths |
+| Remediation | Tune prompts/guardrails, roll back configuration/model changes, or switch provider paths when quality/risk thresholds are not met |
+| Human oversight | Users can review, reject, edit, or override AI recommendations; autonomous high-impact execution is not the default model |
+| Governance cadence | AI behavior and control effectiveness are reviewed as part of regular security and engineering control review cycles |
+
 ## External references
 
 - [OpenAI data controls](https://platform.openai.com/docs/guides/your-data)

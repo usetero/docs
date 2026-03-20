@@ -1,0 +1,59 @@
+---
+title: "Change and Network Rule Management Standard"
+sidebarTitle: "Change & Rule Standard"
+description: "Baseline for material change communication and firewall/network rule lifecycle controls."
+icon: "git-branch-plus"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This standard defines how material platform changes are communicated and how firewall/network rules are requested, reviewed, approved, tested, and maintained.
+
+## What this standard answers
+
+- How customers are notified of material platform or schema changes
+- Typical notice timing and notification channels
+- How firewall/network rule changes are governed, including emergency changes
+
+## Material change notification baseline
+
+| Area | Baseline |
+|------|----------|
+| Triggering changes | Security, availability, data-handling, API/schema, or integration-impacting material changes |
+| Notice channels | Email to designated customer contacts and agreed customer channels |
+| Typical notice period | Advance notice aligned to contract or plan terms (commonly 15-30 days for planned material changes) |
+| Emergency changes | Communicated as quickly as practical with impact and remediation context |
+
+## Notification content baseline
+
+- Change summary and reason for change
+- Effective date and expected impact
+- Required customer action (if any)
+- Migration, mitigation, or rollback guidance where applicable
+
+## Firewall and network rule lifecycle
+
+| Phase | Baseline behavior |
+|-------|-------------------|
+| Request | Change request is documented and scoped to least privilege |
+| Review | Security and engineering review for scope, exposure, and risk |
+| Approval | Approval before production rollout |
+| Validation | Rule behavior is tested/validated before full production use |
+| Periodic review | Existing rules are reviewed for necessity and stale-entry cleanup |
+| Emergency changes | Expedited implementation with retrospective review and remediation tracking |
+
+## Evidence map
+
+| Topic | Primary evidence |
+|-------|------------------|
+| Network controls and change validation | [Network Security](/trust/controls/network-security) |
+| Incident handling and emergency comms | [Incident Response](/trust/controls/incident-response) |
+| Assurance and reviewer workflow | [Compliance and Assurance](/trust/assurance/compliance-and-assurance), [Reviewer Map](/trust/reviewer-map) |
+
+Questions: [{securityEmail}](mailto:{securityEmail})
