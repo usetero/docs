@@ -8,6 +8,6 @@
     "build": "mintlify build"
   },
   "devDependencies": {
-    "mintlify": "^4.2.209"
+    "mintlify": "4.2.209"
   }
 }
