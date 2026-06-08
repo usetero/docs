@@ -1,0 +1,283 @@
+:root {
+  --tero-bg: #fafaf7;
+  --tero-bg-sunken: #f4f2eb;
+  --tero-bg-card: #fffffc;
+  --tero-ink: #0a0a0a;
+  --tero-ink-2: #2a2a28;
+  --tero-muted: #6b6b66;
+  --tero-muted-2: #9a9a93;
+  --tero-line: #e6e4db;
+  --tero-line-2: #d6d4c9;
+  --tero-accent: #00d492;
+  --tero-accent-ink: #00855c;
+  --tero-accent-deep: #006b49;
+  --tero-accent-soft: rgba(0, 212, 146, 0.1);
+  --tero-accent-wash: rgba(0, 212, 146, 0.04);
+  --tero-danger: #c03a2b;
+  --tero-danger-soft: rgba(192, 58, 43, 0.1);
+  --tero-warn: #c97b1f;
+  --tero-warn-soft: rgba(201, 123, 31, 0.1);
+  --tero-depth-edge: #0a0a0a;
+  --tero-ghost-depth-edge: #d6d4c9;
+  --tero-radius: 2px;
+  --tero-radius-panel: 6px;
+  --tero-sans: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tero-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+.dark {
+  --tero-bg: #080908;
+  --tero-bg-sunken: #0f1110;
+  --tero-bg-card: #111312;
+  --tero-ink: #f7f5ee;
+  --tero-ink-2: #ddd8cf;
+  --tero-muted: #aaa49a;
+  --tero-muted-2: #79756c;
+  --tero-line: #242720;
+  --tero-line-2: #34382f;
+  --tero-accent: #00d492;
+  --tero-accent-ink: #65e7bd;
+  --tero-accent-deep: #8af0cf;
+  --tero-accent-soft: rgba(0, 212, 146, 0.16);
+  --tero-accent-wash: rgba(0, 212, 146, 0.08);
+  --tero-danger: #ff735f;
+  --tero-danger-soft: rgba(255, 115, 95, 0.14);
+  --tero-warn: #e0a24f;
+  --tero-warn-soft: rgba(224, 162, 79, 0.14);
+  --tero-depth-edge: #006b49;
+  --tero-ghost-depth-edge: #34382f;
+}
+
+html,
+body {
+  background: var(--tero-bg);
+  color: var(--tero-ink);
+  font-family: var(--tero-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    linear-gradient(90deg, transparent calc(100% - 1px), var(--tero-line) calc(100% - 1px)),
+    linear-gradient(180deg, var(--tero-bg), var(--tero-bg));
+  background-size:
+    min(1320px, calc(100% - 64px)) 100%,
+    auto;
+  background-position:
+    center top,
+    center top;
+  background-repeat: no-repeat;
+}
+
+#navbar {
+  border-bottom: 1px solid var(--tero-line);
+  background: color-mix(in srgb, var(--tero-bg) 92%, transparent);
+  box-shadow: 0 1px 0 var(--tero-bg-sunken);
+  backdrop-filter: blur(16px) saturate(1.12);
+}
+
+#navbar a,
+#sidebar a,
+#table-of-contents a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+#sidebar {
+  border-right-color: var(--tero-line);
+  background: var(--tero-bg);
+}
+
+#table-of-contents {
+  border-left-color: var(--tero-line);
+}
+
+main h1,
+main h2,
+main h3,
+article h1,
+article h2,
+article h3 {
+  color: var(--tero-ink);
+  font-family: var(--tero-sans);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+main h1,
+article h1 {
+  max-width: 780px;
+}
+
+main p,
+main li,
+article p,
+article li {
+  color: var(--tero-ink-2);
+}
+
+main strong,
+article strong {
+  color: var(--tero-ink);
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+}
+
+main a,
+article a {
+  color: var(--tero-accent-ink);
+  text-decoration-color: color-mix(in srgb, var(--tero-accent-ink) 42%, transparent);
+}
+
+main a:hover,
+article a:hover {
+  color: var(--tero-accent-deep);
+  text-decoration-color: currentColor;
+}
+
+main code,
+main pre,
+main kbd,
+article code,
+article pre,
+article kbd {
+  font-family: var(--tero-mono);
+}
+
+main :not(pre) > code,
+article :not(pre) > code {
+  border: 1px solid var(--tero-line);
+  border-radius: var(--tero-radius);
+  background: var(--tero-bg-sunken);
+  color: var(--tero-ink);
+  font-size: 0.9em;
+  padding: 0.1rem 0.28rem;
+}
+
+main pre,
+article pre {
+  border: 1px solid var(--tero-line-2);
+  border-radius: var(--tero-radius-panel);
+  background: var(--tero-bg-card);
+  box-shadow: 0 1px 0 var(--tero-ghost-depth-edge);
+}
+
+main table,
+article table {
+  border-color: var(--tero-line);
+}
+
+main thead,
+article thead {
+  background: var(--tero-bg-sunken);
+}
+
+main th,
+article th {
+  color: var(--tero-muted);
+  font-family: var(--tero-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+main td,
+main th,
+article td,
+article th {
+  border-color: var(--tero-line);
+}
+
+main hr,
+article hr {
+  border-color: var(--tero-line);
+}
+
+main blockquote,
+article blockquote {
+  border-color: var(--tero-line-2);
+  background: var(--tero-bg-sunken);
+  color: var(--tero-ink-2);
+}
+
+button,
+[role="button"] {
+  border-radius: var(--tero-radius);
+}
+
+.eyebrow,
+[class*="eyebrow"] {
+  color: var(--tero-accent-ink);
+  font-family: var(--tero-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[class*="card"],
+[class*="Card"] {
+  border-color: var(--tero-line-2);
+  border-radius: var(--tero-radius-panel);
+  background: var(--tero-bg-card);
+}
+
+[class*="badge"],
+[class*="Badge"] {
+  border-radius: var(--tero-radius);
+  font-family: var(--tero-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+[class*="tip"],
+[class*="Tip"],
+[class*="note"],
+[class*="Note"],
+[class*="info"],
+[class*="Info"] {
+  border-color: var(--tero-line-2);
+  border-radius: var(--tero-radius-panel);
+  background: var(--tero-bg-sunken);
+}
+
+[class*="warning"],
+[class*="Warning"] {
+  border-color: color-mix(in srgb, var(--tero-warn) 36%, var(--tero-line));
+  background: var(--tero-warn-soft);
+}
+
+[class*="danger"],
+[class*="Danger"],
+[class*="error"],
+[class*="Error"] {
+  border-color: color-mix(in srgb, var(--tero-danger) 36%, var(--tero-line));
+  background: var(--tero-danger-soft);
+}
+
+img[src*="tero-hero"],
+img[src*="edge-hero"],
+img[src*="trust-hero"] {
+  width: min(100%, 960px);
+  margin: 0 0 2.25rem;
+  border: 1px solid var(--tero-line-2);
+  border-radius: var(--tero-radius-panel);
+  background: var(--tero-bg-card);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--tero-bg-card) 65%, transparent) inset,
+    0 28px 72px -54px rgba(0, 0, 0, 0.42);
+}
+
+@media (max-width: 840px) {
+  body {
+    background-size:
+      calc(100% - 28px) 100%,
+      auto;
+  }
+}
