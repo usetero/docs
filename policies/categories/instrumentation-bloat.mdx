@@ -118,4 +118,4 @@ These fields come from tooling, not your application code. You often can't fix a
 
 ## How it works
 
-Tero maps your dependencies and instrumentation stack. Fields like `telemetry.sdk.version` and `otel.library.name` are obviously bloat - no engineer added them, no engineer wants them. Tero flags them automatically.
+Tero maps your dependencies and instrumentation stack. Fields like `telemetry.sdk.version` and `otel.library.name` come from tooling rather than application code. Tero flags them as instrumentation bloat.

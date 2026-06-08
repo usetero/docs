@@ -62,7 +62,7 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
     tero
     ```
 
-    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda production"). Copy the key when shown—it's only displayed once.
+    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda production"). Copy the key when shown. It's only displayed once.
 
   </Step>
 
@@ -110,7 +110,9 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
     [tero] Extension started, policies loaded: 5
     ```
 
-    Confirm telemetry reaches Datadog with policies applied.
+    In Datadog, confirm the expected logs, metrics, or traces arrive and that
+    any test telemetry matching your policy is absent or sampled at the expected
+    rate.
 
   </Step>
 </Steps>

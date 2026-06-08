@@ -6,7 +6,7 @@ Tero sends telemetry samples for classification. This powers:
 - **Service enrichment**: Adding context about what services do based on their telemetry patterns
 - **Waste identification**: Determining which telemetry is debug noise, health checks, or otherwise low-value
 
-See [How Tero evaluates waste](/questions/waste/how-it-works) for the full classification process.
+See [Policies](/policies/overview) for how Tero turns classification into reviewable changes.
 
 ### What gets sent
 
@@ -32,7 +32,7 @@ Rough estimates:
 | Medium (50 services) | ~2,000-10,000 | ~200K-1M tokens |
 | Large (200+ services) | ~10,000-50,000 | ~1M-5M tokens |
 
-After initial analysis, ongoing usage is minimal. New event types are rare once your telemetry patterns are understood.
+After initial analysis, ongoing usage stays low. New event types become less common once Tero classifies your telemetry patterns.
 
 <Note>
 These are rough estimates. Actual usage depends on telemetry diversity, not volume. A service with verbose logging creates more unique event types than one with structured logs.

@@ -13,15 +13,15 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-This page explains how AI provider integrations are configured and what controls apply to AI-related data paths.
+AI Data Controls explains how Tero configures AI provider integrations and which controls apply to AI-related data paths.
 
-## What this page answers
+## Reviewer focus
 
 - What data is sent to AI providers for classification and analysis workflows
 - Which provider and key-ownership modes are supported
 - How retention and training controls differ by provider and configuration
 
-## Current state (as of March 5, 2026)
+## Implementation status (March 5, 2026)
 
 Tero supports three AI deployment modes: hosted default provider path, bring-your-own provider credentials, and customer-controlled self-hosted provider routing.
 
@@ -67,7 +67,7 @@ AI workflows use data needed for classification and analysis tasks. By default, 
 - Bedrock and additional provider paths are supported as deployment-dependent integration options.
 - Additional open-source/local model paths (for example, Ollama-compatible) are possible, with quality validated case-by-case.
 
-## Recommended enterprise hardening profile
+## Recommended strict-control profile
 
 | Control | Recommended setting |
 |--------|---------------------|

@@ -4,7 +4,7 @@
   <img src="/images/how-it-works-otel-1.svg" alt="Connect to your OTel provider" />
 </Frame>
 
-Tero connects to your observability backend via API. Read-only by default. No agents to deploy, no code changes, no infrastructure changes. Your setup stays exactly as it is.
+Tero connects to your observability backend via API. The default setup uses read-only access and leaves your agents, code, and infrastructure unchanged.
 
 ## 2. Build context
 
@@ -12,7 +12,7 @@ Tero connects to your observability backend via API. Read-only by default. No ag
   <img src="/images/how-it-works-otel-2.svg" alt="Understand your data" />
 </Frame>
 
-Tero analyzes your telemetry and builds [context](/context/overview). Billions of logs compress into thousands of [log events](/context/log-events). Millions of spans become [trace span patterns](/context/trace-spans). Each is understood: what it represents, when it matters, which service produces it. Services, metrics, failure scenarios, dependencies get connected into a graph.
+Tero analyzes your telemetry and builds the [Master Catalog](/master-catalog/overview). Raw logs group into [log events](/master-catalog/log-events). Spans group into [trace span patterns](/master-catalog/trace-spans). Tero tracks what each pattern represents, when it matters, and which service produces it. Tero connects services, metrics, failure scenarios, and dependencies into a graph.
 
 ## 3. Ask questions
 
@@ -20,7 +20,7 @@ Tero analyzes your telemetry and builds [context](/context/overview). Billions o
   <img src="/images/how-it-works-otel-3.svg" alt="Ask questions" />
 </Frame>
 
-You ask questions, Tero answers. [How much data is waste?](/questions/waste) [Are there data spikes?](/questions/data-spikes) [Is PII leaking?](/questions/pii)
+You ask questions, Tero answers. [How policies work](/policies/overview). [Burst protection](/policies/categories/burst-protection). [PII leakage](/policies/categories/pii-leakage).
 
 ## 4. Take action
 
@@ -32,7 +32,7 @@ Once Tero identifies a problem, you decide what to do.
       <img src="/images/how-it-works-otel-4-in-code.svg" alt="Fix it in your code" />
     </Frame>
 
-    Tero can open a PR with the fix for you to review and merge. Or use Tero as an MCP so developers understand what to change. Or just use the analysis to make changes yourself.
+    Tero can open a PR for your team to review, expose the policy through MCP so developers can inspect the change, or leave the analysis for your team to implement.
   </Accordion>
 
   <Accordion title="In your infrastructure">

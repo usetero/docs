@@ -13,15 +13,15 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-Security reviews move faster when ownership is explicit. This page defines who owns what in each deployment model.
+Security reviews move faster when ownership is explicit. Shared Responsibility defines who owns what in each deployment model.
 
-## What this page answers
+## Reviewer focus
 
 - Which controls are Tero-owned vs customer-owned
 - How baseline integration traffic flows between customer systems and Tero
-- Where enterprise teams typically add stricter controls
+- Where customers commonly add stricter controls
 
-## Current state (as of March 5, 2026)
+## Implementation status (March 5, 2026)
 
 Tero supports two deployment models:
 
@@ -68,7 +68,7 @@ flowchart LR
 | Incident response for platform operations | Tero | Customer for environment ops, Tero for product support |
 | Subprocessor management | Tero | Customer (for customer-chosen stack) |
 
-## Where enterprise teams usually tighten controls
+## Where customers usually tighten controls
 
 - Self-hosted deployment for full environment ownership
 - Customer IdP policy enforcement for authentication lifecycle controls
@@ -86,13 +86,13 @@ flowchart LR
 
 | Topic | Primary evidence |
 |-------|------------------|
-| Ownership split by deployment model | This page |
+| Ownership split by deployment model | Current page |
 | Architecture and trust boundary | [Security Architecture](/trust/architecture) |
 | Data handling scope and storage model | [Overview](/trust/overview), [Data Handling](/trust/controls/data-handling) |
 | Encryption and key management | [Encryption and Key Management](/trust/controls/encryption-key-management), [Encryption Standard](/trust/policies/encryption-standard) |
 
 ## Exceptions and governance
 
-If a control allocation does not match customer policy requirements, we document the gap, agree on compensating controls, and define a time-bound resolution plan before production use.
+If a control allocation does not match customer policy requirements, Tero and the customer document the gap, agree on compensating controls, and define a time-bound resolution plan before production use.
 
 Evidence requests: [{securityEmail}](mailto:{securityEmail})

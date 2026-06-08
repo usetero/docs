@@ -66,7 +66,7 @@ Workspaces map to destinations. How policies apply depends on your routing:
 
     The security workspace configures which logs get tagged as security-relevant. You set up a Datadog index with filter `tero.security:true` and order it before your main index. Security logs route there, everything else falls through.
 
-    This can dramatically reduce security index costs since you're only sending what security actually needs, not all your observability data.
+    This can reduce security index costs because Datadog indexes only the logs your security team marks as security-relevant.
   </Tab>
   <Tab title="Same index">
     Both teams query the same data. Tero unions the policies before enforcement.

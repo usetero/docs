@@ -9,7 +9,7 @@ Tero discovers services from your [integrations](/integrations). Each one become
 
 ## What Tero knows
 
-Tero doesn't just import names. It analyzes logs and traces to understand what each service does, what technologies it uses, and how it relates to other services.
+Tero imports service names, then analyzes logs and traces to understand what each service does, what technologies it uses, and how it relates to other services.
 
 <Expandable title="Fields">
   <ResponseField name="name" type="string">
@@ -46,7 +46,7 @@ Reference a service with `@` to scope your questions:
 @kafka what log events does this produce?
 ```
 
-Tero pulls in everything connected: the service's description, dependencies, failure scenarios, log events. Your question gets answered with that full context.
+Tero pulls in everything connected: the service's description, dependencies, failure scenarios, log events. It answers your question with that full context.
 
 ## Refining a service
 

@@ -13,17 +13,17 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-This page explains how requests move through Tero, where trust boundaries exist, and which controls enforce those boundaries.
+Security Architecture maps how requests move through Tero, where trust boundaries exist, and which controls enforce those boundaries.
 
-## What this page answers
+## Reviewer focus
 
 - Where authentication, authorization, encryption, and logging controls are enforced
 - How traffic is terminated and whether inbound connectivity is required
 - Which architecture layers are Tero-owned vs customer-owned in self-hosted deployments
 
-## Current state (as of March 5, 2026)
+## Implementation status (March 5, 2026)
 
-Tero operates as a control plane. Customer users and systems call Tero APIs over HTTPS, operations are executed within tenant and workspace scope, and security-relevant activity is logged for audit and response.
+Tero operates as a control plane. Customer users and systems call Tero APIs over HTTPS. Tero executes operations within tenant and workspace scope and logs security-relevant activity for audit and response.
 
 ## System flow diagram (hosted default)
 
@@ -43,10 +43,10 @@ flowchart LR
 
 1. A user or integration authenticates to approved endpoints.
 2. Traffic reaches Tero over TLS-protected connections.
-3. Requests are authorized to tenant and workspace scope.
+3. Tero authorizes requests to tenant and workspace scope.
 4. Services execute control-plane workflows and metadata processing.
-5. Required data is stored in encrypted managed services.
-6. Security and operational events are recorded for detection and audit.
+5. Tero stores required data in encrypted managed services.
+6. Tero records security and operational events for detection and audit.
 
 ## Trust boundaries and enforcement points
 
@@ -62,8 +62,8 @@ flowchart LR
 
 | Layer | Isolation approach |
 |-------|--------------------|
-| Application | Requests are authorized in tenant and workspace scope; role and operation checks are enforced before execution |
-| Data | Tenant and workspace context is enforced in control-plane data access paths; bounded data model reduces cross-tenant exposure risk |
+| Application | Tero authorizes requests in tenant and workspace scope; role and operation checks run before execution |
+| Data | Tero applies tenant and workspace context in control-plane data access paths; bounded data model reduces cross-tenant exposure risk |
 | Network | Managed ingress and service boundaries isolate Internet edge, application ingress, and internal service communication paths |
 
 ## Isolation boundary diagram
@@ -98,7 +98,7 @@ flowchart TB
 
 ## Architecture diagrams and review artifacts
 
-We maintain architecture documentation that describes trust boundaries, tenant isolation, and data-flow separation. Public overview material is available in this Trust Center; deeper architecture walkthrough material is available for security review under NDA.
+Tero maintains architecture documentation that describes trust boundaries, tenant isolation, and data-flow separation. This Trust Center includes public overview material; Tero shares deeper architecture walkthrough material for security review under NDA.
 
 ## Traffic and termination model
 

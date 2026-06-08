@@ -5,9 +5,9 @@ icon: "cloud"
 iconType: "duotone"
 ---
 
-<Badge color="green" icon="bolt">Immediate</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
+<Badge color="green" icon="bolt">Provider API</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
 
-Configure exclusion filters and routing rules directly in your observability provider. No deployment required. Tero uses the provider's API to apply changes.
+Configure exclusion filters and routing rules directly in your observability provider. Tero uses the provider's API to apply changes, so this path does not require an Edge deployment.
 
 <Note>
 Use this when you don't have [Edge](/edge) deployed or want to configure provider-specific features like index routing.
@@ -56,7 +56,7 @@ Connect your provider with write access:
 
 ## Example
 
-Tero identifies that `checkout-api` is emitting 2.3 million health check logs per day. The logs have never been queried and don't appear in any dashboard or alert.
+Tero identifies that `checkout-api` is emitting 2.3 million health check logs per day. Query history shows no recent searches for those logs, and they don't appear in any dashboard or alert.
 
 You approve the policy and select "Enforce in provider." Tero configures an exclusion filter in Datadog:
 
@@ -65,7 +65,7 @@ Filter name: tero-drop-health-checks-checkout-api
 Query: service:checkout-api http.target:/health* http.status_code:200
 ```
 
-The filter takes effect within minutes. Matching logs stop being indexed. You still see them in Live Tail (they reach Datadog), but they don't count against your indexed volume.
+After Datadog applies the filter, matching logs stop being indexed. You still see them in Live Tail (they reach Datadog), but they don't count against your indexed volume.
 
 Your data quality dashboard updates as Datadog reports the change. If something goes wrong, disable the policy and Tero removes the exclusion filter. Logs index normally again.
 
@@ -76,6 +76,6 @@ Enforce in provider works best when:
 - You don't have Edge deployed and want quick wins
 - You need provider-specific features like index routing
 - Egress costs aren't a concern
-- You want to start immediately without deploying infrastructure
+- You want provider-side controls without deploying infrastructure
 
 If you need maximum control, egress savings, or sub-millisecond latency, use [Enforce at edge](/policies/enforcement/edge) instead.

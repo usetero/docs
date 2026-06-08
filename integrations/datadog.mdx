@@ -42,15 +42,15 @@ account.
 
 ## Context
 
-When you connect Datadog, Tero adds to your [context graph](/context/overview).
-Your logs, metrics, traces, and services become connected and understood.
+When you connect Datadog, Tero adds to your [Master Catalog](/master-catalog/overview).
+Tero maps your logs, metrics, traces, and services into connected records.
 
 <CardGroup cols={1}>
   <Card
     title="Services"
     icon="circle-nodes"
     iconType="duotone"
-    href="/context/services"
+    href="/master-catalog/services"
     horizontal
   >
     Your services, their dependencies, and who owns them.
@@ -59,16 +59,16 @@ Your logs, metrics, traces, and services become connected and understood.
     title="Log Events"
     icon="file-lines"
     iconType="duotone"
-    href="/context/log-events"
+    href="/master-catalog/log-events"
     horizontal
   >
-    Your logs compressed into semantic events Tero can reason about.
+    Groups of similar logs with service, volume, and usage context.
   </Card>
   <Card
     title="Metrics"
     icon="chart-line"
     iconType="duotone"
-    href="/context/metrics"
+    href="/master-catalog/metrics"
     horizontal
   >
     Your custom metrics, their cardinality, and usage patterns.
@@ -77,7 +77,7 @@ Your logs, metrics, traces, and services become connected and understood.
     title="Trace Spans"
     icon="diagram-subtask"
     iconType="duotone"
-    href="/context/trace-spans"
+    href="/master-catalog/trace-spans"
     horizontal
   >
     Your request flows mapped to services and operations.
@@ -116,10 +116,10 @@ With write access, Tero can take action directly in Datadog:
   </Card>
 </CardGroup>
 
-These are Datadog-specific. You can always take action other ways: deploy
+These are Datadog-specific. You can also take action other ways: deploy
 policies to your infrastructure with [Edge](/edge/overview), adjust
 instrumentation in your code, or configure Datadog manually. See
-[Taking action](/questions/waste/taking-action) for all options.
+[enforcement](/policies/enforcement/overview) for all options.
 
 ## Permissions
 
@@ -130,8 +130,8 @@ Pick one when creating your service account.
 | Role          | What it gives Tero                       |
 | ------------- | ---------------------------------------- |
 | **Standard**  | Full context and actions                 |
-| **Read-Only** | Context only — you take action elsewhere |
-| **Custom**    | You decide — see below                   |
+| **Read-Only** | Context only; you take action elsewhere |
+| **Custom**    | You decide; see below                   |
 
 ### Custom role permissions
 
@@ -163,7 +163,7 @@ Create a custom role if you need fine-grained control.
 
 <Note>
   Start minimal and add permissions later. Update the service account's role in
-  Datadog and Tero picks up the changes automatically.
+  Datadog. Tero uses the updated role on its next Datadog API request.
 </Note>
 
 ### Scoping to specific services

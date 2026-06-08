@@ -9,14 +9,14 @@ iconType: "duotone"
 
 Tero is a control plane for observability data.
 
-Connect your stack. Tero builds a [Master Catalog](/master-catalog): every service, every log event, every metric, understood semantically. Not just format, but meaning.
+After you connect your stack, Tero builds a [Master Catalog](/master-catalog): services, log events, and metrics with semantic context. Tero tracks the data's meaning alongside its format.
 
-From that understanding, Tero generates [policies](/policies): atomic rules that capture data quality improvements. Each one does one thing. You can read it and know exactly what it does. Once you fix a data quality mistake, the policy keeps it fixed. No regression, no repeating the same cleanup.
+From that understanding, Tero generates [policies](/policies): atomic rules that capture data quality improvements. Each policy does one thing and states the change it will make. Once you fix a data quality mistake, the policy keeps enforcing that fix.
 
-You review them, approve them, and Tero [enforces](/policies/enforcement) them wherever makes sense.
+You review them, approve them, and Tero [enforces](/policies/enforcement) them in your provider, code, or infrastructure.
 
 Control planes manage desired state. You declare the target, they make reality match. Tero does that for your observability data.
 
-Why does this matter? Because observability isn't expensive. It's dirty. At least half of what you're sending to your provider is waste: debug logs that never got turned off, health checks firing every second, redundant fields in every log. It accumulates because nobody can see it. Pipelines move data but don't understand it. Vendors bill by volume so they don't care.
+Observability costs climb when low-value data accumulates: debug logs that never got turned off, health checks firing every second, redundant fields repeated in log events. Pipelines move data but don't understand what it means, and providers charge by volume regardless of value.
 
-Tero cleans it up and keeps it clean. Better observability, lower costs. Not a tradeoff.
+Tero cleans up low-value telemetry and keeps policies in place so the same problems do not return.

@@ -79,14 +79,14 @@ Reference a span pattern with `@` to focus your questions:
 @kafka_publish_order_created which services produce this?
 ```
 
-Tero pulls in the span's context: which service owns it, what the operation does, how it connects to other signals. Your question gets answered with that full picture.
+Tero pulls in the span's context: which service owns it, what the operation does, how it connects to other signals. It answers your question with that full picture.
 
 ## Refining trace spans
 
 Tero classifies spans automatically, but you know your systems better:
 
-- **Reclassify** span patterns that Tero misjudged. That "noise" span might actually matter for debugging.
+- **Reclassify** span patterns that Tero misjudged. That "noise" span might matter for debugging.
 - **Edit descriptions** to add context Tero couldn't infer.
-- **Adjust normalization** if an operation is being split into too many patterns or merged incorrectly.
+- **Adjust normalization** when Tero splits an operation into too many patterns or merges distinct operations.
 
 Every correction improves the catalog.

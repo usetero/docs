@@ -55,13 +55,13 @@ It doesn't appear in any dashboard or alert.
 Identified by Tero: https://app.tero.dev/policies/abc123
 ```
 
-Your team reviews the PR. Once merged and deployed, the logs stop being generated entirely. No filtering needed. The waste is gone at the source.
+Your team reviews the PR. Once merged and deployed, the application stops generating those logs, so the fix removes the waste at the source.
 
 ## When to use
 
 Open PRs works best when:
 
-- The waste is clearly a mistake (debug logs, forgotten print statements)
+- The waste is a code mistake (debug logs, forgotten print statements)
 - The fix is straightforward (remove a line, change a log level)
 - You want a permanent fix, not ongoing filtering
 
