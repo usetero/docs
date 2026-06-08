@@ -99,8 +99,8 @@ Use cases:
     | `TeroLogLevel`         | `info`                                    | Log level (`debug`, `info`, `warn`, `err`)                      |
 
     <Note>
-      The extension automatically configures the Datadog Forwarder to route logs
-      through `localhost:3000`. The upstream URL is derived from your `DdSite`
+      The extension configures the Datadog Forwarder to route logs through
+      `localhost:3000`. The upstream URL is derived from your `DdSite`
       parameter.
     </Note>
 
@@ -117,7 +117,7 @@ Use cases:
         tero
         ```
 
-        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda forwarder"). Copy the key when shown—it's only displayed once.
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda forwarder"). Copy the key when shown. It's only displayed once.
 
       </Step>
 
@@ -156,7 +156,8 @@ Use cases:
         [INFO] configuration.loaded logs_url="https://http-intake.logs.us5.datadoghq.com"
         ```
 
-        Confirm logs reach Datadog with policies applied.
+        In Datadog Logs, confirm events from the test source arrive and that any
+        logs matching your policy are absent or sampled at the expected rate.
 
       </Step>
     </Steps>
@@ -170,7 +171,7 @@ After deploying the forwarder, configure triggers to send AWS logs to it.
 
 <Tabs>
   <Tab title="Automatic">
-    Use the Datadog AWS integration to automatically set up log collection.
+    Use the Datadog AWS integration to set up log collection from AWS.
 
     <Steps>
       <Step title="Get the forwarder ARN">
@@ -184,7 +185,7 @@ After deploying the forwarder, configure triggers to send AWS logs to it.
       </Step>
 
       <Step title="Enable log sources">
-        In the same AWS integration page, enable the AWS services you want to collect logs from. Datadog automatically configures the triggers.
+        In the same AWS integration page, enable the AWS services you want to collect logs from. Datadog creates the triggers for the selected services.
       </Step>
     </Steps>
 

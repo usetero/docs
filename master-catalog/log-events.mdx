@@ -1,6 +1,6 @@
 ---
 title: "Log Events"
-description: "How Tero turns billions of logs into something you can reason about"
+description: "How Tero groups raw logs into actionable patterns"
 icon: "file-lines"
 iconType: "duotone"
 ---
@@ -62,7 +62,7 @@ These matchers identify 47,000 logs. Each log has different order IDs, timestamp
 
 Open any log event to see what Tero learned: the description, matchers, sample logs, classification reasoning. Browse by service or search across all events.
 
-Drill into the matchers to understand exactly which logs this event captures. See sample instances to verify the pattern makes sense.
+Drill into the matchers to understand which logs this event captures. See sample instances to verify the pattern makes sense.
 
 ## Using in chat
 
@@ -74,13 +74,13 @@ Reference a log event with `@` to focus your questions:
 @order_created what's the typical latency?
 ```
 
-Tero pulls in the event's context: which service owns it, what attributes it has, how it relates to other events. Your question gets answered with that full picture.
+Tero pulls in the event's context: which service owns it, what attributes it has, how it relates to other events. It answers your question with that full picture.
 
 ## Refining log events
 
 Tero classifies events automatically, but you know your systems better:
 
-- **Reclassify** events that Tero misjudged. That "debug" log might actually matter.
+- **Reclassify** events that Tero misjudged. That "debug" log might matter.
 - **Edit descriptions** to add context Tero couldn't infer.
 - **Adjust matchers** if an event is capturing the wrong logs.
 

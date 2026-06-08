@@ -90,8 +90,7 @@ Focused distributions have a smaller binary size and attack surface.
 - Handles OTLP `/v1/logs` and `/v1/metrics` endpoints
 - Policy-based filtering (DROP/KEEP) for logs and metrics
 - Separate upstream URLs for logs and metrics
-- Async policy loading (server starts immediately while policies load in
-  background)
+- Async policy loading (server starts before policy loading completes)
 - Fail-open behavior (errors pass data through unchanged)
 - Lock-free policy updates via atomic snapshots
 - Graceful shutdown with signal handling

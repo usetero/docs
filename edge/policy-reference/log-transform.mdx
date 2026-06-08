@@ -513,7 +513,7 @@ This keeps 50% of checkout logs and redacts cart contents from the survivors.
 
 ## Best Practices
 
-1. **Redact, don't remove** PII—preserves the signal that data existed
+1. **Redact, don't remove** PII so downstream tools still see that data existed
 2. **Use descriptive replacements** for redacted fields (`[EMAIL REDACTED]` vs
    `[REDACTED]`)
 3. **Test transforms** in staging before production

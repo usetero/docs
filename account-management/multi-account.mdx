@@ -13,11 +13,11 @@ Most organizations use a single account. Multi-account is for organizations that
 
 An organization contains one or more accounts. Each account contains its own:
 
-- **Master Catalog** — Services, log events, metrics, traces
-- **Policies** — Data quality rules and enforcement
-- **Teams** — Users and service ownership
-- **Workspaces** — Different policy sets for the same data
-- **Integrations** — Datadog, Splunk, GitHub, etc.
+- **Master Catalog**: Services, log events, metrics, traces
+- **Policies**: Data quality rules and enforcement
+- **Teams**: Users and service ownership
+- **Workspaces**: Different policy sets for the same data
+- **Integrations**: Datadog, Splunk, GitHub, etc.
 
 ```mermaid
 flowchart TB
@@ -40,9 +40,9 @@ flowchart TB
 
 ## When to use multiple accounts
 
-- **Compliance boundaries** — FedRAMP, HIPAA, PCI environments that must be isolated
-- **Regional separation** — EU and US data that cannot be mixed
-- **Organizational boundaries** — Acquisitions or business units that operate independently
+- **Compliance boundaries**: FedRAMP, HIPAA, PCI environments that must be isolated
+- **Regional separation**: EU and US data that cannot be mixed
+- **Organizational boundaries**: Acquisitions or business units that operate independently
 
 If you need different teams to manage the same data differently, use [workspaces](/account-management/workspaces) instead. Workspaces share a catalog; accounts don't.
 

@@ -13,17 +13,17 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-This page summarizes encryption controls for cloud data and how key ownership and operations differ between hosted and self-hosted deployments.
+Encryption and Key Management summarizes encryption controls for cloud data and how key ownership and operations differ between hosted and self-hosted deployments.
 
-## What this page answers
+## Reviewer focus
 
 - How data is encrypted in transit and at rest
 - Who owns and administers encryption keys by deployment model
 - How key usage visibility, rotation, and revocation are handled
 
-## Current state (as of March 5, 2026)
+## Implementation status (March 5, 2026)
 
-Sensitive and confidential data paths are encrypted in transit and at rest in hosted environments.
+Tero encrypts sensitive and confidential data paths in transit and at rest in hosted environments.
 
 ## Encryption controls
 
@@ -44,8 +44,8 @@ Sensitive and confidential data paths are encrypted in transit and at rest in ho
 ## Rotation and revocation baseline
 
 - Key lifecycle follows cloud-provider rotation and lifecycle controls.
-- Integration credentials and secrets are rotatable and revocable.
-- Emergency revocation path is supported for compromised credentials.
+- Tero supports rotation and revocation for integration credentials and secrets.
+- Tero supports emergency revocation for compromised credentials.
 
 ## Evidence you can request
 

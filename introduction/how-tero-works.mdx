@@ -12,7 +12,7 @@ iconType: "duotone"
   <img src="/images/how-it-works-generic-1.svg" alt="Connect to your observability stack" />
 </Frame>
 
-Tero connects to your observability stack via API: Datadog, Splunk, your collectors. Read-only by default. No agents, no code changes, no infrastructure changes. Your setup stays exactly as it is.
+Tero connects to your observability stack via API: Datadog, Splunk, your collectors. Read-only by default. No agents, code changes, or infrastructure changes required.
 
 ## 2. Build the Master Catalog
 
@@ -20,7 +20,7 @@ Tero connects to your observability stack via API: Datadog, Splunk, your collect
   <img src="/images/how-it-works-generic-2.svg" alt="Build the Master Catalog from your data" />
 </Frame>
 
-Tero analyzes your telemetry and builds the [Master Catalog](/master-catalog). Billions of raw logs compress into thousands of distinct log events. Each one is understood: what it represents, which service produces it, whether anyone queries it. Services, dependencies, and failure scenarios get connected into a graph.
+Tero analyzes your telemetry and builds the [Master Catalog](/master-catalog). Large volumes of raw logs compress into distinct log events. Tero tracks what each one represents, which service produces it, and whether anyone queries it. Services, dependencies, and failure scenarios get connected into a graph.
 
 This is how Tero knows what's waste and what matters.
 
@@ -30,7 +30,7 @@ This is how Tero knows what's waste and what matters.
   <img src="/images/how-it-works-generic-3.svg" alt="Review and approve policies" />
 </Frame>
 
-Tero generates [policies](/policies): specific statements about what's wrong and how to fix it. This field duplicates that one. This log is a health check firing 86,400 times a day. This debug statement shipped to production.
+Tero generates [policies](/policies): specific statements about what's wrong and how to fix it. A field duplicates another field. A log is a health check firing 86,400 times a day. A debug statement shipped to production.
 
 Policies are organized by [category](/policies/categories): duplicate fields, health checks, accidental debug statements, verbose payloads, PII leakage. You review with examples from your actual data. Approve what you agree with.
 
@@ -44,7 +44,7 @@ Approved policies get [enforced](/policies/enforcement). You choose where:
       <img src="/images/how-it-works-generic-4-in-provider.svg" alt="Configure your provider" />
     </Frame>
 
-    [Enforce policies in your provider](/policies/enforcement/provider) by configuring exclusion filters, routing rules, or transformations directly via API. No deployment required. Fully reversible.
+    [Enforce policies in your provider](/policies/enforcement/provider) by configuring exclusion filters, routing rules, or transformations directly via API. This path requires no deployment and can be reversed.
   </Accordion>
 
   <Accordion title="In your code">
@@ -60,8 +60,8 @@ Approved policies get [enforced](/policies/enforcement). You choose where:
       <img src="/images/how-it-works-generic-4-in-infrastructure.svg" alt="Execute at the edge" />
     </Frame>
 
-    [Enforce policies at the edge](/policies/enforcement/edge) before data leaves your network. Drop-in replacements for collectors you already run.
+    [Enforce policies at the edge](/policies/enforcement/edge) before data leaves your network. Edge distributions can replace collectors you already run.
   </Accordion>
 </AccordionGroup>
 
-Tero monitors for regression. If a problem resurfaces, Tero catches it. Problems you fix stay fixed.
+Tero monitors for regression. If a problem resurfaces, Tero creates a new policy review so the fix can be restored.

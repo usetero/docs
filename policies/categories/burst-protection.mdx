@@ -66,4 +66,4 @@ Tero analyzes each log event and asks: if something breaks, could this flood?
 
 For events at risk of bursting, Tero generates a policy with a default rate limit of 100/second. High enough to preserve signal during normal operation, low enough to prevent catastrophic floods. During normal operation, you probably see a handful of these per minute and the limit never triggers. During an outage, when you'd otherwise get 10,000/second, the circuit breaker kicks in.
 
-Traditional rate limiting caps your entire log stream, so you lose everything during a spike, including the business events you actually need. Tero does it per event. Infrastructure symptoms get circuit breakers. Business events flow through normally.
+Traditional rate limiting caps your entire log stream, so you lose everything during a spike, including the business events you need. Tero does it per event. Infrastructure symptoms get circuit breakers. Business events flow through normally.
