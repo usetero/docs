@@ -7,7 +7,7 @@ iconType: "duotone"
 
 A log statement that fires on every request, every iteration, or every tick. Middleware that logs every incoming request. A loop that logs each item. Code that runs constantly and logs every time.
 
-The log statement isn't wrong. It's just in the wrong place. These logs made sense during development. They don't make sense at production scale.
+The log statement isn't wrong. It sits in the wrong place. These logs made sense during development. They don't make sense at production scale.
 
 This is different from [burst protection](/policies/categories/burst-protection). Burst protection is for logs that flood during failures. Hot path logs flood all the time, even when everything is healthy.
 

@@ -13,17 +13,17 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-This page defines the hosted default data scope, retention behavior, and how that changes in self-hosted deployments.
+Data Handling defines the hosted default data scope, retention behavior, and how that changes in self-hosted deployments.
 
-## What this page answers
+## Reviewer focus
 
 - Which data classes are stored in the hosted model
 - What the default retention and deletion behavior is
 - How ownership changes between hosted and self-hosted environments
 
-## Current state (as of March 5, 2026)
+## Implementation status (March 5, 2026)
 
-Tero is designed to minimize retained data. The control plane stores the metadata required to operate the product, not full raw telemetry payloads as the default system-of-record model.
+Tero limits retained data by default. The control plane stores the metadata required to operate the product, not full raw telemetry payloads as the default system-of-record model.
 
 ## Data lifecycle diagram (hosted default)
 
@@ -55,7 +55,7 @@ flowchart LR
 | Metadata required for service operation | While workspace is active |
 | Backups | 30 days |
 
-When a customer account or workspace is deleted, data is removed from active systems within 30 days. Backup copies age out under backup-retention windows.
+When a customer account or workspace is deleted, Tero removes data from active systems within 30 days. Backup copies age out under backup-retention windows.
 
 ## Hosted vs self-hosted boundary
 

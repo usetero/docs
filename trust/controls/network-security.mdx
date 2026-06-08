@@ -13,15 +13,15 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-This page describes the network baseline for integrations, including TLS, edge protections, and deployment-dependent connectivity options.
+Network Security describes the integration network baseline, including TLS, edge protections, and deployment-dependent connectivity options.
 
-## What this page answers
+## Reviewer focus
 
 - How traffic reaches Tero and where TLS is terminated
 - Which WAF and DDoS controls protect hosted endpoints
-- What network restriction options are supported for enterprise deployments
+- What network restriction options are supported for stricter deployment requirements
 
-## Current state (as of March 5, 2026)
+## Implementation status (March 5, 2026)
 
 Hosted APIs are exposed through controlled public endpoints behind Cloudflare edge protections. Self-hosted deployments are customer-controlled for perimeter and routing policy.
 
@@ -35,7 +35,7 @@ flowchart LR
     I --> S[Internal Service Boundary]
 
     C -. Enterprise option .-> X[Private Connectivity Path]
-    X -. customer or enterprise configured .-> I
+    X -. customer configured .-> I
 ```
 
 ## Connectivity baseline
@@ -44,8 +44,8 @@ flowchart LR
 |-------|-------------|-------------|
 | Integration directionality | Customer-initiated outbound API calls | Customer-defined |
 | Inbound into customer environment | Not required for baseline integration | Customer-defined |
-| Private connectivity model | Available based on enterprise requirements | Customer-managed |
-| Destination restrictions | Allowlisting support for enterprise integrations | Customer-managed |
+| Private connectivity model | Available based on customer requirements | Customer-managed |
+| Destination restrictions | Allowlisting support for customer integrations | Customer-managed |
 
 ## Edge protection model (hosted)
 

@@ -11,11 +11,11 @@ iconType: "duotone"
 [Edge](https://github.com/usetero/edge) is a high-performance telemetry proxy that applies policies to your
 observability data before it reaches your backends. It sits between your
 applications and observability platforms, filtering noise, redacting sensitive
-data, and transforming telemetry in real-time.
+data, and transforming telemetry in real time.
 
-## Why Edge?
+## When to use Edge
 
-As your infrastructure grows, so does the noise: debug logs, health checks, internal metrics. Data that clutters your dashboards and slows your queries.
+Infrastructure growth often brings more debug logs, health checks, and internal metrics. That low-value data clutters dashboards and slows queries.
 
 Edge processes telemetry in your environment before it leaves:
 
@@ -41,7 +41,7 @@ Applications → Edge → Observability Platform
 3. **Apply** actions: drop, sample, transform, or pass through
 4. **Forward** surviving telemetry to your backend
 
-[Policies](https://github.com/usetero/policy) are evaluated in parallel for each piece of telemetry. There's no sequential pipeline. Matching policies contribute their actions, and the most restrictive action wins.
+[Policies](https://github.com/usetero/policy) are evaluated in parallel for each piece of telemetry. Edge does not rely on a sequential pipeline. Matching policies contribute their actions, and the most restrictive action wins.
 
 ## Key Features
 
@@ -51,7 +51,7 @@ Applications → Edge → Observability Platform
   </Card>
   <Card title="Hot Reload" icon="rotate">
     Update policies without restarting. Edge watches for changes and applies
-    them instantly with zero downtime.
+    them without downtime.
   </Card>
   <Card title="Fail-Open" icon="shield-check">
     If a policy fails to evaluate, telemetry passes through unchanged. Edge
@@ -77,10 +77,9 @@ Choose the distribution that matches your telemetry stack.
 
 ## Comparisons to Other Solutions
 
-The Edge proxy is not designed to replace other telemetry pipelines like the
-OpenTelemetry Collector, Datadog Agent, or Vector. Instead, it complements these
-solutions by providing an incredibly performant, policy-driven approach to
-processing telemetry in your environment.
+Edge complements telemetry pipelines like the OpenTelemetry Collector, Datadog
+Agent, and Vector. It adds policy-driven filtering and transformation for
+telemetry that needs to be processed in your environment.
 
 ### Reach for the Edge if:
 
@@ -88,7 +87,7 @@ processing telemetry in your environment.
 - You need to redact sensitive data to meet compliance requirements.
 - You need to process telemetry in your environment.
 - You struggle with latency or throughput issues.
-- You want zero-downtime, sub-millisecond remote configuration.
+- You want remote configuration without downtime and with sub-millisecond overhead.
 
 ### Rely on Telemetry Pipelines for:
 

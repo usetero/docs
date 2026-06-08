@@ -68,7 +68,7 @@ policies:
 ## Matchers
 
 **Matchers** identify which telemetry a policy applies to. A policy can have
-multiple matchers—all must match for the policy to apply (AND logic). When
+multiple matchers, and each matcher must match for the policy to apply (AND logic). When
 creating a policy, it's best to ensure the matchers are mutually exclusive to
 avoid unintended matches.
 
@@ -165,7 +165,7 @@ Edge currently supports two telemetry types:
 | Metrics | Numeric measurements with dimensions        | Filter only               |
 | Traces  | Distributed traces with spans               | Filter only (coming soon) |
 
-Each policy targets exactly one telemetry type. You cannot mix log and metric
+Each policy targets one telemetry type. You cannot mix log and metric
 matchers in the same policy.
 
 ## Policy Sources

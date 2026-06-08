@@ -156,8 +156,7 @@ high-throughput processing.
 
 ### Lock-Free Reads
 
-Policy evaluation is a read-heavy operation—every request needs to read
-policies, but updates are rare. Edge uses atomic pointers to policy snapshots,
+Policy evaluation reads policies on each request, while updates stay rare. Edge uses atomic pointers to policy snapshots,
 eliminating read-side synchronization.
 
 ```mermaid
@@ -200,7 +199,7 @@ Protocol modules don't maintain state. All they do is:
 3. Apply policies to the data
 4. Forward to upstream
 
-This makes modules easy to reason about and safe to run in parallel.
+Engineers can inspect each module in isolation, and Edge can run modules in parallel.
 
 ## Performance Characteristics
 
@@ -264,10 +263,10 @@ flowchart LR
 ```
 
 **Use Case**: Tero Edge sits at the egress point after your telemetry pipeline.
-It acts as a final gateway before data leaves your network, applying
-cost-focused policies to dramatically reduce egress to expensive SaaS vendors.
-Drop redundant health checks, sample high-cardinality metrics, and keep only
-actionable data—cutting observability costs by up to 90%.
+It acts as a final gateway before data leaves your network and applies
+cost-focused policies that reduce egress to SaaS vendors. Drop redundant health
+checks, sample high-cardinality metrics, and keep actionable data before your
+provider bills for it.
 
 Best for:
 
@@ -311,8 +310,8 @@ flowchart LR
 ```
 
 **Use Case**: Tero Edge runs as a lightweight sidecar next to each application.
-It applies policies at the source—dropping noisy debug logs, redacting PII, or
-sampling high-volume metrics—before data ever reaches the telemetry pipeline.
+It applies policies at the source by dropping noisy debug logs, redacting PII, or
+sampling high-volume metrics before data reaches the telemetry pipeline.
 This reduces load on collectors and network bandwidth within your
 infrastructure.
 
@@ -328,7 +327,7 @@ Best for:
   <Card title="Quickstart" icon="rocket" href="/edge/quickstart">
     Get Edge running in 5 minutes
   </Card>
-  <Card title="Reference" icon="gear" href="/edge/reference">
+  <Card title="Reference" icon="gear" href="/edge/edge-reference/config">
     Full configuration reference
   </Card>
 </CardGroup>

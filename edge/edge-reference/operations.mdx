@@ -6,7 +6,7 @@ icon: "screwdriver-wrench"
 iconType: "duotone"
 ---
 
-This page covers operational aspects of running Edge in production.
+Operations covers the production behaviors you need to run Edge: logs, health checks, graceful shutdown, and resource sizing.
 
 ## Logging
 
@@ -83,7 +83,7 @@ Edge handles SIGINT and SIGTERM for graceful shutdown:
 2. Waits for in-flight requests to complete
 3. Exits cleanly
 
-This ensures zero dropped requests during deployments and scaling events.
+This shutdown sequence lets Edge finish accepted requests before the process exits during deployments and scaling events.
 
 ### Kubernetes Termination
 
@@ -108,9 +108,9 @@ Recommended minimums:
 
 Memory usage scales with:
 
-- **Number of policies** — Each policy consumes memory for its compiled matchers
-- **Regex complexity** — Hyperscan databases for complex patterns
-- **Request body sizes** — Buffered during processing
+- **Number of policies**: Each policy consumes memory for its compiled matchers
+- **Regex complexity**: Hyperscan databases for complex patterns
+- **Request body sizes**: Buffered during processing
 
 ### Kubernetes Resources
 

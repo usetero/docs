@@ -95,4 +95,4 @@ Bot traffic is external noise. Your application didn't decide to log these reque
 
 Tero identifies log events that contain a user-agent field. Bots usually self-identify: `Googlebot`, `bingbot`, `Slackbot`, and hundreds of others announce themselves in this field. You decide which bots to filter.
 
-If the log event also has a correlation ID (like `request_id` or `trace_id`), you can drop the entire request trace, not just the entry point. The initial HTTP handler logs the user-agent, but downstream database queries, cache lookups, and service calls don't. Correlation lets you drop all of them.
+If the log event also has a correlation ID (like `request_id` or `trace_id`), you can drop the entire request trace. The initial HTTP handler logs the user-agent, but downstream database queries, cache lookups, and service calls don't. Correlation lets you drop those related logs too.

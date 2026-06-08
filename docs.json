@@ -9,20 +9,20 @@
   },
   "background": {
     "color": {
-      "light": "#fafafa",
-      "dark": "#0a0a0a"
+      "light": "#fafaf7",
+      "dark": "#080908"
     }
   },
   "appearance": {
-    "default": "dark",
-    "strict": true
+    "default": "light",
+    "strict": false
   },
   "fonts": {
     "body": {
-      "family": "Oxygen"
+      "family": "Geist"
     },
     "heading": {
-      "family": "Oxanium"
+      "family": "Geist"
     }
   },
   "favicon": "/favicon.svg",

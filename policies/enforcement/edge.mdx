@@ -5,9 +5,9 @@ icon: "server"
 iconType: "duotone"
 ---
 
-<Badge color="green" icon="bolt">Immediate</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
+<Badge color="green" icon="bolt">Next sync</Badge> <Badge color="green" icon="rotate-left">Reversible</Badge>
 
-Drop, sample, or transform telemetry before it leaves your infrastructure. No code changes, no provider configuration.
+Drop, sample, or transform telemetry before it leaves your infrastructure, without changing application code or provider configuration.
 
 <Note>
 This is the most common enforcement method. Most [policy categories](/policies/categories) recommend it.
@@ -15,7 +15,7 @@ This is the most common enforcement method. Most [policy categories](/policies/c
 
 ## How it works
 
-[Tero Edge](/edge) runs in your infrastructure as a proxy. It periodically syncs with the Tero control plane to fetch policies and applies them in real time.
+[Tero Edge](/edge) runs in your infrastructure as a proxy. It periodically syncs with the Tero control plane to fetch policies and applies them to matching telemetry as it passes through.
 
 <Tabs>
   <Tab title="Datadog">
@@ -50,7 +50,7 @@ Deploy the proxy alongside your existing telemetry pipeline:
 
 ## Example
 
-Tero identifies that `checkout-api` is emitting 2.3 million health check logs per day. Kubernetes probes hit `/health` every 10 seconds on every pod. The logs have never been queried and don't appear in any dashboard or alert.
+Tero identifies that `checkout-api` is emitting 2.3 million health check logs per day. Kubernetes probes hit `/health` every 10 seconds on every pod. Query history shows no recent searches for those logs, and they don't appear in any dashboard or alert.
 
 You approve the policy and select "Enforce at edge." The policy:
 
@@ -68,15 +68,15 @@ log:
   keep: none
 ```
 
-The policy syncs to Edge within seconds. Edge begins dropping logs that match: requests to `checkout-api` on health check paths with status code `200`. Failed health checks (non-200) still flow through since those have debugging value.
+On the next policy sync, Edge begins dropping logs that match: requests to `checkout-api` on health check paths with status code `200`. Failed health checks (non-200) still flow through since those have debugging value.
 
-Your data quality dashboard updates in real time. You see the volume from `checkout-api` drop immediately. If something goes wrong, disable the policy and it's removed on the next sync. Logs flow normally again.
+In your data quality dashboard, the `checkout-api` health check volume drops after Edge reports filtered telemetry. If something goes wrong, disable the policy and it's removed on the next sync. Logs flow normally again.
 
 ## When to use
 
 Enforce at edge works best when:
 
-- You want immediate impact without code changes
+- You want impact on the next Edge sync without code changes
 - The waste is infrastructure noise (health checks, bot traffic, tool metadata)
 - You need to reduce costs quickly while planning a permanent fix
-- You want to block temporarily and revert easily
+- You want to block temporarily and revert on a later sync

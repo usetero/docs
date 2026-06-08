@@ -31,7 +31,7 @@ Connect Splunk to give Tero context and enable actions directly in your instance
       </Step>
 
       <Step title="Log in to Tero">
-        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
+        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. After confirmation, the TUI records your session.
       </Step>
 
       <Step title="Select Splunk">
@@ -59,14 +59,14 @@ Connect Splunk to give Tero context and enable actions directly in your instance
 
 ## Context
 
-When you connect Splunk, Tero adds to your [context graph](/context/overview). Your logs and services become connected and understood.
+When you connect Splunk, Tero adds to your [Master Catalog](/master-catalog/overview). Tero maps your logs and services into connected records.
 
 <CardGroup cols={1}>
-  <Card title="Services" icon="circle-nodes" iconType="duotone" href="/context/services" horizontal>
+  <Card title="Services" icon="circle-nodes" iconType="duotone" href="/master-catalog/services" horizontal>
     Your services and their relationships.
   </Card>
-  <Card title="Log Events" icon="file-lines" iconType="duotone" href="/context/log-events" horizontal>
-    Your logs compressed into semantic events Tero can reason about.
+  <Card title="Log Events" icon="file-lines" iconType="duotone" href="/master-catalog/log-events" horizontal>
+    Groups of similar logs with service, volume, and usage context.
   </Card>
 </CardGroup>
 
@@ -84,7 +84,7 @@ With write access, Tero can take action directly in Splunk:
   </Card>
 </CardGroup>
 
-These are Splunk-specific. You can always take action other ways: deploy policies to your infrastructure with [Edge](/edge/overview), adjust instrumentation in your code, or configure Splunk manually. See [Taking action](/questions/waste/taking-action) for all options.
+These are Splunk-specific. You can also take action other ways: deploy policies to your infrastructure with [Edge](/edge/overview), adjust instrumentation in your code, or configure Splunk manually. See [enforcement](/policies/enforcement/overview) for all options.
 
 ## Permissions
 
@@ -93,8 +93,8 @@ Splunk uses [capabilities](https://docs.splunk.com/Documentation/SplunkCloud/lat
 | Role | What it gives Tero |
 |------|-------------------|
 | **admin** | Full context and actions |
-| **power** | Context only — you take action elsewhere |
-| **Custom** | You decide — see below |
+| **power** | Context only; you take action elsewhere |
+| **Custom** | You decide; see below |
 
 ### Custom role capabilities
 
@@ -118,5 +118,5 @@ Create a custom role if you need fine-grained control.
 </AccordionGroup>
 
 <Note>
-Start minimal and add capabilities later. Update the token's role in Splunk and Tero picks up the changes automatically.
+Start minimal and add capabilities later. Update the token's role in Splunk. Tero uses the updated role on its next Splunk API request.
 </Note>

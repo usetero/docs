@@ -1,29 +1,29 @@
 ---
 title: "Master Catalog"
 sidebarTitle: "Overview"
-description: "The single source of truth for all your telemetry"
+description: "A unified view of your telemetry"
 icon: "hexagon-nodes"
 iconType: "duotone"
 ---
 
 import { ContextGraph } from '/snippets/context-graph.jsx'
 
-The Master Catalog is Tero's unified view of all your observability data (services, log events, metrics, traces) across every source you connect.
+The Master Catalog is Tero's unified view of the observability data you connect: services, log events, metrics, and traces.
 
 <ContextGraph />
 
-Not sampling. Not partial visibility. Complete coverage, automatically maintained, semantically understood. Tero knows what each piece of data means, not just its format.
+Tero builds the catalog from connected sources, maintains it automatically, and adds semantic context. Tero tracks each piece of data's meaning alongside its format.
 
 ## What Tero understands
 
 For each piece of telemetry, Tero builds understanding across four dimensions:
 
 - **Structure.** Fields, types, formats. What the data looks like.
-- **Semantics.** What it means. A `payment_failed` log is a business event, not just a string.
+- **Semantics.** What it means. A `payment_failed` log is a business event with operational meaning.
 - **Relationships.** Which service emits it. What other events correlate with it. Whether it appears in dashboards or alerts.
-- **Usage.** How often it's queried. Whether anyone actually looks at it. What role it plays during incidents.
+- **Usage.** How often it's queried. Whether teams use it. What role it plays during incidents.
 
-This is what makes [policy](/policies) generation possible. Without understanding what data means and how it's used, you can only do pattern matching. With it, you can reason about value.
+This is what makes [policy](/policies) generation possible. Pattern matching can identify formats. Catalog context lets Tero evaluate value.
 
 ## What's in the catalog
 
@@ -32,7 +32,7 @@ This is what makes [policy](/policies) generation possible. Without understandin
     Your infrastructure components: what they do, what they depend on, what telemetry they produce.
   </Card>
   <Card title="Log Events" icon="file-lines" href="/master-catalog/log-events">
-    Billions of raw logs compressed into thousands of distinct patterns. Each one understood.
+    Large volumes of raw logs grouped into distinct patterns with semantic context.
   </Card>
   <Card title="Metrics" icon="chart-line" href="/master-catalog/metrics">
     Named measurements with their tags, cardinality, and usage.
@@ -44,10 +44,10 @@ This is what makes [policy](/policies) generation possible. Without understandin
 
 ## How the catalog builds
 
-Connect an [integration](/integrations) (Datadog, Splunk, your OTel collectors) and Tero discovers what's there. Services get cataloged. Log events get identified and grouped. Metrics get mapped. Relationships form between them. You can drill into any of it, see exactly what Tero found and how it's connected.
+Connect an [integration](/integrations) (Datadog, Splunk, your OTel collectors) and Tero discovers what's there. Tero catalogs services, identifies and groups log events, maps metrics, and forms relationships between them. You can drill into the catalog to see what Tero found and how it is connected.
 
-The catalog updates continuously. New services, new log formats, new errors: they get discovered and added automatically. The goal is complete coverage with zero manual maintenance.
+The catalog updates as Tero sees new telemetry. New services, log formats, and errors get discovered and added automatically. The goal is broad coverage with little manual maintenance.
 
 Tero enriches what it finds. It detects that a service is a Rails app and adds known failure patterns. It identifies common error signatures. It notices which events correlate during incidents.
 
-You can refine it too. Correct a misclassification and Tero learns. Add context it couldn't infer. The catalog gets sharper over time.
+You can refine it too. Correct a misclassification and Tero learns. Add context it could not infer. The catalog improves over time.
