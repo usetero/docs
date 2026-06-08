@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Tero Documentation",
   "colors": {
-    "primary": "#10b981",
-    "light": "#10b981",
-    "dark": "#059669"
+    "primary": "#00855c",
+    "light": "#00855c",
+    "dark": "#00855c"
   },
   "background": {
     "color": {
