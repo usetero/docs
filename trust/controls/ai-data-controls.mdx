@@ -13,7 +13,7 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-AI Data Controls explains how Tero configures AI provider integrations and which controls apply to AI-related data paths.
+This page covers how Tero configures AI provider integrations and which controls apply to AI-related data paths.
 
 ## Reviewer focus
 
@@ -27,7 +27,7 @@ Tero supports three AI deployment modes: hosted default provider path, bring-you
 
 ## AI workflow data scope
 
-AI workflows use data needed for classification and analysis tasks. By default, this includes control-plane-relevant context and telemetry samples required for the task, not unrestricted ingestion of all customer telemetry.
+Tero sends AI providers only the data each classification or analysis task needs. By default, that means control-plane-relevant context and the telemetry samples the task requires. Tero does not ingest your full telemetry stream.
 
 | Topic | Baseline approach |
 |-------|-------------------|

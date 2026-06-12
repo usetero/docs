@@ -5,25 +5,25 @@ icon: "layer-group"
 iconType: "duotone"
 ---
 
-Workspaces let different teams manage the same data for different purposes. Security, observability, compliance: each gets their own policies for the same catalog.
+Workspaces let different teams manage the same data for different purposes. Security, observability, and compliance each get their own policies for the same catalog.
 
-Most organizations don't need workspaces. One account, one set of policies, multiple teams. Workspaces become useful when teams have fundamentally different goals for the same telemetry.
+Most organizations don't need workspaces. One account, one set of policies, multiple teams. Workspaces become useful when teams have conflicting goals for the same telemetry.
 
 ## When to use workspaces
 
-Your security team wants to keep all authentication logs with full context. Your observability team wants to sample them and drop the tokens. Your compliance team wants to archive everything for 90 days.
+Your security team wants to keep all authentication logs with full context. Your observability team wants to sample them and drop the tokens. Meanwhile, your compliance team needs a 90-day archive of all of it.
 
-Without workspaces, these goals conflict. Someone has to compromise. With workspaces, each team manages their own policies. Same catalog, different decisions.
+Workspaces resolve the conflict: each team manages its own policies against the same catalog.
 
 ## How it works
 
-The [Master Catalog](/master-catalog/overview) is shared across workspaces. Every workspace sees the same services, log events, metrics, and traces. The catalog is built at the account level.
+The [Master Catalog](/master-catalog/overview) is shared across workspaces. Every workspace sees the same services, log events, metrics, and traces. Tero builds the catalog at the account level.
 
-Policies are per-workspace. Each workspace evaluates the catalog and creates its own policies. The security workspace keeps auth logs. The observability workspace samples them. No conflict.
+Policies are per-workspace. Each workspace evaluates the catalog and creates its own policies. The security workspace keeps auth logs while the observability workspace samples them; neither blocks the other.
 
 ## Enforcement
 
-Workspaces map to destinations. How policies apply depends on your routing:
+Workspaces map to destinations. Your routing determines how policies apply:
 
 <Tabs>
   <Tab title="Separate destinations">
@@ -45,7 +45,7 @@ Workspaces map to destinations. How policies apply depends on your routing:
       style Datadog fill:#632ca6,stroke:#262626,color:#fff
     ```
 
-    Clean separation. Each team controls what reaches their destination.
+    This keeps separation clean: each team controls what reaches its destination.
   </Tab>
   <Tab title="Different indices">
     Both teams use Datadog, but security uses a dedicated index. Tero tags security-relevant logs, and Datadog's index filters route them.
@@ -88,7 +88,7 @@ Workspaces map to destinations. How policies apply depends on your routing:
       style Datadog fill:#632ca6,stroke:#262626,color:#fff
     ```
 
-    The more permissive policy wins. Security wants to keep auth logs, observability wants to drop them? They're kept.
+    The more permissive policy wins. If security wants to keep auth logs and observability wants to drop them, Tero keeps them.
   </Tab>
 </Tabs>
 

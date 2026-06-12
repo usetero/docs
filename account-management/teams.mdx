@@ -13,7 +13,7 @@ Teams are optional. For small organizations, assign users directly to services.
 
 ## Service ownership
 
-Services belong to teams. When Tero generates a policy for a service, it routes to the owning team. The engineers who know the service decide whether to approve it.
+Services belong to teams. Tero sends each policy it generates to the team that owns the service. The engineers who know the service decide whether to approve it.
 
 A service can have multiple teams with different roles:
 - **Owners** review and approve policies, receive alerts, own data quality for the service
@@ -23,12 +23,12 @@ This lets platform or security teams have visibility without being in the approv
 
 ## Creating teams
 
-Create a team, add members, assign services. Members see those services immediately.
+Create a team, add members, assign services. Members then see those services in their catalog.
 
-For larger organizations, sync teams from your identity provider. Engineers are automatically added based on their groups in Okta, Azure AD, or Google Workspace. When someone joins your payments team in your IdP, they get access to the right services in Tero. See [Authentication](/account-management/authentication) for setup.
+For larger organizations, sync teams from your identity provider. Tero adds engineers based on their groups in Okta, Azure AD, or Google Workspace. When someone joins your payments team in your IdP, they get access to the right services in Tero. See [Authentication](/account-management/authentication) for setup.
 
 ## Rolling out
 
 Start with a team that's interested, often the one feeling the pain of log costs or debugging friction. Get them into Tero, let them see their services, have them approve a few policies. 
 
-Once they're seeing value, expand. You don't need to onboard everyone at once. Teams adopt independently while you keep visibility into everything.
+Once they're seeing value, expand. You don't need to onboard everyone at once. Teams adopt at their own pace while you keep org-wide visibility.

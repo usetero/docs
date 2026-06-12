@@ -1,199 +1,133 @@
 ---
 title: "Datadog"
-description: "Connect Tero to your Datadog account"
+description: "Connect Tero to Datadog for evidence, catalog context, and provider actions"
 icon: "dog"
 iconType: "duotone"
 ---
 
 import { DatadogConnectSteps } from "/snippets/datadog-connect-steps.jsx";
 
-Connect Datadog to give Tero context and enable actions directly in your
-account.
+Connect Datadog when you want Tero to review log telemetry and build service and log-event context. Tero also shows cost and compliance issues, analyzes ingestion, and manages supported provider actions.
 
-## Connect
+## Connect Datadog
+
+Select your Datadog region, then follow the steps.
 
 <Tabs>
-  <Tab title="CLI">
-    Select your Datadog region, then follow the steps.
-
-    <Tabs>
-      <Tab title="US1">
-        <DatadogConnectSteps region="US1" host="app.datadoghq.com" />
-      </Tab>
-      <Tab title="US3">
-        <DatadogConnectSteps region="US3" host="us3.datadoghq.com" />
-      </Tab>
-      <Tab title="US5">
-        <DatadogConnectSteps region="US5" host="us5.datadoghq.com" />
-      </Tab>
-      <Tab title="EU">
-        <DatadogConnectSteps region="EU" host="app.datadoghq.eu" />
-      </Tab>
-      <Tab title="AP1">
-        <DatadogConnectSteps region="AP1" host="ap1.datadoghq.com" />
-      </Tab>
-      <Tab title="US1-FED">
-        <DatadogConnectSteps region="US1-FED" host="app.ddog-gov.com" />
-      </Tab>
-    </Tabs>
-
+  <Tab title="US1">
+    <DatadogConnectSteps region="US1" host="app.datadoghq.com" />
+  </Tab>
+  <Tab title="US3">
+    <DatadogConnectSteps region="US3" host="us3.datadoghq.com" />
+  </Tab>
+  <Tab title="US5">
+    <DatadogConnectSteps region="US5" host="us5.datadoghq.com" />
+  </Tab>
+  <Tab title="EU">
+    <DatadogConnectSteps region="EU" host="app.datadoghq.eu" />
+  </Tab>
+  <Tab title="AP1">
+    <DatadogConnectSteps region="AP1" host="ap1.datadoghq.com" />
+  </Tab>
+  <Tab title="US1-FED">
+    <DatadogConnectSteps region="US1-FED" host="app.ddog-gov.com" />
   </Tab>
 </Tabs>
 
-## Context
+## Datadog context in Tero
 
-When you connect Datadog, Tero adds to your [Master Catalog](/master-catalog/overview).
-Tero maps your logs, metrics, traces, and services into connected records.
+Datadog gives Tero provider context for what you review in Tero:
 
-<CardGroup cols={1}>
-  <Card
-    title="Services"
-    icon="circle-nodes"
-    iconType="duotone"
-    href="/master-catalog/services"
-    horizontal
-  >
-    Your services, their dependencies, and who owns them.
-  </Card>
-  <Card
-    title="Log Events"
-    icon="file-lines"
-    iconType="duotone"
-    href="/master-catalog/log-events"
-    horizontal
-  >
-    Groups of similar logs with service, volume, and usage context.
-  </Card>
-  <Card
-    title="Metrics"
-    icon="chart-line"
-    iconType="duotone"
-    href="/master-catalog/metrics"
-    horizontal
-  >
-    Your custom metrics, their cardinality, and usage patterns.
-  </Card>
-  <Card
-    title="Trace Spans"
-    icon="diagram-subtask"
-    iconType="duotone"
-    href="/master-catalog/trace-spans"
-    horizontal
-  >
-    Your request flows mapped to services and operations.
-  </Card>
-</CardGroup>
+- [Issues](/issues/overview) with evidence from log events, services, volume, cost, and compliance exposure
+- [Services](/master-catalog/services) with ownership and log-volume context
+- [Log events](/master-catalog/log-events) grouped from Datadog logs
+- Cost and Compliance lanes tied to open issues
+- Log ingestion analysis for indexed, non-indexed, and migration-candidate volume
+- Datadog exclusion filter inventory in the [Policies](/policies) workspace
 
-## Actions
+{/* screenshot-suggestion
+id: datadog-log-ingestion
+priority: useful
+appRoute: /ingestion
+viewport: desktop
+state: Datadog ingestion analysis loaded with index breakdown and migration candidates visible
+output: /images/screenshots/integrations/datadog-log-ingestion.png
+caption: Datadog log ingestion analysis shows where you can move waste upstream with policies.
+purpose: Connects the Datadog integration to current Tero screens.
+*/}
 
-With write access, Tero can take action directly in Datadog:
-
+{/* screenshot-generated id: datadog-log-ingestion */}
 <Frame>
-  <img
-    src="/images/how-it-works-datadog-4-in-provider.svg"
-    alt="Tero configuring Datadog"
-  />
+  <img src="/images/screenshots/integrations/datadog-log-ingestion.png" alt="Datadog log ingestion analysis shows where you can move waste upstream with policies." />
 </Frame>
+{/* /screenshot-generated */}
 
-<CardGroup cols={1}>
-  <Card
-    title="Exclusion filters"
-    icon="filter"
-    iconType="duotone"
-    href="https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters"
-    horizontal
-  >
-    Tero configures filters to prevent waste logs from being indexed.
-  </Card>
-  <Card
-    title="Pipelines"
-    icon="pipe-section"
-    iconType="duotone"
-    href="https://docs.datadoghq.com/logs/log_configuration/pipelines/"
-    horizontal
-  >
-    Tero modifies pipelines to change how logs are parsed and routed.
-  </Card>
-</CardGroup>
+## Provider actions
 
-These are Datadog-specific. You can also take action other ways: deploy
-policies to your infrastructure with [Edge](/edge/overview), adjust
-instrumentation in your code, or configure Datadog manually. See
-[enforcement](/policies/enforcement/overview) for all options.
+With write access, Tero can manage supported Datadog log controls through the Datadog API.
+
+Common actions include:
+
+| Action | What Tero can do |
+| ------ | ------------- |
+| Exclusion filters | Convert or create filters for log events that should stop reaching indexed storage. |
+| Pipelines | Adjust supported log processing behavior when a policy requires provider-side handling. |
+| Policy import | Inspect Datadog filters, preview Tero policies, and create supported policies from provider inventory. |
+
+Provider actions are one way to run a policy. You can also run policies with [Edge](/edge/overview), deploy the [Datadog Edge distribution](/edge/distributions/datadog), or use repository workflows.
 
 ## Permissions
 
-Datadog has three
-[managed roles](https://docs.datadoghq.com/account_management/rbac/#datadog-default-roles).
-Pick one when creating your service account.
+Datadog has managed roles and custom role permissions. Choose the narrowest role that supports the work you want Tero to do.
 
-| Role          | What it gives Tero                       |
-| ------------- | ---------------------------------------- |
-| **Standard**  | Full context and actions                 |
-| **Read-Only** | Context only; you take action elsewhere |
-| **Custom**    | You decide; see below                   |
+| Role | What it gives Tero |
+| ---- | ------------------ |
+| **Read-Only** | Context and evidence only. You take action through Edge, your provider, or your own workflow. |
+| **Standard** | Context plus supported provider actions. |
+| **Custom** | Fine-grained access for the permissions below. |
 
 ### Custom role permissions
-
-Create a custom role if you need fine-grained control.
 
 <AccordionGroup>
   <Accordion title="Context (read)">
     | Permission | What Tero can do |
-    |------------|------------------|
-    | `logs_read_data` | Read your logs |
-    | `logs_read_index_data` | Read index configuration |
-    | `metrics_read` | Read your metrics |
-    | `apm_read` | Read your traces |
-    | `service_catalog_read` | Read your services |
-    | `dashboards_read` | Read your dashboards |
-    | `monitors_read` | Read your monitors |
-    | `usage_read` | Read usage data |
-    | `billing_read` | Read billing data |
+    | ---------- | ---------------- |
+    | `logs_read_data` | Read log data for evidence and log-event grouping |
+    | `logs_read_index_data` | Read index configuration and ingestion context |
+    | `service_catalog_read` | Read service catalog context |
+    | `dashboards_read` | Read dashboard usage context when available |
+    | `monitors_read` | Read monitor context when available |
+    | `usage_read` | Read usage data for cost and ingestion analysis |
+    | `billing_read` | Read billing context when available |
   </Accordion>
 
-  <Accordion title="Actions (write)">
+  <Accordion title="Provider actions (write)">
     | Permission | What Tero can do |
-    |------------|------------------|
-    | `logs_write_exclusion_filters` | Configure exclusion filters |
-    | `logs_write_pipelines` | Modify pipelines |
-    | `apm_generate_metrics` | Create trace-based metrics |
+    | ---------- | ---------------- |
+    | `logs_write_exclusion_filters` | Create or modify exclusion filters |
+    | `logs_write_pipelines` | Modify supported log pipelines |
   </Accordion>
 </AccordionGroup>
 
-<Note>
-  Start minimal and add permissions later. Update the service account's role in
-  Datadog. Tero uses the updated role on its next Datadog API request.
-</Note>
+Start with read access when you only want evidence and recommendations. Add write permissions when you want Tero to apply provider actions.
 
-### Scoping to specific services
+### Scope access to services
 
-If you want to limit Tero's access to logs from specific services, use Datadog's
-[restriction queries](https://docs.datadoghq.com/account_management/rbac/permissions/?tab=ui#logs_read_data).
-Restriction queries filter which logs a role can read through the
-`logs_read_data` permission.
+Use Datadog restriction queries when you want Tero to read logs for specific services.
 
-<Steps>
-  <Step title="Add a restriction query">
-    In Datadog, go to **Organization Settings > Data Access** and click **Add Restriction Query**.
-  </Step>
-  <Step title="Enter a query">
-    Scope access to the services you want Tero to see. Examples:
+| Goal | Query |
+| ---- | ----- |
+| Single service | `service:api` |
+| Multiple services | `service:api OR service:web` |
+| Service and environment | `service:api AND env:production` |
+| Exclude a service | `service:* AND NOT service:internal-audit` |
 
-    | Goal | Query |
-    |------|-------|
-    | Single service | `service:api` |
-    | Multiple services | `service:api OR service:web` |
-    | Service + environment | `service:api AND env:production` |
-    | Exclude a service | `service:* AND NOT service:internal-audit` |
+Attach the restriction query to the role used by Tero.
 
-  </Step>
-  <Step title="Assign to Tero's role">
-    Attach the restriction query to your Tero service account's role.
-  </Step>
-</Steps>
+## Related pages
 
-<Note>
-  Each role can only have one restriction query. Use `OR` operators in a single
-  query to scope to multiple services.
-</Note>
+- [Issues](/issues/overview)
+- [Policies](/policies)
+- [Log events](/master-catalog/log-events)
+- [Edge](/edge/overview)
+- [Edge Datadog](/edge/distributions/datadog)

@@ -1,0 +1,25 @@
+---
+title: "Policy categories"
+description: "Telemetry issue categories that can produce policy recommendations"
+icon: "tags"
+iconType: "duotone"
+---
+
+Tero groups telemetry issues into the categories below. Each category can produce policy recommendations.
+
+| Category | Signal | Typical action |
+| -------- | ------ | -------------- |
+| [Duplicate fields](/policies/categories/duplicate-fields) | The same value appears in multiple fields. | Remove duplicate fields. |
+| [Accidental debug statements](/policies/categories/accidental-debug-statements) | Temporary debugging messages shipped to production. | Remove the statement in code or drop the matching event. |
+| [Malformed data](/policies/categories/malformed-data) | Binary, corrupted, or unparseable log payloads. | Drop malformed events. |
+| [Health checks](/policies/categories/health-checks) | Successful readiness, liveness, or synthetic monitor requests. | Drop successful probe logs. |
+| [Bot traffic](/policies/categories/bot-traffic) | Requests from known crawlers, scanners, and unfurlers. | Drop or sample matching bot request logs. |
+| [Instrumentation bloat](/policies/categories/instrumentation-bloat) | SDK, agent, collector, or platform metadata with little review value. | Remove low-value fields. |
+| [PII leakage](/policies/categories/pii-leakage) | Sensitive values in log fields or free-form messages. | Redact or remove sensitive values. |
+| [Excessive payloads](/policies/categories/excessive-payloads) | Large bodies, serialized objects, or oversized stack traces. | Trim or remove large fields. |
+| [Debug mode left on](/policies/categories/debug-mode-left-on) | A service emits prolonged DEBUG-level volume in production. | Create a ticket, open a config PR, or apply a temporary filter. |
+| [Logs in hot path](/policies/categories/logs-in-hot-path) | One event dominates a service's steady-state log volume. | Remove or relocate the log statement. |
+| [Burst protection](/policies/categories/burst-protection) | Infrastructure error events can flood during outages. | Rate-limit the matching event. |
+| [High cardinality tags](/policies/categories/high-cardinality-tags) | Metric tags have unbounded or fast-changing values. | Remove high-cardinality tags. |
+
+Use [Policy lifecycle](/policies/lifecycle) for policy states and [Enforcement](/policies/enforcement/overview) for enforcement methods.

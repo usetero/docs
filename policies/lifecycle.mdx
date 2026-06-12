@@ -1,0 +1,73 @@
+---
+title: "Policy lifecycle"
+description: "Policy states, sources, deployments, imports, and impact"
+icon: "folder-tree"
+iconType: "duotone"
+---
+
+This reference lists the policy state and lifecycle fields shown in Tero.
+
+## Policy states
+
+| State | Meaning |
+| ----- | ------- |
+| **Draft** | The policy exists for review or completion. |
+| **Active** | The policy is enabled where it should run. |
+| **Disabled** | The policy remains visible but is not intended to affect telemetry. |
+
+## Policy sources
+
+Policy source identifies where a policy originated.
+
+| Source | Meaning |
+| ------ | ------- |
+| Tero recommendation | Tero recommended the policy from issue evidence. |
+| Provider import | Tero created or previewed the policy from provider inventory, such as a Datadog exclusion filter. |
+| Repository sync | Tero read or wrote the policy through a configured repository workflow. |
+| Configured workflow | The policy came from another configured review or deployment workflow. |
+
+## Policy detail tabs
+
+| Tab | Contents |
+| --- | -------- |
+| **Overview** | Policy identity, source, linked issue, hits over time, and activity. |
+| **Deployments** | Deployment targets and runtime state, including Edge deployment state when present. |
+| **Spec** | Structured policy definition used by Tero and runtimes. |
+
+## Deployment targets
+
+Policies can run through one or more configured targets.
+
+| Target | Description |
+| ------ | ----------- |
+| Provider configuration | Provider-side controls such as Datadog exclusion filters. |
+| Edge instances | Tero Edge instances running in your infrastructure. |
+| Collector or pipeline paths | Collector or pipeline integrations that apply policy before telemetry reaches storage. |
+| Repository workflows | Policy or instrumentation changes reviewed through code workflows. |
+
+## Datadog import states
+
+Datadog filter conversion can show these states:
+
+| State | Meaning |
+| ----- | ------- |
+| **Proposal ready** | Tero can preview a policy from the provider filter. |
+| **Policy active** | The imported or converted policy is active. |
+| **Policy verified** | Tero verified the policy after import or deployment. |
+| **Rejected** | A reviewer rejected the proposed conversion. |
+| **Unsupported** | The provider filter cannot be represented as a supported Tero policy. |
+| **Sample key required** | Tero needs an additional sample key before conversion. |
+| **Blocked** | Conversion or import is blocked by missing context or configuration. |
+
+## Impact checks
+
+Use these facts when checking whether a policy changed the expected telemetry path:
+
+| Check | Expected result |
+| ----- | --------------- |
+| Linked issue | The issue moves from **Open** or **In progress** toward **Resolved**. |
+| Policy state | The policy remains **Active** in the expected deployment target. |
+| Runtime state | Edge or provider deployment state reports no policy errors. |
+| Outcome | Cost, compliance exposure, or matching volume moves in the expected direction. |
+
+Use [Policies](/policies) for the policy concept and [Enforcement](/policies/enforcement/overview) for enforcement options.

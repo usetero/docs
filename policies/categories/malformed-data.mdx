@@ -5,9 +5,23 @@ icon: "file-circle-xmark"
 iconType: "duotone"
 ---
 
-Logs that aren't logs. Binary data, corrupted output, unparseable strings. They convey nothing and cost you money.
+Malformed data includes binary payloads, corrupted output, truncated structured data, and strings that cannot be parsed in the expected format.
 
-Applications crash mid-write. Binary protocols get routed to text log pipelines. Encoding mismatches produce garbage. In a large enough system, something is always emitting garbage somewhere.
+Typical causes include:
+
+- Binary protocols or files routed into a text log pipeline
+- Application crashes or buffer limits that truncate structured output
+- Encoding mismatches that produce invalid characters
+- Partial serialization of JSON or other structured formats
+
+## Signals
+
+| Signal | Description |
+| --- | --- |
+| Binary prefix | A log body starts with a file signature or non-text bytes, such as a PNG header. |
+| Parser failure | A field expected to contain JSON, XML, or another structured format fails parsing. |
+| Truncation | A structured value ends before required delimiters, quotes, or braces. |
+| Invalid encoding | The payload contains characters that cannot be decoded in the expected encoding. |
 
 ## Example
 
@@ -24,7 +38,7 @@ Applications crash mid-write. Binary protocols get routed to text log pipelines.
         ```
       </Tab>
       <Tab title="After">
-        Dropped entirely.
+        Dropped.
       </Tab>
     </Tabs>
 
@@ -53,7 +67,7 @@ Applications crash mid-write. Binary protocols get routed to text log pipelines.
         ```
       </Tab>
       <Tab title="After">
-        Dropped entirely.
+        Dropped.
       </Tab>
     </Tabs>
 
@@ -75,7 +89,14 @@ Applications crash mid-write. Binary protocols get routed to text log pipelines.
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
-  Drop malformed logs before they reach your provider. No point paying to store garbage.
+  Drop malformed log events before they reach the destination provider.
 </Card>
 
-There's no "fix at source" for most malformed data. It's a symptom of something breaking, not a logging decision someone made.
+Tero removes malformed events whole because their fields fail parsing.
+
+## Detection notes
+
+- Tero can match explicit binary signatures with regular expressions.
+- Tero can match fields that fail the expected parser, such as malformed JSON.
+- Scope malformed-data policies to the emitting service or field when the pattern is specific.
+- Dropping malformed events preserves valid error, warning, and diagnostic logs that are parseable.

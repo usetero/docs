@@ -75,7 +75,7 @@ Use the Edge distribution when:
 - **Migration**: Transitioning from one protocol to another
 - **Multi-vendor**: Sending data to multiple backends that prefer different
   protocols
-- **Flexibility**: Want a single deployment that handles everything
+- **Flexibility**: Want a single deployment that handles both protocols
 
 For single-protocol environments, prefer the focused distributions:
 
@@ -139,7 +139,7 @@ The Edge distribution:
 
 - Has a larger binary size than focused distributions
 - Loads all protocol modules at startup
-- Uses slightly more memory
+- Uses more memory
 
 For most deployments, this overhead is negligible. Consider focused
 distributions only if you're running Edge in constrained environments (embedded

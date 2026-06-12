@@ -1,13 +1,21 @@
 ---
 title: "Accidental debug statements"
-description: "Developer debugging garbage that shipped to production"
+description: "Temporary debugging output that shipped to production"
 icon: "bug"
 iconType: "duotone"
 ---
 
-Throwaway statements a developer wrote while debugging and forgot to delete. `console.log("here")`, `print("WTF")`, `logger.info("asdf")`. The message content is the signal: "got here", "hello world", "TODO remove", variable dumps like `"x = 42"`.
+Accidental debug statements are developer-authored messages that do not describe application behavior, system state, or user activity. Examples include `console.log("here")`, `print("debug")`, and `logger.info("asdf")`.
 
-Log severity is irrelevant. These can be INFO, DEBUG, or anything else. What matters is the message itself: temporary debugging output that no one intended to keep.
+Tero classifies by message content; these statements appear at `DEBUG`, `INFO`, or any other severity level.
+
+## Signals
+
+- Placeholder messages such as `got here`, `hello world`, `testing`, or `asdf`.
+- Explicit cleanup notes such as `TODO remove`.
+- Bare variable dumps such as `x = 42`.
+- Profanity or informal phrases used as temporary debugging markers.
+- Messages with no stable operational meaning.
 
 ## Example
 
@@ -18,12 +26,12 @@ Log severity is irrelevant. These can be INFO, DEBUG, or anything else. What mat
       "@timestamp": "2024-01-15T10:30:00Z",
       "service.name": "checkout-api",
       "severity_text": "DEBUG",
-      "body": "got here lol"
+      "body": "got here"
     }
     ```
   </Tab>
   <Tab title="After">
-    Dropped entirely.
+    Dropped.
   </Tab>
 </Tabs>
 
@@ -38,20 +46,21 @@ log:
     - resource_attribute: service.name
       exact: checkout-api
     - log_field: body
-      exact: "got here lol"
+      exact: "got here"
   keep: none
 ```
 
 ## Recommended enforcement
 
 <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs" horizontal>
-  Fix at the source. These are code mistakes. Remove them from the codebase.
+  Remove accidental debug statements from the codebase.
 </Card>
 
-Unlike most categories, accidental debug statements should be fixed in code. The log statement shouldn't exist. Opening a PR to remove it fixes the problem permanently.
+Fix this at the source: the statement should not exist in production code.
 
-## How it works
+## Detection notes
 
-Tero looks at message content, not severity. Messages containing common debug phrases ("got here", "testing", "WTF", "TODO remove") or that appear to be accidental (random characters, bare variable dumps) are flagged.
-
-Conservative by design. Tero only flags logs that are unambiguously mistakes. Statements any engineer would look at and immediately recognize as garbage. Legitimate logging, even verbose logging, isn't flagged.
+- Tero evaluates message content rather than severity.
+- Tero flags common debug phrases, random character strings, cleanup notes, and bare variable dumps.
+- Detection is conservative for this category: Tero flags only logs that are clear accidents.
+- Tero excludes legitimate verbose logging when the message has operational meaning.

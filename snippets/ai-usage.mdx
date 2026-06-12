@@ -2,9 +2,9 @@
 
 Tero sends telemetry samples for classification. This powers:
 
-- **Log event classification**: Understanding what each log event represents and whether it's valuable
-- **Service enrichment**: Adding context about what services do based on their telemetry patterns
-- **Waste identification**: Determining which telemetry is debug noise, health checks, or otherwise low-value
+- **Log event classification**: what each log event represents and whether it's valuable
+- **Service enrichment**: context about what services do, based on their telemetry patterns
+- **Waste identification**: which telemetry is debug noise, health checks, or otherwise low-value
 
 See [Policies](/policies/overview) for how Tero turns classification into reviewable changes.
 
@@ -16,11 +16,11 @@ Tero sends sample log lines, metric names, and span names. These samples include
 - Service names and descriptions
 - Metric and span metadata
 
-Samples are processed in memory and discarded. They are not stored by Tero or the AI provider.
+Tero processes samples in memory and discards them. Neither Tero nor the AI provider stores them.
 
-### Usage scales with diversity, not volume
+### Usage scales with event diversity
 
-AI usage depends on how many **unique event types** you have, not how much telemetry you generate.
+AI usage depends on how many **unique event types** you have. Total telemetry volume doesn't affect it.
 
 If you have 1 billion logs but they all match 1,000 distinct event types, Tero only needs to classify those 1,000 events. The other 999,999,000 logs match existing classifications and don't require AI calls.
 
@@ -35,5 +35,5 @@ Rough estimates:
 After initial analysis, ongoing usage stays low. New event types become less common once Tero classifies your telemetry patterns.
 
 <Note>
-These are rough estimates. Actual usage depends on telemetry diversity, not volume. A service with verbose logging creates more unique event types than one with structured logs.
+These are rough estimates. Actual usage depends on telemetry diversity. A service with verbose logging creates more unique event types than one with structured logs.
 </Note>

@@ -5,11 +5,18 @@ icon: "fire"
 iconType: "duotone"
 ---
 
-A log statement that fires on every request, every iteration, or every tick. Middleware that logs every incoming request. A loop that logs each item. Code that runs constantly and logs every time.
+Code that runs on most requests or records emits hot-path logs without conditions. Common sources include request middleware, item-processing loops, and polling loops.
 
-The log statement isn't wrong. It sits in the wrong place. These logs made sense during development. They don't make sense at production scale.
+This category is distinct from [burst protection](/policies/categories/burst-protection). Burst protection applies to logs that flood during failures. Hot-path logs produce high volume even when the service is healthy.
 
-This is different from [burst protection](/policies/categories/burst-protection). Burst protection is for logs that flood during failures. Hot path logs flood all the time, even when everything is healthy.
+## Signals
+
+| Signal | Description |
+| ------ | ----------- |
+| Disproportionate volume | One event shape represents a large share of a service's logs. |
+| Generic message text | Messages such as `Incoming request`, `Processing item`, or `Handling request` repeat with little diagnostic context. |
+| Unconditional emission | The log appears on every request, item, or loop iteration. |
+| Healthy-state volume | The pattern occurs during normal service operation, not only during incidents. |
 
 ## Example
 
@@ -23,10 +30,9 @@ This is different from [burst protection](/policies/categories/burst-protection)
         {"body": "Incoming request", "http.target": "/api/products", "service.name": "api-gateway"}
         {"body": "Incoming request", "http.target": "/api/users", "service.name": "api-gateway"}
         ```
-        Thousands per minute. Every request. No additional context beyond what you'd get from metrics.
       </Tab>
       <Tab title="After">
-        Log removed from middleware entirely.
+        Log removed from middleware.
       </Tab>
     </Tabs>
   </Tab>
@@ -39,7 +45,6 @@ This is different from [burst protection](/policies/categories/burst-protection)
         {"body": "Processing item", "item_id": "3", "service.name": "batch-processor"}
         // ... 10,000 more
         ```
-        One log per item in a batch. The batch completion log would suffice.
       </Tab>
       <Tab title="After">
         Single log at batch completion with item count.
@@ -52,17 +57,17 @@ This is different from [burst protection](/policies/categories/burst-protection)
 
 <CardGroup cols={2}>
   <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
-    Remove or relocate the log statement in code.
+    Remove, relocate, or condition the log statement in code.
   </Card>
   <Card title="Create tickets" icon="ticket" href="/policies/enforcement/create-tickets">
-    Alert the team to review the logging pattern.
+    Ask the owning team to review the high-volume logging pattern.
   </Card>
 </CardGroup>
 
-The fix is in code: move the log outside the loop, add a condition, or remove it entirely. Edge filtering is a temporary workaround, but it doesn't fix the underlying problem. The code is still doing unnecessary work to generate logs that get dropped.
+The durable remediation is a code change. Edge filtering can reduce downstream volume, but the service still performs the work required to create the log event.
 
-## How it works
+## Detection notes
 
-Tero identifies hot path logs by relative volume. If one event represents a disproportionate share of a service's logs - say 80% of total volume - it's in the hot path. That's the primary signal.
+Tero identifies hot-path logs by relative volume. If one event shape represents a disproportionate share of a service's logs, Tero treats the event as a hot-path candidate.
 
-The content often confirms it: generic messages like "Processing request" or "Handling item" that fire unconditionally. But volume is what matters.
+Message content can support detection. Generic messages such as `Processing request` or `Handling item` often indicate unconditional logging, but volume is the primary signal.

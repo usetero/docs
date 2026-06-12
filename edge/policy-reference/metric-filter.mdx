@@ -6,7 +6,7 @@ iconType: "duotone"
 ---
 
 Metric filter policies control which metrics pass through Edge. Use them to drop
-noisy metrics, reduce cardinality, and cut costs.
+noisy metrics and cut cardinality costs.
 
 ## Basic Structure
 
@@ -420,7 +420,7 @@ Using negation to drop everything except what you want:
 
 ### Cost Reduction
 
-Drop metrics you never query:
+Drop metrics you don't query:
 
 - Debug and internal metrics
 - Per-request ID dimensions (high cardinality)
@@ -450,7 +450,7 @@ Drop metrics that might contain sensitive information:
 1. **Start with observability**: Know what you're dropping before you drop it
 2. **Use exact matches when possible**: Faster than regex
 3. **Target high-volume metrics**: Focus on metrics that cost the most
-4. **Be careful with negation**: Easy to accidentally drop important metrics
+4. **Be careful with negation**: It makes it easy to drop metrics you meant to keep
 5. **Test in staging**: Verify policies before production deployment
 
 ## Next Steps

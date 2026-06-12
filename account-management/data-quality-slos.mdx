@@ -5,9 +5,9 @@ icon: "bullseye"
 iconType: "duotone"
 ---
 
-You can't set an SLO on something you can't measure. Traditional tools measure volume, but volume doesn't tell you what's waste and what's valuable.
+An SLO needs a measurement behind it. Traditional tools measure volume, but with a volume number you still can't see which data is waste and which is valuable.
 
-Tero quantifies waste per service. The [Master Catalog](/master-catalog/overview) classifies every log event, metric, and trace your services produce. Tero knows which are debug logs that never should have shipped, which are redundant fields, which are health checks firing every second. It adds them up and gives you a number: this service has 23% waste, costing $4,200/month. That's what makes data quality SLOs possible.
+Tero quantifies waste per service. The [Master Catalog](/master-catalog/overview) classifies every log event, metric, and trace your services produce. Tero knows which are debug logs that never should have shipped and which are health checks firing every second. It adds them up into a number you can set an SLO against: this service has 23% waste, costing $4,200/month.
 
 ## What Tero measures
 
@@ -25,13 +25,11 @@ Tero pushes data quality metrics to your observability platform, so you can crea
 
 ### Supported platforms
 
-<CardGroup cols={2}>
+<CardGroup cols={1}>
   <Card title="Datadog" icon="chart-line" href="/integrations/datadog">
     Push data quality metrics to Datadog. Create SLOs and monitors using Datadog's native features.
   </Card>
 </CardGroup>
-
-More integrations coming.
 
 ## What you can do
 
@@ -42,4 +40,4 @@ Once metrics are in your platform:
 - **Alert on regression**: Get notified when a service's data quality drops
 - **Include in reviews**: Add data quality to service scorecards and operational reviews
 
-Data quality becomes a metric teams own and improve over time, not a quarterly cleanup someone has to drive.
+Teams own the metric and improve it over time.

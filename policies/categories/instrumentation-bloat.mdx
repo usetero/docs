@@ -1,13 +1,21 @@
 ---
 title: "Instrumentation bloat"
-description: "SDK and collector metadata no one asked for"
+description: "SDK and collector metadata with low diagnostic value"
 icon: "box-open"
 iconType: "duotone"
 ---
 
-Fields that SDKs, agents, and collectors inject automatically. Fields the developer didn't add and doesn't want. `telemetry.sdk.version`, `otel.library.name`, collector build strings. Each one adds bytes to every log.
+Instrumentation bloat consists of fields added by SDKs, agents, collectors, and exporters. These fields describe the telemetry tooling rather than the observed system.
 
-Not all instrumentation fields are bloat. The test: did a developer add this, and would any engineer ever query it? Bloat is metadata about the instrumentation, not metadata about your system. `telemetry.sdk.version` is bloat. `service.name` is not.
+Some instrumentation fields, such as `service.name`, are operational metadata for system identity and routing. Tooling metadata such as `telemetry.sdk.version`, `otel.library.name`, and collector build strings has low value in logs.
+
+## Signals
+
+- Fields that describe SDKs, agents, collectors, exporters, or instrumentation libraries.
+- Version fields for telemetry tooling.
+- Internal Kubernetes UIDs when human-readable Kubernetes names are also present.
+- Fields the telemetry pipeline adds on its own rather than fields from application code.
+- Fields you query only when debugging the telemetry tooling itself.
 
 ## Example
 
@@ -85,7 +93,7 @@ Not all instrumentation fields are bloat. The test: did a developer add this, an
       </Tab>
     </Tabs>
 
-    You already have the human-readable names. The internal UIDs are noise.
+    Human-readable Kubernetes names remain available after the policy removes internal UIDs.
 
     ```yaml
     id: remove-k8s-uids
@@ -111,11 +119,14 @@ Not all instrumentation fields are bloat. The test: did a developer add this, an
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
-  Strip bloat before data leaves your network. Immediate savings, no code changes.
+  Remove low-value instrumentation metadata before data leaves your network.
 </Card>
 
-These fields come from tooling, not your application code. You often can't fix at the source. The edge is where you have control.
+Use edge enforcement when telemetry tooling, not application code, adds the fields.
 
-## How it works
+## Detection notes
 
-Tero maps your dependencies and instrumentation stack. Fields like `telemetry.sdk.version` and `otel.library.name` come from tooling rather than application code. Tero flags them as instrumentation bloat.
+- Tero maps dependencies and instrumentation metadata to distinguish tooling fields from application fields.
+- Tero flags fields such as `telemetry.sdk.version` and `otel.library.name` when they come from telemetry tooling.
+- It does not classify system identity fields such as `service.name` as instrumentation bloat.
+- Tero removes Kubernetes UID fields when it keeps the human-readable names.

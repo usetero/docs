@@ -1,79 +1,62 @@
 ---
 title: "Quickstart"
-description: "Get Edge running locally"
+description: "Run Edge locally and verify one policy"
 icon: "rocket"
 iconType: "duotone"
 ---
 
-This guide gets Edge running locally with a file-backed policy.
+Run Edge locally with a file-backed policy, send two test logs, and verify Edge drops the debug log and forwards the error log.
 
-## Prerequisites
+## Before you begin
 
-- A running observability platform (Datadog, or any OTLP-compatible backend)
-- Docker or a Zig build environment
+You need:
 
-## Step 1: Create a Configuration
+- Docker
+- A Datadog intake endpoint and API key for your region
+- A working directory for the quickstart files
 
-Create a `config.json` file:
+This tutorial uses the Datadog distribution because it gives us a concrete log endpoint to test.
 
-<Tabs>
-  <Tab title="Datadog">
-    ```json config.json
+## 1. Create the Edge configuration
+
+Create `config.json`:
+
+```json config.json
+{
+  "listen_address": "127.0.0.1",
+  "listen_port": 8080,
+  "upstream_url": "https://http-intake.logs.datadoghq.com",
+  "metrics_url": "https://api.datadoghq.com",
+  "log_level": "info",
+  "policy_providers": [
     {
-      "listen_address": "127.0.0.1",
-      "listen_port": 8080,
-      "upstream_url": "https://agent-http-intake.logs.datadoghq.com",
-      "metrics_url": "https://api.datadoghq.com",
-      "log_level": "info",
-      "policy_providers": [
-        {
-          "id": "local",
-          "type": "file",
-          "path": "policies.json"
-        }
-      ]
+      "id": "local",
+      "type": "file",
+      "path": "/etc/edge/policies.json"
     }
-    ```
+  ]
+}
+```
 
-    <Note>
-      Replace the URLs with your Datadog region's endpoints. See [Datadog distribution](/edge/distributions/datadog) for region-specific URLs.
-    </Note>
+If your Datadog account uses another region, replace `upstream_url` and `metrics_url` with the endpoints from [Edge Datadog](/edge/distributions/datadog).
 
-  </Tab>
-  <Tab title="OTLP">
-    ```json config.json
-    {
-      "listen_address": "127.0.0.1",
-      "listen_port": 8080,
-      "upstream_url": "https://your-otlp-endpoint.com",
-      "log_level": "info",
-      "policy_providers": [
-        {
-          "id": "local",
-          "type": "file",
-          "path": "policies.json"
-        }
-      ]
-    }
-    ```
-  </Tab>
-</Tabs>
+You now have a local Edge listener on port `8080` and a file policy provider.
 
-## Step 2: Create a Policy
+## 2. Create a policy
 
-Create a `policies.json` file with a simple policy that drops debug logs:
+Create `policies.json`:
 
 ```json policies.json
 {
   "policies": [
     {
       "id": "drop-debug-logs",
-      "name": "Drop debug and trace logs",
+      "name": "Drop debug logs",
       "log": {
         "match": [
           {
-            "log_field": "severity_text",
-            "regex": "^(DEBUG|TRACE)$"
+            "log_field": "status",
+            "regex": "^(debug|trace|DEBUG|TRACE)$"
           }
         ],
         "keep": "none"
@@ -83,124 +66,83 @@ Create a `policies.json` file with a simple policy that drops debug logs:
 }
 ```
 
-This policy:
+This policy matches Datadog log records whose `status` field is `debug` or `trace`. Edge drops matching logs.
 
-- Matches logs with severity DEBUG or TRACE
-- Drops them (`keep: none`)
+## 3. Run Edge
 
-## Step 3: Run Edge
-
-<Tabs>
-  <Tab title="Docker">
-    ```bash
-    docker run -d \
-      -p 8080:8080 \
-      -v $(pwd)/config.json:/etc/edge/config.json \
-      -v $(pwd)/policies.json:/etc/edge/policies.json \
-      ghcr.io/usetero/edge:latest \
-      /etc/edge/config.json
-    ```
-  </Tab>
-  <Tab title="Binary">
-    ```bash
-    # Download the appropriate binary for your platform
-    curl -LO https://github.com/usetero/edge/releases/latest/download/edge-linux-amd64
-    chmod +x edge-linux-amd64
-
-    # Run Edge
-    ./edge-linux-amd64 config.json
-    ```
-
-  </Tab>
-  <Tab title="From Source">
-    ```bash
-    # Clone the repository
-    git clone https://github.com/usetero/edge.git
-    cd edge
-
-    # Build and run
-    zig build run -- config.json
-    ```
-
-  </Tab>
-</Tabs>
-
-## Step 4: Point Your Telemetry at Edge
-
-Configure your applications or agents to send telemetry to Edge instead of
-directly to your backend.
-
-<Tabs>
-  <Tab title="Datadog Agent">
-    In your `datadog.yaml`:
-
-    ```yaml
-    logs_config:
-        logs_dd_url: "localhost:8080"
-        use_http: true
-    ```
-
-  </Tab>
-  <Tab title="OTLP">
-    Point your OTLP exporter to Edge:
-
-    ```yaml
-    exporters:
-      otlphttp:
-        endpoint: "http://localhost:8080"
-    ```
-
-  </Tab>
-</Tabs>
-
-## Step 5: Verify It's Working
-
-Send a test log and check that debug logs are being dropped:
+Run the Datadog distribution:
 
 ```bash
-# Send a debug log (should be dropped)
-curl -X POST http://localhost:8080/api/v2/logs \
-  -H "Content-Type: application/json" \
-  -d '[{"message": "test debug message", "status": "debug"}]'
-
-# Send an error log (should pass through)
-curl -X POST http://localhost:8080/api/v2/logs \
-  -H "Content-Type: application/json" \
-  -d '[{"message": "test error message", "status": "error"}]'
+docker run --name tero-edge-quickstart --rm \
+  -p 8080:8080 \
+  -e DD_API_KEY="$DD_API_KEY" \
+  -v "$(pwd)/config.json:/etc/edge/config.json" \
+  -v "$(pwd)/policies.json:/etc/edge/policies.json" \
+  ghcr.io/usetero/edge-datadog:latest \
+  /etc/edge/config.json
 ```
 
-Check Edge's logs for a policy match on the debug log and a forwarded request
-for the error log:
+Leave this terminal running.
+
+You should see Edge start and load the `local` policy provider.
+
+## 4. Send a debug log
+
+In another terminal, send a debug log to Edge:
 
 ```bash
-docker logs edge
-# or
-tail -f /var/log/edge.log
+curl -X POST http://localhost:8080/api/v2/logs \
+  -H "Content-Type: application/json" \
+  --data-binary @- <<'JSON'
+[
+  {
+    "message": "quickstart debug log",
+    "status": "debug",
+    "service": "edge-quickstart"
+  }
+]
+JSON
 ```
 
-## What's Next?
+Edge should accept the request. Because the policy matches `status: debug`, Edge should drop the log before forwarding.
 
-You now have Edge filtering telemetry. From here:
+## 5. Send an error log
 
-<CardGroup cols={2}>
-  <Card title="Reference" icon="gear" href="/edge/edge-reference/config">
-    Full configuration reference
-  </Card>
-  <Card
-    title="Log Filter"
-    icon="filter"
-    href="/edge/policy-reference/log-filter"
-  >
-    Learn all the ways to filter logs
-  </Card>
-  <Card
-    title="Log Transform"
-    icon="wand-magic-sparkles"
-    href="/edge/policy-reference/log-transform"
-  >
-    Redact and transform log data
-  </Card>
-  <Card title="Distributions" icon="cubes" href="/edge/distributions/datadog">
-    Configure for your specific backend
-  </Card>
-</CardGroup>
+Send an error log to the same endpoint:
+
+```bash
+curl -X POST http://localhost:8080/api/v2/logs \
+  -H "Content-Type: application/json" \
+  --data-binary @- <<'JSON'
+[
+  {
+    "message": "quickstart error log",
+    "status": "error",
+    "service": "edge-quickstart"
+  }
+]
+JSON
+```
+
+This log should pass through because it does not match the policy.
+
+## 6. Check Edge output
+
+Return to the terminal running Edge.
+
+You should see activity for the incoming requests. The debug request should show a policy match or dropped-log activity. The error request should show forwarding activity.
+
+If Edge forwards both requests, confirm that `policies.json` is mounted at `/etc/edge/policies.json` and that the policy matches the `status` field.
+
+## What you ran
+
+You ran Edge locally, loaded one file-backed policy, sent two logs through Edge, and verified the policy decision.
+
+That is the basic Edge loop: receive telemetry, match policies, apply the keep decision, and forward the result.
+
+## Next steps
+
+- Read [How Edge works](/edge/concepts) for the runtime model.
+- Use [Config](/edge/edge-reference/config) for configuration fields.
+- Use [Log filter](/edge/policy-reference/log-filter) for log matching and keep actions.
+- Use [Edge Datadog](/edge/distributions/datadog) for Datadog-specific configuration.

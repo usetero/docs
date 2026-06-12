@@ -1,22 +1,48 @@
 ---
 title: "What is Tero?"
-description: "A control plane for observability data"
+description: "Telemetry control for production teams"
 icon: "robot"
 iconType: "duotone"
 ---
 
-<img src="/images/tero-hero.svg" alt="Tero" />
+Tero shows the state of your telemetry estate: the issues that need review, the policies that can fix them, and the impact of those policies at runtime.
 
-Tero is a control plane for observability data.
+Datadog, Splunk, collectors, and pipelines remain the systems where telemetry lives. Tero is the control layer above them.
 
-After you connect your stack, Tero builds a [Master Catalog](/master-catalog): services, log events, and metrics with semantic context. Tero tracks the data's meaning alongside its format.
+{/* screenshot-suggestion
+id: issues-work-queue
+priority: useful
+appRoute: /issues
+viewport: desktop
+state: issues list loaded with cost and compliance issues visible
+output: /images/screenshots/introduction/issues-work-queue.png
+caption: Issues are the main entry point for telemetry policy control.
+purpose: Shows how Tero moves from a detected issue to reviewable action.
+*/}
 
-From that understanding, Tero generates [policies](/policies): atomic rules that capture data quality improvements. Each policy does one thing and states the change it will make. Once you fix a data quality mistake, the policy keeps enforcing that fix.
+{/* screenshot-generated id: issues-work-queue */}
+<Frame>
+  <img src="/images/screenshots/introduction/issues-work-queue.png" alt="Issues are the main entry point for telemetry policy control." />
+</Frame>
+{/* /screenshot-generated */}
 
-You review them, approve them, and Tero [enforces](/policies/enforcement) them in your provider, code, or infrastructure.
+Tero helps you control telemetry policy. It finds issues across cost, compliance, and signal quality. Each issue includes evidence, provenance, impact, and a recommended policy or action. You review the evidence before you decide what should change.
 
-Control planes manage desired state. You declare the target, they make reality match. Tero does that for your observability data.
+Policies are control-plane artifacts. Tero presents them with status, source, spec, related issue, deployment state, and measured activity. The control plane owns durable policy state; your providers, repositories, collectors, and Edge instances run the changes.
 
-Observability costs climb when low-value data accumulates: debug logs that never got turned off, health checks firing every second, redundant fields repeated in log events. Pipelines move data but don't understand what it means, and providers charge by volume regardless of value.
+The workflow:
 
-Tero cleans up low-value telemetry and keeps policies in place so the same problems do not return.
+1. [Issues](/issues/overview): Tero shows what it found and the cost or exposure behind it.
+2. [Policies](/policies): you review the policy that would address the issue.
+3. Runtime: Tero shows where the policy runs, including provider configuration and [Edge instances](/edge/overview).
+4. Impact: Tero measures whether the issue, cost, or compliance exposure changed after action.
+
+## Why telemetry needs control
+
+Telemetry grows through local decisions. A team adds a debug log during an incident. A health check logs once per second, long after anyone reads it. Two libraries use different names for the same field, so it ships twice. Each change can make sense in isolation, but together they raise your bill and bury the signals you rely on.
+
+Pipelines move and transform data, and providers store and query it. Tero adds the missing control loop: find the issue, show the evidence, propose the policy, track runtime state, and measure the result.
+
+## Where to start
+
+Start with [Quickstart](/quickstart) if you want a guided walkthrough. Start with [Issues](/issues/overview) if you have Tero connected and want to understand the main workspace. Use [How Tero works](/introduction/how-tero-works) for the full control loop.

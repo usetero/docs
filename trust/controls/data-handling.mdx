@@ -13,7 +13,7 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-Data Handling defines the hosted default data scope, retention behavior, and how that changes in self-hosted deployments.
+This page defines the hosted default data scope, retention behavior, and what changes when you self-host.
 
 ## Reviewer focus
 
@@ -23,7 +23,7 @@ Data Handling defines the hosted default data scope, retention behavior, and how
 
 ## Implementation status (March 5, 2026)
 
-Tero limits retained data by default. The control plane stores the metadata required to operate the product, not full raw telemetry payloads as the default system-of-record model.
+Tero limits retained data by default. The control plane stores only the metadata required to operate the product. Full raw telemetry stays in your observability platform.
 
 ## Data lifecycle diagram (hosted default)
 

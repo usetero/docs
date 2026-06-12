@@ -11,7 +11,7 @@
 
 ### What Happens When Things Fail
 
-| Scenario | Impact | Why It's Okay |
+| Scenario | Impact | Mitigation |
 |----------|--------|--------------|
 | Control plane unavailable | <Badge color="surface">No Impact</Badge> | Edge uses cached rules, continues filtering |
 | Single zone fails | <Badge color="surface">No Impact</Badge> | Automatic failover to another zone |
@@ -37,7 +37,7 @@
 | Fail-open behavior | Passes data through on any unhandled error |
 | Local rule caching | Works without control plane connection |
 | Health checks | Exposes endpoints for your monitoring |
-| Performance | Typically adds less than 1ms latency |
+| Performance | Adds less than 1ms latency in most deployments |
 | Deployment options | Sidecar, pipeline, or centralized |
 
 ### Monitoring

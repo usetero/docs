@@ -48,13 +48,16 @@
             ]
           },
           {
+            "group": "Issues",
+            "pages": [
+              "issues/overview",
+              "issues/review-an-issue"
+            ]
+          },
+          {
             "group": "Master Catalog",
             "pages": [
-              "master-catalog/overview",
-              "master-catalog/services",
-              "master-catalog/log-events",
-              "master-catalog/metrics",
-              "master-catalog/trace-spans"
+              "master-catalog/overview"
             ]
           },
           {
@@ -62,9 +65,43 @@
             "pages": [
               "policies/overview",
               {
-                "group": "Categories",
+                "group": "Enforcement",
+                "icon": "gavel",
+                "pages": [
+                  "policies/enforcement/overview",
+                  "policies/enforcement/edge",
+                  "policies/enforcement/provider",
+                  "policies/enforcement/open-prs",
+                  "policies/enforcement/create-tickets",
+                  "policies/enforcement/notify",
+                  "policies/enforcement/set-slos"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              {
+                "group": "Observability Platforms",
+                "icon": "cloud",
+                "pages": ["integrations/datadog"]
+              }
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "issues/evidence",
+              "issues/lifecycle",
+              "master-catalog/services",
+              "master-catalog/log-events",
+              "policies/lifecycle",
+              {
+                "group": "Policy Categories",
                 "icon": "tags",
                 "pages": [
+                  "policies/categories/overview",
                   "policies/categories/duplicate-fields",
                   "policies/categories/accidental-debug-statements",
                   "policies/categories/malformed-data",
@@ -78,66 +115,6 @@
                   "policies/categories/burst-protection",
                   "policies/categories/high-cardinality-tags"
                 ]
-              },
-              {
-                "group": "Enforcement",
-                "icon": "gavel",
-                "pages": [
-                  "policies/enforcement/overview",
-                  "policies/enforcement/edge",
-                  "policies/enforcement/provider",
-                  "policies/enforcement/open-prs",
-                  "policies/enforcement/create-tickets",
-                  "policies/enforcement/notify",
-                  "policies/enforcement/set-slos"
-                ]
-              },
-              "policies/management"
-            ]
-          },
-          {
-            "group": "Account Management",
-            "pages": [
-              "account-management/overview",
-              "account-management/teams",
-              "account-management/authentication",
-              "account-management/data-quality-slos",
-              "account-management/workspaces",
-              "account-management/multi-account"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
-              {
-                "group": "Observability Platforms",
-                "icon": "cloud",
-                "pages": ["integrations/datadog", "integrations/splunk"]
-              },
-              {
-                "group": "Infrastructure",
-                "icon": "server",
-                "pages": [
-                  "integrations/datadog-agent",
-                  "integrations/otel-collector",
-                  "integrations/prometheus",
-                  "integrations/datadog-lambda-extension",
-                  "integrations/datadog-lambda-forwarder"
-                ]
-              },
-              {
-                "group": "Code",
-                "icon": "code",
-                "pages": ["integrations/github"]
-              },
-              {
-                "group": "AI",
-                "icon": "microchip-ai",
-                "pages": [
-                  "integrations/anthropic",
-                  "integrations/openai",
-                  "integrations/aws-bedrock"
-                ]
               }
             ]
           }
@@ -148,13 +125,16 @@
         "icon": "cube",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Introduction",
             "pages": [
               "edge/overview",
               "edge/concepts",
-              "edge/architecture",
               "edge/quickstart"
             ]
+          },
+          {
+            "group": "Architecture",
+            "pages": ["edge/architecture"]
           },
           {
             "group": "Distributions",

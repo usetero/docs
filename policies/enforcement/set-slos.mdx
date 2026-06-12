@@ -21,7 +21,7 @@ Tero defines SLOs in your observability provider that measure data quality metri
 
 Connect your provider with SLO support:
 
-<CardGroup cols={2}>
+<CardGroup cols={1}>
   <Card title="Datadog" icon="dog" href="/integrations/datadog">
     Tero creates SLOs using Datadog's SLO product.
   </Card>
@@ -42,9 +42,9 @@ Current: 2.3M logs/day
 Target: 230K logs/day
 ```
 
-The platform team sees this SLO in their Datadog dashboard. They decide how to hit the target: maybe they configure their ingress controller to stop logging health checks, or they deploy Edge policies, or they update their Kubernetes probes. The SLO tracks progress regardless of method.
+The platform team sees this SLO in their Datadog dashboard. They decide how to hit the target: maybe they configure their ingress controller to stop logging health checks, or they deploy Edge policies, or they update their Kubernetes probes. Datadog measures progress regardless of method.
 
-If the team falls below target, an alert fires. They investigate and course-correct.
+If the team falls below target, an alert fires. They investigate and adjust.
 
 ## When to use
 

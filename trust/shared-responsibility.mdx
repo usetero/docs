@@ -13,7 +13,7 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-Security reviews move faster when ownership is explicit. Shared Responsibility defines who owns what in each deployment model.
+This page defines who owns each control in each deployment model.
 
 ## Reviewer focus
 
@@ -28,7 +28,7 @@ Tero supports two deployment models:
 - Tero-hosted control plane
 - Self-hosted control plane in customer-managed infrastructure
 
-Control ownership changes by model, primarily at infrastructure and network layers.
+Control ownership changes by model at the infrastructure and network layers.
 
 ## Scope and integration boundary
 
@@ -68,7 +68,7 @@ flowchart LR
 | Incident response for platform operations | Tero | Customer for environment ops, Tero for product support |
 | Subprocessor management | Tero | Customer (for customer-chosen stack) |
 
-## Where customers usually tighten controls
+## Where customers tighten controls
 
 - Self-hosted deployment for full environment ownership
 - Customer IdP policy enforcement for authentication lifecycle controls

@@ -1,59 +1,58 @@
 ---
 title: "Services"
-description: "How Tero discovers and understands your services"
-icon: "circle-nodes"
+description: "Service catalog context for issues and policies"
+icon: "box"
 iconType: "duotone"
 ---
 
-Tero discovers services from your [integrations](/integrations). Each one becomes a hub in the catalog, owning [log events](/master-catalog/log-events), [metrics](/master-catalog/metrics), and [trace spans](/master-catalog/trace-spans), and relating to other services through dependencies.
+The Services catalog shows the owner, open issues, log volume, and cost for each service's telemetry.
 
-## What Tero knows
+{/* screenshot-suggestion
+id: services-catalog
+priority: useful
+appRoute: /services
+viewport: desktop
+state: services list loaded with open issues, team, log volume, and cost columns visible
+output: /images/screenshots/master-catalog/services-catalog.png
+caption: The Services list shows the owner, open issues, log volume, and cost for each service.
+purpose: Shows the service catalog surface behind issue review.
+*/}
 
-Tero imports service names, then analyzes logs and traces to understand what each service does, what technologies it uses, and how it relates to other services.
+{/* screenshot-generated id: services-catalog */}
+<Frame>
+  <img src="/images/screenshots/master-catalog/services-catalog.png" alt="The Services list shows the owner, open issues, log volume, and cost for each service." />
+</Frame>
+{/* /screenshot-generated */}
 
-<Expandable title="Fields">
-  <ResponseField name="name" type="string">
-    The service identifier as it appears in your telemetry.
-  </ResponseField>
-  <ResponseField name="description" type="string">
-    What the service does, generated from observed behavior.
-  </ResponseField>
-  <ResponseField name="technologies" type="array">
-    Languages, frameworks, databases. Inferred from logs and traces.
-  </ResponseField>
-  <ResponseField name="dependencies" type="array">
-    Other services this one calls or relies on.
-  </ResponseField>
-  <ResponseField name="failure_scenarios" type="array">
-    Known ways the service fails and what causes them.
-  </ResponseField>
-  <ResponseField name="ownership" type="string">
-    Team or individual responsible (when available).
-  </ResponseField>
-</Expandable>
+## Service list
 
-## Exploring a service
+The Services list can show these fields:
 
-Open any service to see what Tero figured out: description, technologies, dependencies, failure scenarios, log events. Everything connected to that service in the catalog.
+| Field | Description |
+| ----- | ----------- |
+| Service | Service name and enabled state. |
+| Team | Owning team when Tero has ownership data. |
+| Open issues | Count of open issues for the service, including high-severity count when present. |
+| Log volume | Observed log volume for the service. |
+| Cost | Estimated annualized log cost. |
 
-## Using in chat
+## Service detail
 
-Reference a service with `@` to scope your questions:
+Service detail pages show the service in context. Current detail tabs include overview, issues, log events, and log volume.
 
-```
-@checkout why are we seeing elevated error rates?
-@payment what are the common failure modes?
-@kafka what log events does this produce?
-```
+| Detail area | Description |
+| ----------- | ----------- |
+| Overview | Service state, ownership context, and summary metrics. |
+| Issues | Open and related issues for the service. |
+| Log events | Log events emitted by the service. |
+| Log volume | Observed log volume over time. |
 
-Tero pulls in everything connected: the service's description, dependencies, failure scenarios, log events. It answers your question with that full context.
+## Relationship to issues and policies
 
-## Refining a service
+Issues often point to an affected service. Policies can also show the service they affect. That connection lets you send reviews to service owners instead of routing all approvals through the platform team.
 
-Tero generates descriptions and infers technologies, but you can refine what it knows:
+## Related pages
 
-- **Edit descriptions** to add detail Tero couldn't infer
-- **Add failure scenarios** your team knows about
-- **Note ownership** so Tero knows who to reference
-
-The more you refine, the better the catalog becomes.
+- [Issues](/issues/overview)
+- [Log events](/master-catalog/log-events)
+- [Policies](/policies)

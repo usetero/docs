@@ -1,19 +1,27 @@
 ---
 title: "Debug mode left on"
-description: "Verbose logging enabled for troubleshooting, never disabled"
+description: "Verbose logging enabled for troubleshooting and left on"
 icon: "toggle-on"
 iconType: "duotone"
 ---
 
-A service running at DEBUG log level in production. Someone enabled verbose logging to investigate an issue, then forgot to turn it off. Now you're getting 10x the logs you need.
+A debug-mode policy category applies when a production service emits DEBUG-level logs for longer than an expected investigation window.
 
-Log level changes often happen through environment variables or config files that don't go through normal code review. There's no reminder to switch back. This is common.
+This is a service configuration issue: log levels come from environment variables or configuration files, and those changes may not follow the same review path as application code.
+
+## Signals
+
+| Signal | Description |
+| ------ | ----------- |
+| Persistent DEBUG volume | A service emits DEBUG logs beyond the configured threshold. |
+| Sudden level change | DEBUG volume jumps from the service's previous baseline. |
+| Service-scoped pattern | The pattern is evaluated at service level rather than per individual log event. |
+| Production environment | The logs come from production or another environment where persistent DEBUG logging signals a problem. |
 
 ## Example
 
 <Tabs>
   <Tab title="Before">
-    A service emitting thousands of DEBUG logs per minute:
     ```json
     {"severity_text": "DEBUG", "body": "Entering getUserById", "service.name": "user-service"}
     {"severity_text": "DEBUG", "body": "Cache miss for user 12345", "service.name": "user-service"}
@@ -21,33 +29,30 @@ Log level changes often happen through environment variables or config files tha
     {"severity_text": "DEBUG", "body": "Query took 3ms", "service.name": "user-service"}
     {"severity_text": "DEBUG", "body": "Exiting getUserById", "service.name": "user-service"}
     ```
-    This pattern repeating for every request, for days.
   </Tab>
   <Tab title="After">
     Log level set back to INFO. Only meaningful events logged.
   </Tab>
 </Tabs>
 
-This isn't a policy you deploy to filter logs. It's a configuration problem that needs to be fixed at the source.
-
 ## Recommended enforcement
 
 <CardGroup cols={3}>
   <Card title="Create tickets" icon="ticket" href="/policies/enforcement/create-tickets">
-    Alert the service owner that debug mode is still enabled.
+    Notify the service owner that DEBUG logging is still active.
   </Card>
   <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
-    If log levels are config-as-code, change it directly.
+    Change the log level when service configuration is managed as code.
   </Card>
   <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
-    Temporary blocking if the issue persists.
+    Apply temporary volume control when you can't change the configuration right away.
   </Card>
 </CardGroup>
 
-Start with tickets. If a service has had debug mode on for 48+ hours with no response, edge blocking can get attention. But the real fix is changing the configuration.
+The preferred remediation is a configuration change at the source. Edge enforcement is a temporary control for persistent high-volume DEBUG output.
 
-## How it works
+## Detection notes
 
-This isn't a per-log-event analysis. Tero looks at service-level patterns: a sudden spike in DEBUG logs that persists beyond a configurable threshold.
+Tero detects this category from service-level log patterns: a sudden increase in DEBUG logs that persists beyond a configured threshold.
 
-Tero defaults to 24 hours before flagging. You can configure thresholds to escalate: notify at 24 hours, block at 48. DEBUG logs during an active incident are normal. DEBUG logs that persist for days are a forgotten configuration.
+DEBUG logs during an active incident are expected. DEBUG logs that continue for days mean someone forgot to revert the configuration.

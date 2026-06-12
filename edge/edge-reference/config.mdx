@@ -51,9 +51,9 @@ Edge uses a JSON configuration file. Pass the path as the first argument:
 ## Configuration Reference
 
 <Info>
-  The edge is configured to work with a maximum of 8k policies. Please open an
-  [issue on GitHub](https://github.com/usetero/edge/issues/new) if more are
-  needed.
+  Edge supports up to 8,000 policies. Open an
+  [issue on GitHub](https://github.com/usetero/edge/issues/new) if you need
+  more.
 </Info>
 
 ### Server Settings
@@ -101,8 +101,8 @@ Loads policies from a local file and watches for changes.
 | `type` | string | Yes      | Must be `"file"`                    |
 | `path` | string | Yes      | Path to the policy file             |
 
-The file is watched using OS-native mechanisms (inotify on Linux, kqueue on
-macOS). Changes are applied immediately.
+Edge watches the file with inotify (Linux) or kqueue (macOS) and applies
+changes on save.
 
 #### HTTP Provider
 
@@ -131,7 +131,7 @@ Loads policies from an HTTP endpoint with periodic polling.
 
 ## Policy File Format
 
-Policies are defined in a JSON file:
+Define policies in a JSON file:
 
 ```json policies.json
 {

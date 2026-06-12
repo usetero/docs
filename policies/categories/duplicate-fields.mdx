@@ -5,19 +5,28 @@ icon: "copy"
 iconType: "duotone"
 ---
 
-The same field appearing in multiple places within a log. `service.name` in both attributes and resource_attributes. `level` and `severity_text` both present. The same data, stored redundantly.
+Duplicate fields occur when multiple fields in a log record carry the same information.
 
-This happens when different parts of your stack add the same information:
+Common sources include:
 
-- Your application logs `time`, your collector adds `@timestamp`
-- Your SDK logs `level`, the OTel exporter adds `severity_text`
-- Your service logs `host`, your agent adds `hostname`
+| Duplicate pair | Common source |
+| --- | --- |
+| `time` and `@timestamp` | Application timestamp plus collector timestamp |
+| `level` and `severity_text` | Application severity plus OpenTelemetry severity |
+| `host` and `hostname` | Service field plus agent field |
 
-Duplicates require the same field name or clear synonyms like `level`/`severity`. Two different fields that happen to have matching values aren't duplicates. That's coincidence, not redundancy.
+Duplicate fields require either repeated field names or clear semantic equivalents such as `level` and `severity`. Fields with matching values but different meanings are not duplicates.
+
+## Signals
+
+- Repeated values across timestamp, severity, host, service, or environment fields.
+- Field pairs with equivalent names from different parts of the telemetry pipeline.
+- Redundant fields added by SDKs, agents, collectors, or exporters.
+- A canonical field that can preserve the value after the duplicate field is removed.
 
 ## Example
 
-The following log has three duplicate pairs: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`. Same values, different names.
+The following log has three duplicate pairs that carry the same values under different names: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`.
 
 <Tabs>
   <Tab title="Before">
@@ -61,18 +70,21 @@ log:
       - log_attribute: level
       - log_attribute: host
 ```
+
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
-  Drop the duplicate field before data leaves your network. Immediate savings, no code changes.
+  Drop duplicate fields before data leaves your network.
 </Card>
 
-These fields come from multiple places: agents, collectors, SDKs. Not your application code. You often can't fix at the source. The edge is where you have control.
+Use edge enforcement when duplicate fields come from agents, collectors, SDKs, or exporters rather than application code.
 
-## How it works
+## Detection notes
 
-Tero compares field values across your logs. Exact string matches get flagged. Semantic equivalents too: `level: 9` and `severity_text: INFO` are the same thing, so one gets removed.
+- Tero compares field values across logs.
+- Tero flags exact string matches when the fields represent the same concept.
+- It flags semantic equivalents when the values share a normalized meaning, such as a numeric severity and a text severity.
+- Fields with similar values but different meanings are not duplicates. For example, `request_id` and `trace_id` are related identifiers, not duplicate fields.
+- Fields with different representations are not duplicates unless they normalize to the same value. For example, UTC and local timestamps are different representations.
 
-Fields that look similar but contain different values aren't flagged. If `time` is UTC and `@timestamp` is local time, that's not a duplicate. They're different representations. Same with `request_id` and `trace_id`. Related but distinct identifiers.
-
-Only true duplicates. Tero keeps the canonical field (usually the more standard name like `@timestamp` or `severity_text`) and removes the duplicate.
+Tero keeps the more standard field, such as `@timestamp` or `severity_text`, and removes the duplicate.

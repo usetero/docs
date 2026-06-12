@@ -1,74 +1,97 @@
 ---
 title: "Policies"
 sidebarTitle: "Overview"
-description: "Data quality as code"
+description: "Reviewable control-plane artifacts"
 icon: "file-code"
 iconType: "duotone"
 ---
 
-Policies are data quality as code: atomic, portable statements about what's wrong with your data and how to fix it.
+Policies are the control-plane artifacts Tero uses to turn issue evidence into runtime action.
 
-```yaml
-id: checkout-api-drop-health-checks
-name: Drop health check logs from checkout-api
+A policy states which telemetry it matches and what action the runtime should take. Tero presents policies for review with status, source, action, service, recent activity, linked issue, deployment state, and spec.
 
-log:
-  match:
-    - resource_attribute: service.name
-      exact: checkout-api
-    - log_field: body
-      regex: "GET /health"
-  keep: none
-```
+<Card
+  title="OpenTelemetry policy proposal"
+  icon="github"
+  href="https://github.com/open-telemetry/opentelemetry-specification/pull/4738"
+>
+  Track the upstream OpenTelemetry specification proposal for telemetry policy.
+</Card>
 
-That's a policy. It does one thing and states the telemetry it changes. You do not need pipeline context or a dependency graph to review it.
+{/* screenshot-suggestion
+id: policies-table
+priority: required
+appRoute: /policies
+viewport: desktop
+state: policies table loaded with active, disabled, cost, and compliance policies visible
+output: /images/screenshots/policies/policies-table.png
+caption: Policies show status, action, source, service, activity, and linked issue.
+purpose: Shows policies as reviewable control-plane artifacts rather than hidden provider config.
+*/}
 
-## Why policies
+{/* screenshot-generated id: policies-table */}
+<Frame>
+  <img src="/images/screenshots/policies/policies-table.png" alt="Policies show status, action, source, service, activity, and linked issue." />
+</Frame>
+{/* /screenshot-generated */}
 
-Traditional pipeline configs often start clean and grow into thousands of lines with shared state, ordering constraints, and hidden dependencies. You need broad config knowledge to change one part safely. Automation has the same problem because each change can affect later stages.
+## How policies relate to issues
 
-We saw this repeatedly while building [Vector](https://vector.dev). Across large deployments, the same failure mode appeared: configs became hard to maintain because the architecture coupled unrelated changes.
+Tero starts with a finding. The issue explains what Tero found and shows evidence. If a policy can address the issue, Tero presents the recommended policy in issue detail.
 
-Policies avoid that coupling. Each one is independent: no ordering dependencies, no shared state. Ten thousand policies execute as fast as ten. You can add or remove a policy without tracing the rest of the policy set. That independence keeps review manageable at scale.
+After approval or deployment, Tero adds the policy to the Policies workspace. You can open the policy to inspect its identity, source, related issue, activity, deployments, and spec.
 
-The same independence makes policies portable. A policy can enforce at the [edge](/policies/enforcement/edge), push to your [provider's API](/policies/enforcement/provider), or sync to a pipeline. The policy is the source of truth. Enforcement translates it into the target runtime.
+Tero links each policy to the issue that produced it, so reviewers can check the evidence before approving.
 
-## How policies are created
+## Policy actions
 
-Two sources:
+Policy actions describe what the runtime should do to matching telemetry. Common actions include dropping a matching event, sampling a subset, redacting sensitive values, rewriting fields, or trimming large payloads.
 
-**Foundation policies** are broad rules you write. Drop debug logs in production. Redact CVV fields. Sample health checks to 10%. These apply across services and rarely change.
+For lookup details, use [Policy lifecycle](/policies/lifecycle) and [Policy categories](/policies/categories/overview).
 
-**Generated policies** come from Tero. The [Master Catalog](/master-catalog) identifies your log events, understands what they mean, and generates specific policies for each. You might have hundreds: one per log event type that needs attention.
+## Policy states
 
-You review policies by [category](/policies/categories). Categories focus on evidence Tero can show: duplicate fields, malformed data, health checks, and PII in fields with sensitive names or values. Each review includes examples from your telemetry so engineers can decide whether to approve the change.
+Policies move through review, deployment, and impact checks. Tero shows policy state, source, linked issue, activity, deployments, and spec so reviewers can connect the policy back to the evidence Tero used to create it.
 
-## What policies can do
+Use [Policy lifecycle](/policies/lifecycle) for the current state reference.
 
-Policies target logs or metrics and specify an action:
+## Policy detail
 
-**Filter** - Control what gets kept:
-- `keep: all` - keep everything (default)
-- `keep: none` - drop it
-- `keep: 50%` - sample to a percentage
-- `keep: 100/s` - rate limit
+Policy detail pages include:
 
-**Transform** - Modify what survives:
-- Remove fields
-- Redact sensitive values
-- Rename attributes
-- Add metadata
+- **Overview**: identity, source, linked issue, hits over time, and activity
+- **Deployments**: where the policy runs, including Edge deployment state when present
+- **Spec**: the structured policy definition Tero and runtimes use
 
-See the full [policy spec](https://github.com/usetero/policy) for details.
+{/* screenshot-suggestion
+id: policy-detail-overview
+priority: useful
+appRoute: /policies/kafka-log-segment-deletion
+viewport: desktop
+state: policy detail overview loaded with linked issue banner, KPIs, identity, and activity visible
+output: /images/screenshots/policies/policy-detail-overview.png
+caption: Policy detail connects spec, activity, linked issue, and deployments.
+purpose: Shows how reviewers inspect policy state after approval.
+*/}
 
-## Where policies live
+{/* screenshot-generated id: policy-detail-overview */}
+<Frame>
+  <img src="/images/screenshots/policies/policy-detail-overview.png" alt="Policy detail connects spec, activity, linked issue, and deployments." />
+</Frame>
+{/* /screenshot-generated */}
 
-Policies aren't hidden in a vendor UI. They sync to where your team can see them:
+The issue link returns you to the evidence. Open Deployments for runtime state, or Spec for the exact match and action.
 
-- **Tero**: review and approve in the interface
-- **Central repo**: platform team maintains a policies repository  
-- **Service repos**: `.tero/` folder in each service, so engineers see what's happening to their data
+## Provider inventory
 
-If Tero drops or transforms data from a service, the policy is visible in the code for engineers to review.
+The Policies workspace can also show Datadog exclusion filters. This inventory helps teams compare existing provider configuration with Tero policies and convert supported filters into policies.
 
-See [management](/policies/management) for details on syncing and version control.
+Datadog filter detail can show overview, policy preview, imported policies, and import readiness.
+
+## Related pages
+
+- [Review an issue](/issues/review-an-issue)
+- [Policy lifecycle](/policies/lifecycle)
+- [Policy categories](/policies/categories/overview)
+- [Policy enforcement](/policies/enforcement/overview)
+- [Datadog integration](/integrations/datadog)

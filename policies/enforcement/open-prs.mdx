@@ -10,23 +10,37 @@ iconType: "duotone"
 Fix the problem at the source. Tero opens a pull request to remove or modify the instrumentation that's generating waste. Your team reviews and merges.
 
 <Note>
-Use this for code-level issues like accidental debug statements, excessive payloads, or logs in hot paths. The waste stops being generated instead of being filtered downstream.
+Use this for code-level issues like accidental debug statements, excessive payloads, or logs in hot paths. The application stops generating the waste, so nothing needs filtering downstream.
 </Note>
 
 ## How it works
 
 Tero analyzes your codebase to find the instrumentation generating the waste. It creates a branch, makes the change, and opens a pull request. Your team reviews the PR like any other code change.
 
-<Frame>
-  <img src="/images/how-it-works-generic-4-in-code.svg" alt="Open PRs" />
-</Frame>
+```mermaid
+flowchart LR
+    Issue["Issue and evidence"] --> Change["Code change"]
+    Change --> Branch["Tero branch"]
+    Branch --> PR["Pull request"]
+    PR --> Review["Team review"]
+    Review --> Deploy["Merge and deploy"]
+    Deploy --> Impact["Waste stops at source"]
+
+    style Issue fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style Change fill:#00855c,stroke:#006b49,color:#fafafa
+    style Branch fill:#262626,stroke:#262626,color:#fafafa
+    style PR fill:#262626,stroke:#262626,color:#fafafa
+    style Review fill:#262626,stroke:#262626,color:#fafafa
+    style Deploy fill:#262626,stroke:#262626,color:#fafafa
+    style Impact fill:#d1fae5,stroke:#10b981,color:#065f46
+```
 
 ## Setup
 
 Connect your source control:
 
 <CardGroup cols={2}>
-  <Card title="GitHub" icon="github" href="/integrations/github">
+  <Card title="GitHub" icon="github">
     Install the Tero GitHub App to enable pull requests.
   </Card>
 </CardGroup>
@@ -55,7 +69,7 @@ It doesn't appear in any dashboard or alert.
 Identified by Tero: https://app.tero.dev/policies/abc123
 ```
 
-Your team reviews the PR. Once merged and deployed, the application stops generating those logs, so the fix removes the waste at the source.
+Your team reviews the PR. Once they merge and deploy, the application stops generating those logs.
 
 ## When to use
 
@@ -63,6 +77,6 @@ Open PRs works best when:
 
 - The waste is a code mistake (debug logs, forgotten print statements)
 - The fix is straightforward (remove a line, change a log level)
-- You want a permanent fix, not ongoing filtering
+- You want a permanent fix
 
 For configuration-based issues (debug mode left on), Tero can also open PRs to change config files if they're in version control.

@@ -168,6 +168,39 @@ article pre {
   box-shadow: 0 1px 0 var(--tero-ghost-depth-edge);
 }
 
+main .code-block,
+article .code-block {
+  margin-block: 1rem 1.5rem;
+  border-color: var(--tero-line-2);
+  border-radius: var(--tero-radius-panel);
+  background: var(--tero-bg-sunken);
+  box-shadow: 0 1px 0 var(--tero-ghost-depth-edge);
+}
+
+main .code-block .code-block-background,
+article .code-block .code-block-background {
+  border-radius: calc(var(--tero-radius-panel) - 1px);
+  background-color: var(--tero-bg-sunken) !important;
+  padding: 0.75rem 0.95rem;
+}
+
+main .code-block pre,
+article .code-block pre {
+  min-width: max-content;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+main .code-block code,
+article .code-block code {
+  font-size: inherit;
+  line-height: inherit;
+}
+
 main table,
 article table {
   border-color: var(--tero-line);
@@ -259,6 +292,47 @@ button,
 [class*="Error"] {
   border-color: color-mix(in srgb, var(--tero-danger) 36%, var(--tero-line));
   background: var(--tero-danger-soft);
+}
+
+.mermaid,
+[class*="mermaid"] {
+  color: var(--tero-ink);
+}
+
+.mermaid svg,
+[class*="mermaid"] svg,
+svg[id^="mermaid-"] {
+  max-width: 100%;
+}
+
+:is(svg[id^="mermaid-"], .mermaid svg, [class*="mermaid"] svg)
+  .node:has(
+    :is(rect, polygon, path, circle, ellipse):is(
+        [style*="fill:#262626"],
+        [style*="fill:#0e2b22"],
+        [style*="fill:#00855c"],
+        [style*="fill:#10b981"],
+        [style*="fill:#059669"],
+        [style*="fill:#632ca6"],
+        [style*="fill:#0ea5e9"]
+      )
+  )
+  :is(text, .nodeLabel, .nodeLabel *) {
+  color: #fafafa !important;
+  fill: #fafafa !important;
+}
+
+:is(svg[id^="mermaid-"], .mermaid svg, [class*="mermaid"] svg)
+  .node:has(
+    :is(rect, polygon, path, circle, ellipse):is(
+        [style*="fill:#d1fae5"],
+        [style*="fill:#ccfbf1"],
+        [style*="fill:#ecfdf5"]
+      )
+  )
+  :is(text, .nodeLabel, .nodeLabel *) {
+  color: #065f46 !important;
+  fill: #065f46 !important;
 }
 
 img[src*="tero-hero"],

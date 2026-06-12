@@ -13,7 +13,7 @@ import { securityEmail } from '/snippets/variables.mdx';
 <Badge>Review cadence: Quarterly</Badge>
 <Badge color="green">Status: Implemented</Badge>
 
-Network Security describes the integration network baseline, including TLS, edge protections, and deployment-dependent connectivity options.
+Tero requires TLS for integration traffic and protects hosted endpoints at the Cloudflare edge. This page covers that baseline and the connectivity options by deployment model.
 
 ## Reviewer focus
 
@@ -23,7 +23,7 @@ Network Security describes the integration network baseline, including TLS, edge
 
 ## Implementation status (March 5, 2026)
 
-Hosted APIs are exposed through controlled public endpoints behind Cloudflare edge protections. Self-hosted deployments are customer-controlled for perimeter and routing policy.
+Tero exposes hosted APIs through controlled public endpoints behind Cloudflare edge protections. Self-hosted deployments are customer-controlled for perimeter and routing policy.
 
 ## Network path diagram
 

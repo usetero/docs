@@ -15,32 +15,28 @@ This is the most common enforcement method. Most [policy categories](/policies/c
 
 ## How it works
 
-[Tero Edge](/edge) runs in your infrastructure as a proxy. It periodically syncs with the Tero control plane to fetch policies and applies them to matching telemetry as it passes through.
+[Tero Edge](/edge) runs in your infrastructure as a proxy. It syncs with the Tero control plane on a fixed interval to fetch policies and applies them to matching telemetry as it passes through.
 
-<Tabs>
-  <Tab title="Datadog">
-    <Frame>
-      <img src="/images/how-it-works-datadog-4-in-infrastructure.svg" alt="Enforce at edge with Datadog" />
-    </Frame>
-  </Tab>
-  <Tab title="Splunk">
-    <Frame>
-      <img src="/images/how-it-works-splunk-4-in-infrastructure.svg" alt="Enforce at edge with Splunk" />
-    </Frame>
-  </Tab>
-  <Tab title="OpenTelemetry">
-    <Frame>
-      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="Enforce at edge with OpenTelemetry" />
-    </Frame>
-  </Tab>
-</Tabs>
+```mermaid
+flowchart LR
+    Apps["Applications and agents"] -->|"telemetry"| Edge["Tero Edge"]
+    Control["Tero control plane"] -. "policy sync" .-> Edge
+    Edge -->|"kept and transformed telemetry"| Provider["Observability provider"]
+    Edge -. "drop, sample, redact" .-> Filtered["Filtered telemetry"]
+
+    style Apps fill:#262626,stroke:#262626,color:#fafafa
+    style Edge fill:#00855c,stroke:#006b49,color:#fafafa
+    style Control fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style Provider fill:#262626,stroke:#262626,color:#fafafa
+    style Filtered fill:#d1fae5,stroke:#10b981,color:#065f46
+```
 
 ## Setup
 
 Deploy the proxy alongside your existing telemetry pipeline:
 
 <CardGroup cols={2}>
-  <Card title="Datadog Agent" icon="dog" href="/integrations/datadog-agent">
+  <Card title="Datadog" icon="dog" href="/edge/distributions/datadog">
     Deploy alongside the Datadog Agent on Kubernetes.
   </Card>
   <Card title="OpenTelemetry Collector" icon="circle-nodes" href="/edge/distributions/otlp">
@@ -70,7 +66,7 @@ log:
 
 On the next policy sync, Edge begins dropping logs that match: requests to `checkout-api` on health check paths with status code `200`. Failed health checks (non-200) still flow through since those have debugging value.
 
-In your data quality dashboard, the `checkout-api` health check volume drops after Edge reports filtered telemetry. If something goes wrong, disable the policy and it's removed on the next sync. Logs flow normally again.
+In your data quality dashboard, the `checkout-api` health check volume drops after Edge reports filtered telemetry. If something goes wrong, disable the policy and Edge removes it on the next sync. Logs flow normally again.
 
 ## When to use
 
@@ -78,5 +74,5 @@ Enforce at edge works best when:
 
 - You want impact on the next Edge sync without code changes
 - The waste is infrastructure noise (health checks, bot traffic, tool metadata)
-- You need to reduce costs quickly while planning a permanent fix
-- You want to block temporarily and revert on a later sync
+- You need to reduce costs while planning a permanent fix
+- You want a temporary block you can revert on a later sync
