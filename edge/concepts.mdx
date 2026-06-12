@@ -10,12 +10,25 @@ Edge receives telemetry, evaluates policies, applies the resulting action, and f
 
 The important idea is that Edge is not a sequential processor chain. Policies evaluate independently against the original telemetry. Matching policies contribute actions, and Edge resolves the final keep and transform result.
 
-```text
-Telemetry -> Match policies -> Keep decision -> Transforms -> Upstream
-                 |                |              |
-                 |                |              +-- remove, redact, rename, add
-                 |                +-- keep, drop, sample, rate-limit
-                 +-- exact, regex, exists, negated matches
+```mermaid
+flowchart LR
+    Telemetry[Telemetry] --> Match[Match policies]
+    Match --> Keep[Keep decision]
+    Keep --> Transform[Transforms]
+    Transform --> Upstream[Upstream]
+
+    Match -. uses .-> Matchers[exact, regex, exists, negated matches]
+    Keep -. resolves .-> KeepActions[keep, drop, sample, rate-limit]
+    Transform -. applies .-> TransformActions[remove, redact, rename, add]
+
+    style Telemetry fill:#262626,stroke:#262626,color:#fafafa
+    style Match fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style Keep fill:#00855c,stroke:#006b49,color:#fafafa
+    style Transform fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style Upstream fill:#262626,stroke:#262626,color:#fafafa
+    style Matchers fill:#d1fae5,stroke:#10b981,color:#065f46
+    style KeepActions fill:#d1fae5,stroke:#10b981,color:#065f46
+    style TransformActions fill:#d1fae5,stroke:#10b981,color:#065f46
 ```
 
 ## Policies

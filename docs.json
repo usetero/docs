@@ -85,23 +85,7 @@
               {
                 "group": "Observability Platforms",
                 "icon": "cloud",
-                "pages": ["integrations/datadog", "integrations/splunk"]
-              },
-              {
-                "group": "Infrastructure",
-                "icon": "server",
-                "pages": [
-                  "integrations/datadog-agent",
-                  "integrations/otel-collector",
-                  "integrations/prometheus",
-                  "integrations/datadog-lambda-extension",
-                  "integrations/datadog-lambda-forwarder"
-                ]
-              },
-              {
-                "group": "Code",
-                "icon": "code",
-                "pages": ["integrations/github"]
+                "pages": ["integrations/datadog"]
               }
             ]
           },

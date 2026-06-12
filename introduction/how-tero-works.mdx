@@ -43,16 +43,17 @@ Tero also shows provenance. A reviewer can see whether a recommendation came fro
 id: issue-detail-evidence-policy
 priority: required
 appRoute: /issues
-viewport: desktop
-state: open issue selected with evidence feed and recommended policy visible
+viewport: mobile
+selector: article[aria-label^="Issue"] [class*="bg-warning/5"]
+state: mobile issue detail with recommended policy card visible
 output: /images/screenshots/introduction/issue-detail-evidence-policy.png
-caption: Issue detail connects evidence to the recommended policy.
-purpose: Shows the review surface that links a finding to a concrete action.
+caption: The recommended policy card connects evidence to a concrete action.
+purpose: Shows the policy recommendation without the surrounding issue list or filters.
 */}
 
 {/* screenshot-generated id: issue-detail-evidence-policy */}
 <Frame>
-  <img src="/images/screenshots/introduction/issue-detail-evidence-policy.png" alt="Issue detail connects evidence to the recommended policy." />
+  <img src="/images/screenshots/introduction/issue-detail-evidence-policy.png" alt="The recommended policy card connects evidence to a concrete action." />
 </Frame>
 {/* /screenshot-generated */}
 

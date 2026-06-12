@@ -12,10 +12,16 @@ iconType: "duotone"
 
 Edge sits between telemetry sources and destinations:
 
-```text
-Applications and agents -> Edge -> Observability provider
-                            ^
-                         Policies
+```mermaid
+flowchart LR
+    Sources[Applications and agents] --> Edge[Tero Edge]
+    Edge --> Provider[Observability provider]
+    Policies[Policies] -. sync .-> Edge
+
+    style Sources fill:#262626,stroke:#262626,color:#fafafa
+    style Edge fill:#00855c,stroke:#006b49,color:#fafafa
+    style Provider fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style Policies fill:#d1fae5,stroke:#10b981,color:#065f46
 ```
 
 Use Edge when a policy should run before telemetry leaves your network. Common policy actions include dropping low-value logs, sampling high-volume events, redacting sensitive values, and transforming fields into a cleaner shape.
@@ -26,7 +32,7 @@ Tero owns policy review, state, and impact. Edge owns runtime execution for the 
 
 That separation matters. Reviewers can inspect issue evidence and approve policy changes in Tero. Edge receives the policy set, evaluates incoming telemetry, and forwards the telemetry that remains after policy execution.
 
-Edge does not replace your observability provider. It changes what reaches the provider.
+**Edge does not replace your observability provider**. It changes what reaches the provider.
 
 ## When to use Edge
 

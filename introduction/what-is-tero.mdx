@@ -5,7 +5,9 @@ icon: "robot"
 iconType: "duotone"
 ---
 
-After you connect your observability stack, Tero shows the state of your telemetry estate: what exists, which issues need review, which policies can fix them, where those policies run, and what impact they have.
+Tero shows the state of your telemetry estate: what exists, which issues need review, which policies can fix them, where those policies run, and what impact they have.
+
+**Tero does not replace your observability provider**. Datadog, Splunk, collectors, and pipelines remain the systems where telemetry lives. Tero sits above them as the control layer.
 
 {/* screenshot-suggestion
 id: issues-work-queue
@@ -34,8 +36,6 @@ In practice, you use Tero this way:
 2. [Policies](/policies): you review the policy that would address the issue.
 3. Runtime: Tero shows where the policy runs, including provider configuration and [Edge instances](/edge/overview).
 4. Impact: Tero measures whether the issue, cost, or compliance exposure changed after action.
-
-Tero does not replace your observability provider. Datadog, Splunk, collectors, repositories, and Edge remain the systems where telemetry lives and changes run. Tero sits above them as the control layer between evidence and action.
 
 ## Why telemetry needs control
 

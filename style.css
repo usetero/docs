@@ -294,6 +294,47 @@ button,
   background: var(--tero-danger-soft);
 }
 
+.mermaid,
+[class*="mermaid"] {
+  color: var(--tero-ink);
+}
+
+.mermaid svg,
+[class*="mermaid"] svg,
+svg[id^="mermaid-"] {
+  max-width: 100%;
+}
+
+:is(svg[id^="mermaid-"], .mermaid svg, [class*="mermaid"] svg)
+  .node:has(
+    :is(rect, polygon, path, circle, ellipse):is(
+        [style*="fill:#262626"],
+        [style*="fill:#0e2b22"],
+        [style*="fill:#00855c"],
+        [style*="fill:#10b981"],
+        [style*="fill:#059669"],
+        [style*="fill:#632ca6"],
+        [style*="fill:#0ea5e9"]
+      )
+  )
+  :is(text, .nodeLabel, .nodeLabel *) {
+  color: #fafafa !important;
+  fill: #fafafa !important;
+}
+
+:is(svg[id^="mermaid-"], .mermaid svg, [class*="mermaid"] svg)
+  .node:has(
+    :is(rect, polygon, path, circle, ellipse):is(
+        [style*="fill:#d1fae5"],
+        [style*="fill:#ccfbf1"],
+        [style*="fill:#ecfdf5"]
+      )
+  )
+  :is(text, .nodeLabel, .nodeLabel *) {
+  color: #065f46 !important;
+  fill: #065f46 !important;
+}
+
 img[src*="tero-hero"],
 img[src*="edge-hero"],
 img[src*="trust-hero"] {
