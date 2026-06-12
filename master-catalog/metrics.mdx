@@ -1,91 +1,32 @@
 ---
 title: "Metrics"
-description: "What Tero knows about your metrics"
+description: "Metric policy context for accounts that expose it"
 icon: "chart-line"
 iconType: "duotone"
 ---
 
-Tero discovers metrics from your [integrations](/integrations) and builds understanding of what each one measures and whether it's worth keeping.
+Metrics are not a primary catalog surface in the current Tero navigation.
 
-## Example
+Use this page only when your Tero account exposes metric policy context or when you are reviewing a policy category that refers to metric tags.
 
-Here's a raw metric:
+## Current scope
 
-```yaml
-name: http_request_duration_seconds
-type: histogram
-tags:
-  service: checkout
-  method: POST
-  endpoint: /api/orders
-  status_code: 200
-  instance_id: i-0a1b2c3d4e5f
-```
+The current Tero experience is log-oriented: [Issues](/issues/overview), [Policies](/policies), [Services](/master-catalog/services), [Log events](/master-catalog/log-events), log ingestion, Cost, Compliance, Checks, and Edge runtime state.
 
-Tero turns it into a metric with context:
+Tero may still refer to metric context in policy categories such as high-cardinality tags. In those cases, review the issue evidence and policy spec rather than looking for a primary Metrics screen.
 
-```yaml
-name: http_request_duration_seconds
-service: checkout
-type: histogram
-description: Measures HTTP request latency for the checkout service.
+## Metric policy facts
 
-tags:
-  - name: method
-    status: keep
-  - name: endpoint
-    status: keep
-  - name: status_code
-    status: keep
-  - name: instance_id
-    status: drop
-    reason: High cardinality, no query value. Use service tag instead.
-```
+Metric-related policies usually concern tag cardinality or metric volume. A review should identify:
 
-Tero identifies which tags are useful and which are causing cardinality problems.
+- Metric name
+- Producing service
+- Tags involved in the finding
+- Current action, such as dropping a tag or filtering a metric
+- Runtime path that applies the policy
 
-<Expandable title="Fields">
-  <ResponseField name="name" type="string">
-    The metric name as it appears in your telemetry.
-  </ResponseField>
-  <ResponseField name="description" type="string">
-    What this metric measures and when it matters.
-  </ResponseField>
-  <ResponseField name="service" type="string">
-    The service that produces this metric.
-  </ResponseField>
-  <ResponseField name="type" type="string">
-    Counter, gauge, histogram, or summary.
-  </ResponseField>
-  <ResponseField name="tags" type="array">
-    Dimensions that segment the metric, with recommendations for normalization or removal.
-  </ResponseField>
-</Expandable>
+## Related pages
 
-## Exploring metrics
-
-Open any metric to see what Tero learned: description, type, tags, classification reasoning. Browse by service or search across all metrics.
-
-See which tags are flagged as problems, which services produce the metric, how it connects to the broader system.
-
-## Using in chat
-
-Reference a metric with `@` to focus your questions:
-
-```
-@http_request_duration_seconds why is p99 latency elevated?
-@kafka_consumer_lag which services are affected?
-@error_rate what changed in the last hour?
-```
-
-Tero pulls in the metric's context: what it measures, which service owns it, related log events. It answers your question with that full picture.
-
-## Refining metrics
-
-Tero infers what metrics measure, but you can refine:
-
-- **Edit descriptions** to clarify what the metric represents
-- **Reclassify** metrics that Tero misjudged
-- **Confirm tag recommendations** to normalize or drop problematic tags
-
-Every refinement improves the catalog.
+- [Issues](/issues/overview)
+- [Policies](/policies)
+- [High-cardinality tags](/policies/categories/high-cardinality-tags)

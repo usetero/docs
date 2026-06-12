@@ -1,0 +1,46 @@
+---
+title: "Evidence"
+description: "What Tero shows before it recommends action"
+icon: "files"
+iconType: "duotone"
+---
+
+Evidence is the data Tero shows to support an issue and its recommended action.
+
+Use this page as a lookup guide while reviewing an issue.
+
+## Evidence types
+
+| Evidence | What it tells you | Where to inspect it |
+| -------- | ----------------- | ------------------- |
+| Log events | Which grouped log patterns contributed to the issue | Issue detail, [Log events](/master-catalog/log-events) |
+| Representative logs | Example records that match the finding | Issue detail |
+| Fields | Attributes involved in duplication, sensitivity, malformed data, or payload size | Issue detail, log event detail |
+| Volume | How often the affected telemetry appears | Issue detail, Log events, Log ingestion |
+| Cost | Estimated spend tied to the affected log volume | Cost lane, issue detail |
+| Compliance exposure | Sensitive or regulated data detected in telemetry | Compliance lane, issue detail |
+| Service ownership | Which service or team owns the affected telemetry | Issue detail, [Services](/master-catalog/services) |
+| Runtime state | Whether a policy is deployed or failing in an execution surface | Policy detail, Edge instances |
+
+## Provenance
+
+Provenance explains where a finding came from. Tero can derive issue context from checks, catalog data, provider inventory, runtime state, or policy activity.
+
+Provenance matters because reviewers need to distinguish observed facts from recommended action. A check can identify a problem. A catalog relationship can explain ownership. A policy recommendation can propose the response.
+
+## Checks
+
+Checks are detector records behind many issues. The Checks screen shows detector inventory for telemetry waste, quality gaps, and policy opportunities across the log estate.
+
+Checks can be filtered by **All**, **Cost**, or **Compliance**. Each check can show related open issues and last-run state.
+
+## Evidence and policy review
+
+Evidence should answer four review questions:
+
+1. Did Tero identify the right telemetry?
+2. Does the issue matter for cost, compliance, or signal quality?
+3. Would the recommended policy make the right change?
+4. Can Tero show where the policy runs and what changed after it ran?
+
+If any answer is unclear, keep the issue open and inspect the related service, log event, policy, or Edge instance before acting.

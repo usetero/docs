@@ -1,89 +1,66 @@
 ---
-title: "Management"
-description: "Where policies live and how they sync"
+title: "Policy management"
+description: "State, versioning, sync, and runtime deployment"
 icon: "folder-tree"
 iconType: "duotone"
 ---
 
-Policies aren't hidden in a vendor UI. They sync to where your team can see them.
+Policy management covers what happens after Tero recommends or creates a policy: review state, versioning, sync, deployment, and impact.
 
-## Where policies live
+## Policy state
 
-Three options, from simplest to most distributed:
+The Tero control plane owns durable policy state. Tero presents that state so reviewers can inspect the policy, its source, linked issue, spec, deployments, and recent activity.
 
-### Tero
+Current policy statuses:
 
-Policies live in Tero. You review and approve them in the interface. This is the default and the easiest way to start.
+| Status | Meaning |
+| ------ | ------- |
+| **Draft** | The policy exists for review or completion. |
+| **Active** | The policy is enabled where it should run. |
+| **Disabled** | The policy remains visible but is not intended to affect telemetry. |
 
-Good for: Getting started, small teams, centralized control.
+## Policy source
 
-### Central repository
+Policy source tells reviewers where the policy came from. A policy may originate from a Tero recommendation, a provider import, a repository sync, or another configured workflow.
 
-Policies sync to a dedicated Git repository. The platform team maintains it. Changes go through pull requests. You get version history, code review, and audit trails.
+Use source together with the linked issue. Source explains origin. The linked issue explains evidence and intent.
 
-```
-policies/
-├── foundation/
-│   ├── drop-debug-logs.yaml
-│   ├── drop-health-checks.yaml
-│   └── redact-pii.yaml
-└── generated/
-    ├── checkout-api/
-    │   ├── drop-cart-item-added.yaml
-    │   └── sample-order-validated.yaml
-    └── user-service/
-        └── drop-session-heartbeat.yaml
-```
+## Versioning and repositories
 
-Good for: Platform teams, compliance requirements, audit trails.
+Teams can use GitHub to review policy changes, open pull requests, create issues, and sync policies to repositories.
 
-### Service repositories
+Repository sync is useful when engineers need policy review in the same workflow they use for service code. A synced policy can live in a central policy repository or near the service that owns the telemetry.
 
-Policies sync to each service's repository in a `.tero/` folder. Engineers see what happens to their service's data. Changes come via PR, either from Tero or from engineers directly.
+Use the [GitHub integration](/integrations/github) when you want repository-based review, audit history, or service-owner workflow.
 
-```
-checkout-api/
-├── src/
-├── tests/
-├── package.json
-└── .tero/
-    └── policies/
-        ├── drop-cart-item-added.yaml
-        └── sample-order-validated.yaml
-```
+## Runtime deployment
 
-The `.tero/` folder pattern follows what engineers already know: `.github/`, `.vscode/`, `.eslintrc`. Configuration that lives with the code.
+A policy has value when it reaches the place you chose to run it. Tero can show deployment state through policy detail and runtime surfaces such as Edge instances.
 
-When Tero drops or transforms data from a service, the policy is right there for engineers to see. They can review what's happening to their telemetry, understand why a policy exists, propose changes via PR, or override if something's wrong.
+Common deployment targets include:
 
-Changes flow both ways. Tero proposes policies. Engineers can accept, modify, or reject them. If an engineer edits a policy directly in the repo, Tero picks up the change.
+- Provider configuration, such as Datadog exclusion filters
+- Edge instances running in your infrastructure
+- Collector or pipeline integration paths
+- Repository workflows that change instrumentation or configuration
 
-Good for: Distributed ownership, no surprises, service teams own their policies.
+Use the **Deployments** tab on policy detail to inspect where a policy runs and whether the runtime reports policy state.
 
-## How sync works
+## Provider inventory and imports
 
-Git is the source of truth. Tero proposes, you approve, Git stores, Tero enforces.
+The Policies workspace can show Datadog exclusion filters alongside Tero policies. This helps you inspect customer-managed filters, evaluate import readiness, preview the policy branches Tero would create, and see imported policies.
 
-1. Tero detects an issue and generates a policy
-2. Tero opens a PR to add the policy to your repo
-3. You review, edit if needed, merge
-4. Tero enforces what's in the repo
+Datadog filter conversion states can include **Proposal ready**, **Policy active**, **Policy verified**, **Rejected**, **Unsupported**, **Sample key required**, **Blocked**, and failure states.
 
-If you edit a policy directly in the repo, Tero enforces the updated version. If Tero detects something new, it opens another PR. Same GitOps workflow you use for everything else.
+## Impact
 
-## Version control
+Policy management continues through impact. Review the linked issue, policy activity, and runtime state after deployment.
 
-Every policy change is tracked:
+Use these checks:
 
-- **Who** approved or modified it
-- **When** the change happened
-- **Why** (linked to the detection that triggered it)
-- **What** the previous version looked like
+- The issue moved from **Open** or **In progress** toward **Resolved**.
+- The policy remains **Active** in the expected deployment target.
+- Edge or provider deployment state reports no policy errors.
+- Cost, compliance exposure, or matching volume moved in the expected direction.
 
-Roll back by reverting the commit. The old policy syncs back to enforcement.
-
-## Getting started
-
-Start with policies in Tero. As you build confidence, move to a central repo. When you're ready for distributed ownership, sync to service repos.
-
-You don't have to choose one. Foundation policies can live in a central repo while generated policies sync to each service.
+If impact does not match the expected result, reopen the issue context and inspect evidence, spec, and runtime state together.

@@ -1,87 +1,66 @@
 ---
-title: "Log Events"
-description: "How Tero groups raw logs into actionable patterns"
+title: "Log events"
+description: "Grouped log patterns used in issue evidence"
 icon: "file-lines"
 iconType: "duotone"
 ---
 
-A log event isn't a log line. It's a pattern that represents thousands or millions of logs that mean the same thing. Tero discovers these patterns from your [integrations](/integrations) and adds them to the catalog.
+A log event is a grouped pattern of matching log records.
 
-## Example
+Tero uses log events to make high-volume telemetry reviewable. Instead of asking you to inspect raw logs one by one, Tero groups records that share a stable pattern and shows the service, severity, volume, cost, policies, and related issues.
 
-Here's a raw log:
+{/* screenshot-suggestion
+id: log-events-catalog
+priority: useful
+appRoute: /log-events
+viewport: desktop
+state: log events list loaded with volume, cost, service, severity, and updated columns visible
+output: /images/screenshots/master-catalog/log-events-catalog.png
+caption: Log events group raw logs into patterns that can be reviewed.
+purpose: Shows the catalog object behind many issue evidence panels.
+*/}
 
-```yaml
-body: "Payment declined: insufficient funds"
-severity: ERROR
-attributes:
-  order_id: "ORD-12345"
-  error_code: "card_declined"
-  decline_reason: "insufficient_funds"
-```
+{/* screenshot-generated id: log-events-catalog */}
+<Frame>
+  <img src="/images/screenshots/master-catalog/log-events-catalog.png" alt="Log events group raw logs into patterns that can be reviewed." />
+</Frame>
+{/* /screenshot-generated */}
 
-Tero turns it into a log event:
+## Log event list
 
-```yaml
-name: card_declined_insufficient_funds
-service: checkout
-description: A card payment was declined due to insufficient funds.
+The Log events screen can show:
 
-matchers:
-  - field_type: log_attribute
-    field_name: error_code
-    match_type: exact
-    match_value: "card_declined"
-  - field_type: log_attribute
-    field_name: decline_reason
-    match_type: exact
-    match_value: "insufficient_funds"
-```
+| Field | Description |
+| ----- | ----------- |
+| Log event | The grouped log pattern name or description. |
+| Service | Service that emits the event. |
+| Severity | Observed severity for matching logs. |
+| Event rate | How often matching logs arrive. |
+| Volume | Total observed log volume over the selected window. |
+| Cost | Estimated annualized cost for the event. |
+| Updated | Most recent update time. |
 
-These matchers identify 47,000 logs. Each log has different order IDs, timestamps, amounts. But they all match the same attributes: `error_code: card_declined` and `decline_reason: insufficient_funds`. That's the event.
+Datadog-scoped accounts can inspect 24-hour, 7-day, and 30-day log-volume windows.
 
-<Expandable title="Fields">
-  <ResponseField name="name" type="string">
-    A descriptive identifier like `card_declined_insufficient_funds` or `kafka_offset_committed`. Unique within the service.
-  </ResponseField>
-  <ResponseField name="description" type="string">
-    What this event represents and when it fires.
-  </ResponseField>
-  <ResponseField name="service" type="string">
-    The service that produces this event.
-  </ResponseField>
-  <ResponseField name="matchers" type="array">
-    Rules that identify which raw logs belong to this event. Combinations of body patterns and attribute conditions.
-  </ResponseField>
-  <ResponseField name="attributes" type="array">
-    Fields that vary per instance: order IDs, user IDs, amounts, durations. The data inside each log.
-  </ResponseField>
-</Expandable>
+## Log event detail
 
-## Exploring log events
+Log event detail pages show the event in context. Current detail tabs include overview, policies, and issues.
 
-Open any log event to see what Tero learned: the description, matchers, sample logs, classification reasoning. Browse by service or search across all events.
+Use the detail view to inspect:
 
-Drill into the matchers to understand which logs this event captures. See sample instances to verify the pattern makes sense.
+- The service that emits the event
+- Volume and cost context
+- Policies attached to the event
+- Issues related to the event
 
-## Using in chat
+## Relationship to issues
 
-Reference a log event with `@` to focus your questions:
+Issues use log events as evidence when a finding concerns a recurring log pattern. A cost issue may point to a high-volume event. A compliance issue may point to an event that carries sensitive fields. A policy recommendation may match a specific log event so the runtime can drop, sample, redact, or transform it.
 
-```
-@payment_declined_insufficient_funds how often does this happen?
-@database_connection_timeout what services are affected?
-@order_created what's the typical latency?
-```
+When you review an issue, open the related log event if you need to confirm the pattern, service, volume, or attached policies.
 
-Tero pulls in the event's context: which service owns it, what attributes it has, how it relates to other events. It answers your question with that full picture.
+## Related pages
 
-## Refining log events
-
-Tero classifies events automatically, but you know your systems better:
-
-- **Reclassify** events that Tero misjudged. That "debug" log might matter.
-- **Edit descriptions** to add context Tero couldn't infer.
-- **Adjust matchers** if an event is capturing the wrong logs.
-
-Every correction improves the catalog.
+- [Evidence](/issues/evidence)
+- [Services](/master-catalog/services)
+- [Policies](/policies)

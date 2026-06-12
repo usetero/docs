@@ -1,0 +1,76 @@
+---
+title: "Review an issue"
+description: "Decide what to do with a telemetry finding"
+icon: "clipboard-check"
+iconType: "duotone"
+---
+
+This guide shows you how to review an open issue and choose the next action.
+
+## Prerequisites
+
+- A Tero account with an observability integration connected
+- An open issue in the Issues workspace
+- Permission to review issues or deploy policies for the affected service
+
+## Open the issue
+
+Go to **Issues** and select an issue from the work queue.
+
+Use filters when the queue is large. Filter by status, severity, service, team, domain, check, or linked issue. Cost and Compliance views narrow the queue to those domains.
+
+## Check the summary
+
+Read the header summary first. Confirm the affected service, issue category, severity, and current status.
+
+If the issue targets a service you do not own, use the service or team fields to find the right reviewer before taking action.
+
+## Review the evidence
+
+Read the evidence sections before acting.
+
+Depending on the issue, Tero may show representative log events, affected fields, related checks, volume, cost, compliance exposure, or timeline entries. Open related services or log events when you need more catalog context.
+
+{/* screenshot-suggestion
+id: review-issue-evidence
+priority: required
+appRoute: /issues
+viewport: desktop
+state: selected compliance issue with evidence and policy card visible
+output: /images/screenshots/issues/review-issue-evidence.png
+caption: Evidence gives reviewers the facts behind a recommended policy.
+purpose: Supports the core review step before action.
+*/}
+
+{/* screenshot-generated id: review-issue-evidence */}
+<Frame>
+  <img src="/images/screenshots/issues/review-issue-evidence.png" alt="Evidence gives reviewers the facts behind a recommended policy." />
+</Frame>
+{/* /screenshot-generated */}
+
+## Inspect the policy card
+
+If Tero recommends a policy, inspect the policy card. Confirm:
+
+- What the policy matches
+- Which action it takes
+- Which service or log event it affects
+- Whether the policy already exists or needs deployment
+
+If a policy is active, open the policy detail page to review the overview, deployments, and spec.
+
+## Choose the next action
+
+Use the issue actions after you review the evidence.
+
+Choose **Deploy policy** when the recommendation is correct and your team wants Tero to apply it where the policy should run.
+
+Choose **Ignore** when the issue is expected, accepted, or outside the scope Tero should act on.
+
+Continue investigation when the evidence is incomplete, the service owner disagrees, or the policy action needs a code or provider change outside the current workflow.
+
+## Verify the result
+
+After deployment, return to the issue or open the linked policy. Check that the policy status, deployment state, and activity match the action you took.
+
+If deployment fails, use the issue state and policy detail to find where the failure happened. For Edge-related failures, inspect [Edge instances](/edge/overview) and the relevant Edge detail screen.

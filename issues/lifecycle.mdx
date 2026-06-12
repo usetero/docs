@@ -1,0 +1,59 @@
+---
+title: "Issue lifecycle"
+description: "Statuses, views, and actions for issues"
+icon: "repeat"
+iconType: "duotone"
+---
+
+This reference lists the issue states and controls shown in Tero.
+
+## Statuses
+
+| Status | Meaning |
+| ------ | ------- |
+| **Open** | Tero found the issue and it needs review. |
+| **In progress** | Policy deployment or remediation work is underway. |
+| **Resolved** | Tero considers the issue addressed. |
+| **Ignored** | A reviewer accepted or dismissed the issue without remediation. |
+
+## Domains
+
+| Domain | Meaning |
+| ------ | ------- |
+| **Cost** | The issue affects log volume, spend, or recoverable savings. |
+| **Compliance** | The issue affects sensitive data exposure or compliance posture. |
+
+## Severities
+
+| Severity | Meaning |
+| -------- | ------- |
+| **High** | Review first. The issue has material cost, compliance, or operational impact. |
+| **Medium** | Review after high-severity issues or when the affected service is in scope. |
+| **Low** | Review when cleaning up backlog or validating a detector. |
+
+## Queue controls
+
+The Issues workspace supports:
+
+- Search by issue text
+- Filter by severity, service, team, domain, check, linked issue, and status
+- Views for **All**, **Cost**, and **Compliance**
+- Sort controls in the queue
+- Loading additional issue rows
+
+## Detail actions
+
+Issue detail can show these actions:
+
+| Action | Meaning |
+| ------ | ------- |
+| **Deploy policy** | Create or roll out the recommended policy where it should run. |
+| **Ignore** | Close the issue without remediation. |
+| **Retry detail** | Reload issue detail after a failed request. |
+| **Previous issue** / **Next issue** | Move through the queue without returning to the list. |
+
+## Remediation states
+
+Policy-related issues can show remediation states such as **Ready to deploy**, **Creating policy**, **Rolling out policy**, **Policy active**, **Policy revoked**, **Policy rollout failed**, and **Resolution verified**.
+
+Use [Review an issue](/issues/review-an-issue) for the review workflow.

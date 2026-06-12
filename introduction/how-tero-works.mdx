@@ -1,67 +1,92 @@
 ---
 title: "How Tero works"
 sidebarTitle: "How Tero works"
-description: "Connect, build the catalog, review policies, enforce"
+description: "From issue evidence to policy runtime impact"
 icon: "gears"
 iconType: "duotone"
 ---
 
-## 1. Connect
+Tero turns telemetry findings into reviewable policies and tracks what happens after those policies run.
 
+Tero presents the control loop. The control plane owns durable evidence, recommendations, policy state, catalog state, runtime state, and impact. Your connected systems remain the source of record for telemetry, provider configuration, repositories, and runtime execution.
+
+## 1. Tero finds issues
+
+Tero starts with issues: cost waste, compliance exposure, signal-quality problems, and checks that found policy opportunities. The Issues workspace shows each finding with priority, category, affected service, status, and the next review step.
+
+{/* screenshot-suggestion
+id: issues-filtered-by-cost
+priority: useful
+appRoute: /issues
+viewport: desktop
+state: issues list filtered to cost issues with high-priority items visible
+output: /images/screenshots/introduction/issues-filtered-by-cost.png
+caption: Issues show the work queue for telemetry control.
+purpose: Shows that Tero starts from reviewable findings, not from a blank policy editor.
+*/}
+
+{/* screenshot-generated id: issues-filtered-by-cost */}
 <Frame>
-  <img src="/images/how-it-works-generic-1.svg" alt="Connect to your observability stack" />
+  <img src="/images/screenshots/introduction/issues-filtered-by-cost.png" alt="Issues show the work queue for telemetry control." />
 </Frame>
+{/* /screenshot-generated */}
 
-Tero connects to your observability stack via API: Datadog, Splunk, your collectors. Read-only by default. No agents, code changes, or infrastructure changes required.
+Cost and Compliance lanes give you another view of the same work. They group affected services and link back to the issues that explain the problem.
 
-## 2. Build the Master Catalog
+## 2. Evidence supports the recommendation
 
+Issue detail explains what Tero found, why the issue matters, and which evidence supports the finding. Evidence can include representative log events, field analysis, related checks, affected services, volume, cost, or compliance exposure.
+
+Tero also shows provenance. A reviewer can see whether a recommendation came from a check, catalog context, provider inventory, or runtime state. This keeps review grounded in facts from systems you already operate.
+
+{/* screenshot-suggestion
+id: issue-detail-evidence-policy
+priority: required
+appRoute: /issues
+viewport: desktop
+state: open issue selected with evidence feed and recommended policy visible
+output: /images/screenshots/introduction/issue-detail-evidence-policy.png
+caption: Issue detail connects evidence to the recommended policy.
+purpose: Shows the review surface that links a finding to a concrete action.
+*/}
+
+{/* screenshot-generated id: issue-detail-evidence-policy */}
 <Frame>
-  <img src="/images/how-it-works-generic-2.svg" alt="Build the Master Catalog from your data" />
+  <img src="/images/screenshots/introduction/issue-detail-evidence-policy.png" alt="Issue detail connects evidence to the recommended policy." />
 </Frame>
+{/* /screenshot-generated */}
 
-Tero analyzes your telemetry and builds the [Master Catalog](/master-catalog). Large volumes of raw logs compress into distinct log events. Tero tracks what each one represents, which service produces it, and whether anyone queries it. Services, dependencies, and failure scenarios get connected into a graph.
+## 3. A policy captures the change
 
-This is how Tero knows what's waste and what matters.
+When a policy can address an issue, Tero presents a recommended policy. The policy states what telemetry it matches and what action it takes, such as dropping, sampling, redacting, or transforming matching log events.
 
-## 3. Review policies
+Approved policies appear in the Policies workspace. Policy detail shows identity, source, related issue, activity, spec, and deployments. The spec is reviewable because the policy is the control-plane artifact that other systems execute.
 
+## 4. Runtime surfaces show where policies run
+
+Policies can run through provider configuration, repositories, collectors, or [Tero Edge](/edge/overview). The Edge instances screen shows the runtime side of the loop: live instances, deployed policy counts, policy errors, last-seen state, and correlated issues.
+
+{/* screenshot-suggestion
+id: edge-runtime-policy-state
+priority: useful
+appRoute: /edge
+viewport: desktop
+state: edge instances list loaded with reporting policy counts and policy errors visible
+output: /images/screenshots/introduction/edge-runtime-policy-state.png
+caption: Edge instances show runtime policy state.
+purpose: Shows how Tero connects approved policies to execution surfaces.
+*/}
+
+{/* screenshot-generated id: edge-runtime-policy-state */}
 <Frame>
-  <img src="/images/how-it-works-generic-3.svg" alt="Review and approve policies" />
+  <img src="/images/screenshots/introduction/edge-runtime-policy-state.png" alt="Edge instances show runtime policy state." />
 </Frame>
+{/* /screenshot-generated */}
 
-Tero generates [policies](/policies): specific statements about what's wrong and how to fix it. A field duplicates another field. A log is a health check firing 86,400 times a day. A debug statement shipped to production.
+Tero shows state and review controls. Providers, Git repositories, collectors, and Edge instances perform the production changes.
 
-Policies are organized by [category](/policies/categories): duplicate fields, health checks, accidental debug statements, verbose payloads, PII leakage. You review with examples from your actual data. Approve what you agree with.
+## 5. Impact closes the loop
 
-## 4. Enforce
+After action, Tero tracks impact: issue status, cost movement, compliance exposure, policy activity, and runtime deployment state. If a policy stops matching, fails to deploy, or leaves a related issue open, Tero keeps that visible.
 
-Approved policies get [enforced](/policies/enforcement). You choose where:
-
-<AccordionGroup>
-  <Accordion title="In your provider" defaultOpen>
-    <Frame>
-      <img src="/images/how-it-works-generic-4-in-provider.svg" alt="Configure your provider" />
-    </Frame>
-
-    [Enforce policies in your provider](/policies/enforcement/provider) by configuring exclusion filters, routing rules, or transformations directly via API. This path requires no deployment and can be reversed.
-  </Accordion>
-
-  <Accordion title="In your code">
-    <Frame>
-      <img src="/images/how-it-works-generic-4-in-code.svg" alt="Fix it in your code" />
-    </Frame>
-
-    Enforce policies by [opening PRs](/policies/enforcement/open-prs) to fix instrumentation at the source, or [create tickets](/policies/enforcement/create-tickets) for engineers to handle on their schedule.
-  </Accordion>
-
-  <Accordion title="In your infrastructure">
-    <Frame>
-      <img src="/images/how-it-works-generic-4-in-infrastructure.svg" alt="Execute at the edge" />
-    </Frame>
-
-    [Enforce policies at the edge](/policies/enforcement/edge) before data leaves your network. Edge distributions can replace collectors you already run.
-  </Accordion>
-</AccordionGroup>
-
-Tero monitors for regression. If a problem resurfaces, Tero creates a new policy review so the fix can be restored.
+Tero keeps that loop visible: issues, policies, runtime, impact.

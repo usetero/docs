@@ -1,53 +1,56 @@
 ---
 title: "Master Catalog"
 sidebarTitle: "Overview"
-description: "A unified view of your telemetry"
+description: "The catalog context behind issues and policies"
 icon: "hexagon-nodes"
 iconType: "duotone"
 ---
 
-import { ContextGraph } from '/snippets/context-graph.jsx'
+The Master Catalog is Tero's maintained context for the telemetry estate.
 
-The Master Catalog is Tero's unified view of the observability data you connect: services, log events, metrics, and traces.
+Catalog data helps reviewers understand an issue before they approve a policy. It ties findings to services, log events, ownership, volume, cost, compliance exposure, and related runtime state.
 
-<ContextGraph />
+## Current catalog surfaces
 
-Tero builds the catalog from connected sources, maintains it automatically, and adds semantic context. Tero tracks each piece of data's meaning alongside its format.
-
-## What Tero understands
-
-For each piece of telemetry, Tero builds understanding across four dimensions:
-
-- **Structure.** Fields, types, formats. What the data looks like.
-- **Semantics.** What it means. A `payment_failed` log is a business event with operational meaning.
-- **Relationships.** Which service emits it. What other events correlate with it. Whether it appears in dashboards or alerts.
-- **Usage.** How often it's queried. Whether teams use it. What role it plays during incidents.
-
-This is what makes [policy](/policies) generation possible. Pattern matching can identify formats. Catalog context lets Tero evaluate value.
-
-## What's in the catalog
+Tero exposes catalog context through Services and Log events.
 
 <CardGroup cols={2}>
-  <Card title="Services" icon="circle-nodes" href="/master-catalog/services">
-    Your infrastructure components: what they do, what they depend on, what telemetry they produce.
+  <Card title="Services" icon="box" href="/master-catalog/services">
+    Service-level ownership, status, open issues, log volume, cost, and related log events.
   </Card>
-  <Card title="Log Events" icon="file-lines" href="/master-catalog/log-events">
-    Large volumes of raw logs grouped into distinct patterns with semantic context.
-  </Card>
-  <Card title="Metrics" icon="chart-line" href="/master-catalog/metrics">
-    Named measurements with their tags, cardinality, and usage.
-  </Card>
-  <Card title="Trace Spans" icon="diagram-subtask" href="/master-catalog/trace-spans">
-    The operations that make up your requests.
+  <Card title="Log events" icon="file-lines" href="/master-catalog/log-events">
+    Grouped log patterns with service, severity, event rate, volume, cost, policies, and issues.
   </Card>
 </CardGroup>
 
-## How the catalog builds
+Tero also presents catalog-backed lanes:
 
-Connect an [integration](/integrations) (Datadog, Splunk, your OTel collectors) and Tero discovers what's there. Tero catalogs services, identifies and groups log events, maps metrics, and forms relationships between them. You can drill into the catalog to see what Tero found and how it is connected.
+- **Cost** shows service-level log cost and recoverable savings.
+- **Compliance** shows affected services, exposed fields, and affected log events.
+- **Checks** shows detector inventory and related issues.
+- **Log ingestion** shows Datadog ingestion analysis, index breakdown, migration candidates, and projected savings.
 
-The catalog updates as Tero sees new telemetry. New services, log formats, and errors get discovered and added automatically. The goal is broad coverage with little manual maintenance.
+## How catalog context helps review
 
-Tero enriches what it finds. It detects that a service is a Rails app and adds known failure patterns. It identifies common error signatures. It notices which events correlate during incidents.
+A reviewer needs more than a policy title:
 
-You can refine it too. Correct a misclassification and Tero learns. Add context it could not infer. The catalog improves over time.
+- Which service owns the telemetry?
+- Which log event pattern is affected?
+- How much volume or cost is involved?
+- Which issue or check produced the recommendation?
+- Which policy or runtime state already exists?
+
+The catalog supplies those facts across Tero. Issues use catalog context to explain findings. Policies link back to issues and services. Edge instances and provider surfaces show whether approved policies run.
+
+## Metrics and traces
+
+Tero is telemetry control, but the current primary surfaces documented here are log-oriented: services, log events, checks, issues, policies, log ingestion, cost, compliance, and Edge runtime state.
+
+Use the Metrics or Trace Spans pages only when your Tero account exposes those surfaces.
+
+## Related pages
+
+- [Services](/master-catalog/services)
+- [Log events](/master-catalog/log-events)
+- [Issues](/issues/overview)
+- [Policies](/policies)

@@ -1,0 +1,70 @@
+---
+title: "Issues"
+sidebarTitle: "Overview"
+description: "The work queue for telemetry control"
+icon: "diamond"
+iconType: "duotone"
+---
+
+Issues are the main entry point for telemetry control in Tero.
+
+An issue is a finding that needs review: cost waste, compliance exposure, signal-quality risk, or a check result that can become a policy action. Tero shows the issue with evidence, provenance, status, severity, affected service, and a recommended next step.
+
+{/* screenshot-suggestion
+id: issues-overview-workspace
+priority: required
+appRoute: /issues?status=open
+viewport: desktop
+state: open issues loaded with filters, queue, and selected issue detail visible
+output: /images/screenshots/issues/issues-overview-workspace.png
+caption: The Issues workspace combines filters, a work queue, and issue detail.
+purpose: Shows the main review surface for telemetry control.
+*/}
+
+{/* screenshot-generated id: issues-overview-workspace */}
+<Frame>
+  <img src="/images/screenshots/issues/issues-overview-workspace.png" alt="The Issues workspace combines filters, a work queue, and issue detail." />
+</Frame>
+{/* /screenshot-generated */}
+
+## How issues fit into review
+
+Tero starts with issues because a policy should answer a specific problem. A reviewer needs to know what Tero found, why it matters, and what evidence supports action.
+
+A typical review goes like this:
+
+1. Open an issue.
+2. Review the evidence and provenance.
+3. Inspect the recommended policy or action.
+4. Deploy, ignore, or continue investigation.
+5. Track policy state, runtime state, and impact.
+
+Cost and Compliance lanes group issues by outcome. Checks show the detector inventory behind many issues. Services and Log events show the catalog context that helps you judge whether the recommendation is right.
+
+## What an issue shows
+
+Issue rows show status, severity, age, title, affected service or team, check type, and domain. The current domains in Tero are **Cost** and **Compliance**.
+
+Issue detail shows the review context:
+
+- A summary of what Tero found
+- A policy card when Tero recommends a policy
+- Related log events or affected fields
+- Evidence and timeline entries
+- Actions such as **Ignore** or **Deploy policy**
+
+Tero can also show an active policy link when a policy already addresses the issue.
+
+## Issue views and filters
+
+Use the Issues workspace to filter by severity, service, team, domain, check, linked issue, and status. The queue supports issue search, status selection, and loading more results.
+
+Use **All** when you want the complete queue. Use **Cost** or **Compliance** when you are reviewing a specific lane.
+
+## Related pages
+
+- [Review an issue](/issues/review-an-issue)
+- [Evidence](/issues/evidence)
+- [Issue lifecycle](/issues/lifecycle)
+- [Policies](/policies)
+- [Checks](/issues/evidence#checks)

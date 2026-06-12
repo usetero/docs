@@ -18,6 +18,16 @@ tasks:
     cmds:
       - pnpm build
 
+  screenshots:
+    desc: "Capture and embed screenshots from screenshot suggestions"
+    cmds:
+      - pnpm screenshots
+
+  screenshots:dry:
+    desc: "List screenshot suggestions without writing files"
+    cmds:
+      - pnpm screenshots:dry
+
   format:
     desc: "Format MDX files"
     cmds:

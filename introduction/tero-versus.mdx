@@ -1,45 +1,47 @@
 ---
 title: "How Tero compares"
 sidebarTitle: "Tero versus"
-description: "Where Tero fits in your stack"
+description: "Where telemetry control fits in your stack"
 icon: "code-compare"
 iconType: "duotone"
 ---
 
-Tero is a control plane. It sits above your existing tools and gives them shared policy, catalog, and enforcement context.
+Tero is a control plane for telemetry policy. It sits above the systems that collect, store, route, and execute telemetry changes.
+
+Tero does three jobs those systems do not own as a single loop: it finds policy-remediable issues, presents evidence for review, and tracks policy runtime impact.
 
 ## Observability platforms
 
-**Datadog, Splunk, New Relic, Grafana**
+Datadog and Splunk store telemetry, run queries, power dashboards, and expose provider-specific controls. Tero connects to them for evidence, catalog context, usage, and provider actions.
 
-These are where your data lives. They store it, query it, visualize it. Tero connects via API and builds understanding on top.
+Your observability provider remains the source of record for its data and configuration. Tero adds a cross-system review layer: which log events create cost or compliance issues, which policy would address them, and whether the change took effect.
 
-Your platform stores the format of your data. Tero adds meaning: which logs matter during incidents, which metrics are not queried, and which telemetry has low value. That understanding becomes policies you can enforce.
+Provider actions stay provider-specific. In Datadog, that can mean exclusion filters or pipelines. In Splunk, that can mean ingest actions. Tero keeps the policy review and impact model consistent across providers.
 
-You can swap platforms, add new ones, or run multiple providers. Tero keeps policies portable across them.
+## Pipelines and collectors
 
-## Pipelines
+Collectors and pipelines move telemetry. They route, buffer, enrich, filter, and forward data to the next destination.
 
-**Cribl, Vector, Fluent Bit, OTel Collector**
+Tero owns the policy control loop above those runtimes. A policy can come from an issue, carry evidence, move through review, and deploy through the runtime your team chooses. The runtime executes the change; Tero tracks policy state and impact.
 
-Pipelines move data. They handle routing, buffering, and basic transforms. When teams use them for data quality at scale, the config model becomes hard to manage: thousands of rules, ordering dependencies, limited portability between tools, and performance that degrades as complexity grows.
-
-Tero uses [policies](/policies) that are atomic and independent. Ten thousand execute as fast as ten. They are portable across runtimes. We're bringing the policy engine to pipelines directly, starting with OTel Collector and Vector, so you can enforce policies where your data already flows.
-
-Tero generates the policies from the [Master Catalog](/master-catalog). You review and approve them. They execute in your pipeline, at the edge, or via your provider's API. Tero maintains the understanding; your stack handles enforcement.
+Use the [Edge](/edge/overview) docs when you want policies to run before telemetry leaves your infrastructure.
 
 ## Cost tools
 
-**CloudZero, Vantage**
+Cost tools show spend. They help you allocate cost by account, service, product line, or team.
 
-Cost tools show what you spend through dashboards, reports, and breakdowns by team or service.
+Tero shows the telemetry issue behind the spend. The Cost lane links service-level log cost to open issues and policy recommendations. The work happens when a reviewer opens the issue, checks the evidence, and approves or rejects the policy.
 
-Tero shows what's wrong with your data and how to fix it. Costs drop when low-value telemetry stops reaching paid storage and indexing paths.
+## Security and compliance tools
 
-## AI SREs
+Security and compliance tools define controls, detect exposure, and support audit work.
 
-Copilots that help debug incidents, answer questions about your systems, and automate runbooks.
+Tero focuses on telemetry policy issues that create compliance exposure, such as sensitive fields in log events. The Compliance lane groups affected services and links into issues with evidence, recommended policy action, and status.
 
-They can help with incidents and operational questions. Estimating waste requires a catalog of what telemetry exists, what it means, and whether teams use it. Answering a question about a slice of data is different from maintaining that catalog.
+Tero should feed your control process. It should not replace the system where your company owns risk acceptance, audit evidence, or security operations.
 
-Tero uses the [Master Catalog](/master-catalog) to answer questions against the telemetry sources you connect.
+## Policy repositories
+
+Git gives policies review, version history, and auditability. Tero can sync policies to repositories when your workflow needs that control.
+
+The policy object still starts from evidence. A repository can store the policy, but Tero keeps the relationship between issue, policy, runtime deployment, and impact visible.

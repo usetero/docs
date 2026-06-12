@@ -12,15 +12,15 @@ Tero connects to Splunk via REST API using an [authentication token](https://doc
   <img src="/images/how-it-works-splunk-2.svg" alt="Understand your data" />
 </Frame>
 
-Tero analyzes your telemetry and builds the [Master Catalog](/master-catalog/overview). Raw logs group into [log events](/master-catalog/log-events). Spans group into [trace span patterns](/master-catalog/trace-spans). Tero tracks what each pattern represents, when it matters, and which service produces it. Tero connects services, metrics, failure scenarios, and dependencies into a graph.
+Tero analyzes log telemetry and builds the [Master Catalog](/master-catalog/overview). Raw logs group into [log events](/master-catalog/log-events). Tero tracks what each pattern represents, when it matters, and which service produces it.
 
-## 3. Ask questions
+## 3. Review issues
 
 <Frame>
-  <img src="/images/how-it-works-splunk-3.svg" alt="Ask questions" />
+  <img src="/images/how-it-works-splunk-3.svg" alt="Review issues" />
 </Frame>
 
-You ask questions, Tero answers. [How policies work](/policies/overview). [Burst protection](/policies/categories/burst-protection). [PII leakage](/policies/categories/pii-leakage).
+Tero shows [issues](/issues/overview) with evidence, recommended policies, and related catalog context.
 
 ## 4. Take action
 
@@ -40,7 +40,7 @@ Once Tero identifies a problem, you decide what to do.
       <img src="/images/how-it-works-splunk-4-in-code.svg" alt="Fix it in your code" />
     </Frame>
 
-    Tero can open a PR for your team to review, expose the policy through MCP so developers can inspect the change, or leave the analysis for your team to implement.
+    Tero can open a PR for your team to review or leave the analysis for your team to implement.
   </Accordion>
 
   <Accordion title="In your infrastructure">

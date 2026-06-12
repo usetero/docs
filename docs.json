@@ -48,13 +48,20 @@
             ]
           },
           {
+            "group": "Issues",
+            "pages": [
+              "issues/overview",
+              "issues/review-an-issue",
+              "issues/evidence",
+              "issues/lifecycle"
+            ]
+          },
+          {
             "group": "Master Catalog",
             "pages": [
               "master-catalog/overview",
               "master-catalog/services",
-              "master-catalog/log-events",
-              "master-catalog/metrics",
-              "master-catalog/trace-spans"
+              "master-catalog/log-events"
             ]
           },
           {
@@ -96,17 +103,6 @@
             ]
           },
           {
-            "group": "Account Management",
-            "pages": [
-              "account-management/overview",
-              "account-management/teams",
-              "account-management/authentication",
-              "account-management/data-quality-slos",
-              "account-management/workspaces",
-              "account-management/multi-account"
-            ]
-          },
-          {
             "group": "Integrations",
             "pages": [
               {
@@ -129,15 +125,6 @@
                 "group": "Code",
                 "icon": "code",
                 "pages": ["integrations/github"]
-              },
-              {
-                "group": "AI",
-                "icon": "microchip-ai",
-                "pages": [
-                  "integrations/anthropic",
-                  "integrations/openai",
-                  "integrations/aws-bedrock"
-                ]
               }
             ]
           }

@@ -1,44 +1,124 @@
 ---
 title: "Quickstart"
-description: "Your first policy in minutes"
+description: "Review your first telemetry issue"
 icon: "rocket"
 iconType: "duotone"
 ---
 
-<Steps>
-  <Step title="Install">
-    <CodeGroup>
-    ```bash curl
-    curl -sSfL https://sh.usetero.com | sh
-    ```
+In this tutorial, we will review one open issue and inspect the policy Tero recommends for it.
 
-    ```bash Homebrew
-    brew install usetero/tap/tero
-    ```
+## Before you begin
 
-    ```bash Scoop (Windows)
-    scoop bucket add tero https://github.com/usetero/scoop-bucket
-    scoop install tero
-    ```
-    </CodeGroup>
-  </Step>
+You need:
 
-  <Step title="Run">
-    ```bash
-    tero
-    ```
+- A Tero account with at least one connected observability integration
+- Access to Tero
+- At least one open issue in the Issues workspace
 
-    The CLI walks you through authentication, connecting your Datadog account, and discovering your services. Have your Datadog API key and Application key ready. You'll find both under **Organization Settings → API Keys** / **Application Keys** in Datadog.
+If your account has no issues yet, connect [Datadog](/integrations/datadog) or [Splunk](/integrations/splunk), then return after Tero has analyzed your telemetry.
 
-    Discovery takes about a minute to analyze your services and log patterns.
-  </Step>
+## 1. Open Issues
 
-  <Step title="Explore">
-    Once setup finishes, you can ask questions and browse policies:
+Open Tero and go to **Issues**.
 
-    - `/policies` to see what Tero found
-    - `/services`, `/logs` to navigate the Master Catalog
-    - `@checkout-api` to reference any service
-    - Ask naturally: *"What's the noisiest service?"*
-  </Step>
-</Steps>
+{/* screenshot-suggestion
+id: quickstart-issues-list
+priority: required
+appRoute: /issues?status=open
+viewport: desktop
+state: open issues loaded with one issue selected
+output: /images/screenshots/quickstart/quickstart-issues-list.png
+caption: The Issues workspace shows open telemetry findings ready for review.
+purpose: Gives the learner a visual target for the first step.
+*/}
+
+{/* screenshot-generated id: quickstart-issues-list */}
+<Frame>
+  <img src="/images/screenshots/quickstart/quickstart-issues-list.png" alt="The Issues workspace shows open telemetry findings ready for review." />
+</Frame>
+{/* /screenshot-generated */}
+
+You should see a work queue with open issues. Each row shows the issue status, severity, title, affected service or team, check type, and domain such as Cost or Compliance.
+
+Notice the filters on the left. You can narrow the queue by severity, service, team, domain, check, or linked issue. Leave the default view for this tutorial.
+
+## 2. Select an issue
+
+Choose one open issue in the queue.
+
+The detail pane should show a summary of what Tero found. Look for:
+
+- The affected service or log event
+- The issue domain and severity
+- The current status, such as **Open** or **In progress**
+- The policy card, if Tero recommends a policy
+
+If the detail pane does not load, use **Retry detail**. If you are on a small screen, open the issue from the row and use the back control to return to the queue.
+
+## 3. Read the evidence
+
+Scroll through the issue detail.
+
+Tero should show the evidence behind the finding. Depending on the issue, you may see representative log events, affected fields, volume, cost, related checks, or a timeline of what Tero observed.
+
+{/* screenshot-suggestion
+id: quickstart-issue-evidence
+priority: required
+appRoute: /issues
+viewport: desktop
+state: selected cost issue with evidence feed and log events section visible
+output: /images/screenshots/quickstart/quickstart-issue-evidence.png
+caption: Issue evidence shows why Tero recommended action.
+purpose: Teaches the learner to review evidence before trusting the recommendation.
+*/}
+
+{/* screenshot-generated id: quickstart-issue-evidence */}
+<Frame>
+  <img src="/images/screenshots/quickstart/quickstart-issue-evidence.png" alt="Issue evidence shows why Tero recommended action." />
+</Frame>
+{/* /screenshot-generated */}
+
+Stop here and check whether the finding makes sense. Use this pass to learn how Tero connects a finding to evidence you can inspect.
+
+## 4. Inspect the recommended policy
+
+Find the policy card in the issue detail.
+
+The policy preview should describe what the policy would match and what action it would take. Common actions include dropping, sampling, redacting, rewriting, or trimming matching telemetry.
+
+If the issue already has an active policy, use the policy link to open its detail page. If the issue has a suggested policy, stay on the issue and inspect the preview.
+
+## 5. Follow the policy state
+
+Open the linked policy, or go to **Policies** and search for the policy by service or issue.
+
+{/* screenshot-suggestion
+id: quickstart-policy-detail
+priority: useful
+appRoute: /policies
+viewport: desktop
+state: policy list loaded with active policy linked to an issue
+output: /images/screenshots/quickstart/quickstart-policy-detail.png
+caption: Policies show status, source, action, service, activity, and linked issue.
+purpose: Shows where the learner goes after reviewing an issue recommendation.
+*/}
+
+{/* screenshot-generated id: quickstart-policy-detail */}
+<Frame>
+  <img src="/images/screenshots/quickstart/quickstart-policy-detail.png" alt="Policies show status, source, action, service, activity, and linked issue." />
+</Frame>
+{/* /screenshot-generated */}
+
+You should see policy status, action, source, service, recent hits, update time, and linked issue. Open a policy detail page to review the overview, deployments, and spec tabs.
+
+## What you reviewed
+
+You reviewed one issue from the work queue, checked the evidence, inspected the recommended policy, and found where Tero shows policy state.
+
+That is the basic review flow: issue, evidence, policy, runtime state, impact.
+
+## Next steps
+
+- Read [Issues overview](/issues/overview) to understand the issue workspace.
+- Use [Review an issue](/issues/review-an-issue) when you are ready to approve, ignore, or deploy a policy.
+- Read [Policies](/policies) to understand policy state, spec, and deployments.

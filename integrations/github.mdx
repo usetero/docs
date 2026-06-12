@@ -1,6 +1,6 @@
 ---
 title: "GitHub"
-description: "Connect Tero to your GitHub repositories"
+description: "Connect repositories for policy review and code workflow"
 icon: "github"
 iconType: "brands"
 ---
@@ -9,77 +9,72 @@ import BetaCallout from '/snippets/beta-callout.mdx';
 
 <BetaCallout />
 
-Connect GitHub to let Tero open pull requests, create issues, and sync policies to your repositories.
+Connect GitHub when you want Tero to work with repositories: open pull requests, create GitHub issues, or sync policies for review.
 
-## Connect
+## Connect GitHub
 
-<Tabs>
-  <Tab title="CLI">
-    <Steps>
-      <Step title="Run tero">
-        Open your terminal and run:
+<Steps>
+  <Step title="Run Tero setup">
+    Open your terminal and run:
 
-        ```bash
-        tero
-        ```
+    ```bash
+    tero
+    ```
 
-        This opens the Tero TUI, which guides you through setup.
+    Sign in when the setup flow opens your browser.
+  </Step>
 
-        <Note>
-        Don't have the CLI installed? See the [quickstart](/quickstart).
-        </Note>
-      </Step>
+  <Step title="Select GitHub">
+    Choose GitHub as the integration you want to connect.
+  </Step>
 
-      <Step title="Log in to Tero">
-        The TUI opens your browser to create an account or log in. Complete the flow in your browser, then confirm the code shown in your terminal. The TUI logs you in automatically.
-      </Step>
+  <Step title="Install the Tero GitHub App">
+    Install the [Tero GitHub App](https://github.com/apps/tero). Select the repositories Tero can access.
+  </Step>
 
-      <Step title="Select GitHub">
-        The TUI asks which integration you want to connect. Select GitHub.
-      </Step>
+  <Step title="Authorize access">
+    Review the requested permissions and authorize Tero.
+  </Step>
 
-      <Step title="Install the GitHub App">
-        The TUI opens your browser to [install the Tero GitHub App](https://github.com/apps/tero). Select which repositories Tero can access. You can grant access to all repositories or select specific ones.
-      </Step>
+  <Step title="Confirm the connection">
+    Tero confirms the installation and can use the selected repositories for configured workflows.
+  </Step>
+</Steps>
 
-      <Step title="Authorize">
-        GitHub asks you to authorize the app. Review the permissions and approve. You're redirected back to Tero.
-      </Step>
+## What GitHub unlocks
 
-      <Step title="Done">
-        Tero confirms the connection. You can now open PRs, create issues, and sync policies to your repositories.
-      </Step>
-    </Steps>
-  </Tab>
-</Tabs>
-
-## Actions
-
-With GitHub connected, Tero can take action directly in your repositories:
+GitHub connects policy control to code review.
 
 <CardGroup cols={1}>
   <Card title="Pull requests" icon="code-pull-request" iconType="duotone" horizontal>
-    Tero opens PRs to fix instrumentation issues: removing debug output, cleaning up excessive logging, fixing waste at the source.
+    Tero can open PRs when a remediation belongs in source code or repository-managed configuration.
   </Card>
-  <Card title="Issues" icon="circle-dot" iconType="duotone" horizontal>
-    Tero creates issues for waste your team should review. Assigned to the right team based on your service catalog.
+  <Card title="GitHub issues" icon="circle-dot" iconType="duotone" horizontal>
+    Tero can create issues when a service owner needs to review or handle a telemetry finding.
   </Card>
   <Card title="Policy sync" icon="rotate" iconType="duotone" horizontal>
-    Tero syncs policies to a git repository. Version control, audit history, review before apply.
+    Tero can sync policies to repositories for versioning, review, and audit history.
   </Card>
 </CardGroup>
+
+Use GitHub when the right action needs service-owner review, code change, or repository history. Use provider actions or [Edge](/edge/overview) when the right action should run in the telemetry path.
 
 ## Permissions
 
 The Tero GitHub App requests these permissions:
 
-| Permission | Access | Why |
-|------------|--------|-----|
-| **Contents** | Read & Write | Read code to find instrumentation, create branches, push commits |
-| **Pull requests** | Read & Write | Open PRs, track PR status |
-| **Issues** | Read & Write | Create issues for teams to review |
-| **Metadata** | Read | Basic repository information |
+| Permission | Access | Why Tero needs it |
+| ---------- | ------ | ----------------- |
+| **Contents** | Read and write | Read repository context and create branches or commits for configured workflows. |
+| **Pull requests** | Read and write | Open PRs and track PR status. |
+| **Issues** | Read and write | Create GitHub issues for service-owner review. |
+| **Metadata** | Read | Read repository names and basic repository information. |
 
-<Note>
-You can limit Tero to specific repositories during installation. Update repository access anytime in your [GitHub App settings](https://github.com/settings/installations).
-</Note>
+Limit Tero to the repositories you want it to use during installation. You can update repository access in GitHub App settings.
+
+## Related pages
+
+- [Review an issue](/issues/review-an-issue)
+- [Policy management](/policies/management)
+- [Open PRs](/policies/enforcement/open-prs)
+- [Create tickets](/policies/enforcement/create-tickets)

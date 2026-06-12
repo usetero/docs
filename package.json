@@ -5,9 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "mintlify dev",
-    "build": "mintlify build"
+    "build": "mintlify build",
+    "screenshots": "node scripts/screenshot-suggestions.mjs",
+    "screenshots:dry": "node scripts/screenshot-suggestions.mjs --dry-run"
   },
   "devDependencies": {
-    "mintlify": "^4.2.209"
+    "mintlify": "^4.2.209",
+    "playwright": "^1.60.0"
   }
 }

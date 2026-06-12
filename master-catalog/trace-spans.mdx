@@ -1,92 +1,32 @@
 ---
-title: "Trace Spans"
-description: "How Tero understands the operations that make up your requests"
+title: "Trace spans"
+description: "Trace policy context for accounts that expose it"
 icon: "diagram-subtask"
 iconType: "duotone"
 ---
 
-A trace span represents an operation in a distributed request. An HTTP call, a database query, a message publish. Tero discovers span patterns from your [integrations](/integrations) and builds understanding of what each operation does, how long it takes, and whether it's worth keeping.
+Trace spans are not a primary catalog surface in the current Tero navigation.
 
-## Example
+Use this page only when your Tero account exposes trace policy context or when an issue, policy, or runtime integration refers to trace data.
 
-Here's a raw span:
+## Current scope
 
-```yaml
-name: "POST"
-span_kind: client
-attributes:
-  http.method: "POST"
-  url.full: "https://api.stripe.com/v1/charges"
-  http.status_code: 200
-  duration_ms: 234
-```
+The current Tero experience is log-oriented: [Issues](/issues/overview), [Policies](/policies), [Services](/master-catalog/services), [Log events](/master-catalog/log-events), log ingestion, Cost, Compliance, Checks, and Edge runtime state.
 
-Tero turns it into a span pattern:
+If an issue or policy references trace context, inspect the issue evidence and policy spec first. This page should not make Trace spans part of the main review flow.
 
-```yaml
-name: http_call_payment_gateway_charge
-service: checkout
-span_kind: client
-description: Checkout service calling the payment gateway to process a charge.
+## Trace policy facts
 
-matchers:
-  - field_type: span_attribute
-    field_name: http.method
-    match_type: exact
-    match_value: "POST"
-  - field_type: span_attribute
-    field_name: url.full
-    match_type: starts_with
-    match_value: "https://api.stripe.com/v1/charges"
-```
+Trace-related policies should identify:
 
-These matchers identify 180,000 spans. Each span has different trace IDs, durations, response codes. But they all match the same pattern: checkout calling Stripe to charge a card. That's the span pattern.
+- Span or operation name
+- Producing service
+- Attributes involved in the finding
+- Current action, such as filtering or redaction
+- Runtime path that applies the policy
 
-<Expandable title="Fields">
-  <ResponseField name="name" type="string">
-    A descriptive identifier like `http_call_payment_gateway_charge` or `postgres_query_select_orders`. Unique within the service.
-  </ResponseField>
-  <ResponseField name="description" type="string">
-    What this operation does and when it's invoked.
-  </ResponseField>
-  <ResponseField name="service" type="string">
-    The service that produces this span.
-  </ResponseField>
-  <ResponseField name="span_kind" type="string">
-    Whether this is a client, server, producer, consumer, or internal span.
-  </ResponseField>
-  <ResponseField name="matchers" type="array">
-    Rules that identify which raw spans belong to this pattern. Combinations of attribute conditions.
-  </ResponseField>
-  <ResponseField name="attributes" type="array">
-    Fields that vary per instance: query parameters, response codes, durations.
-  </ResponseField>
-</Expandable>
+## Related pages
 
-## Exploring trace spans
-
-Open any span pattern to see what Tero learned: the description, operation, sample spans, classification reasoning. Browse by service or search across all span patterns.
-
-Drill into sample spans to see actual traces. Understand the typical duration, common error codes, which parent spans invoke this operation.
-
-## Using in chat
-
-Reference a span pattern with `@` to focus your questions:
-
-```
-@postgres_query_select_orders why is this slow?
-@http_call_payment_gateway what's the error rate?
-@kafka_publish_order_created which services produce this?
-```
-
-Tero pulls in the span's context: which service owns it, what the operation does, how it connects to other signals. It answers your question with that full picture.
-
-## Refining trace spans
-
-Tero classifies spans automatically, but you know your systems better:
-
-- **Reclassify** span patterns that Tero misjudged. That "noise" span might matter for debugging.
-- **Edit descriptions** to add context Tero couldn't infer.
-- **Adjust normalization** when Tero splits an operation into too many patterns or merges distinct operations.
-
-Every correction improves the catalog.
+- [Issues](/issues/overview)
+- [Policies](/policies)
+- [Edge policy reference](/edge/policy-reference/trace-filter)
