@@ -110,16 +110,7 @@ Use cases:
     For existing Datadog Forwarder deployments, add the Tero Edge Extension layer.
 
     <Steps>
-      <Step title="Create a Tero API key">
-        Open your terminal and run:
-
-        ```bash
-        tero
-        ```
-
-        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda forwarder"). Copy the key when shown. Tero shows it once.
-
-      </Step>
+      <Snippet file="create-edge-api-key.mdx" />
 
       <Step title="Add the extension layer">
         Add the Tero Edge Extension layer to your Lambda function:

@@ -1,11 +1,11 @@
 ---
 title: "Quickstart"
-description: "Review your first telemetry issue"
+description: "See what your telemetry costs, then review your first issue"
 icon: "rocket"
 iconType: "duotone"
 ---
 
-You will review one open issue, inspect its evidence, and find the policy Tero recommends.
+You will see what your telemetry estate costs, find where compliance exposure lives, then review one open issue, inspect its evidence, and find the policy Tero recommends.
 
 ## Before you begin
 
@@ -17,9 +17,37 @@ You need:
 
 If your account has no issues yet, connect [Datadog](/integrations/datadog), then return after Tero has analyzed your telemetry.
 
-## 1. Open Issues
+## 1. Start with Cost
 
-Open Tero and go to **Issues**.
+Open Tero and go to **Cost**.
+
+{/* screenshot-suggestion
+id: quickstart-cost-overview
+priority: required
+appRoute: /cost
+viewport: desktop
+state: cost screen loaded with service-level log cost, recoverable savings, and issue links visible
+output: /images/screenshots/quickstart/quickstart-cost-overview.png
+caption: Cost shows service-level log cost and the savings Tero found in your estate.
+purpose: Grounds the learner in what their estate costs before they review individual issues.
+*/}
+
+{/* screenshot-generated id: quickstart-cost-overview */}
+<Frame>
+  <img src="/images/screenshots/quickstart/quickstart-cost-overview.png" alt="Cost shows service-level log cost and the savings Tero found in your estate." />
+</Frame>
+<p className="screenshot-caption"><small>Cost shows service-level log cost and the savings Tero found in your estate. <a className="demo-screenshot-link" href="https://demo.usetero.com/cost" target="_blank" rel="noopener noreferrer">Open in demo <Icon icon="arrow-up-right-from-square" /></a></small></p>
+{/* /screenshot-generated */}
+
+You should see service-level log cost and recoverable savings. This is what your telemetry estate spends today and what Tero found that you can get back. Notice which services drive the most spend, and that cost findings link to issues.
+
+If your concern is sensitive data rather than spend, **Compliance** is the same view for exposure: affected services, exposed fields, and affected log events.
+
+Cost and Compliance show where money and risk live in your estate. Issues show what to do about it. That is where you go next.
+
+## 2. Open Issues
+
+Go to **Issues**.
 
 {/* screenshot-suggestion
 id: quickstart-issues-list
@@ -39,11 +67,11 @@ purpose: Gives the learner a visual target for the first step.
 <p className="screenshot-caption"><small>The Issues workspace shows open telemetry findings ready for review. <a className="demo-screenshot-link" href="https://demo.usetero.com/issues?status=open" target="_blank" rel="noopener noreferrer">Open in demo <Icon icon="arrow-up-right-from-square" /></a></small></p>
 {/* /screenshot-generated */}
 
-You should see a work queue with open issues. Each row shows the issue status, severity, title, affected service or team, check type, and domain such as Cost or Compliance.
+You should see a work queue with open issues. Each row shows the issue status, severity, title, affected service or team, check type, and domain. The domains match the pages you just left: Cost or Compliance.
 
 Notice the filters on the left. You can narrow the queue by severity, service, team, domain, check, or linked issue. Leave the default view for this tutorial.
 
-## 2. Select an issue
+## 3. Select an issue
 
 Choose one open issue in the queue.
 
@@ -56,7 +84,7 @@ The detail pane summarizes what Tero found. Look for:
 
 If the detail pane does not load, use **Retry detail**. If you are on a small screen, open the issue from the row and use the back control to return to the queue.
 
-## 3. Read the evidence
+## 4. Read the evidence
 
 Scroll through the issue detail.
 
@@ -82,7 +110,7 @@ purpose: Teaches the learner to review evidence before trusting the recommendati
 
 Stop here and check whether the finding makes sense. Use this pass to learn how Tero connects a finding to evidence you can inspect.
 
-## 4. Inspect the recommended policy
+## 5. Inspect the recommended policy
 
 Find the policy card in the issue detail.
 
@@ -90,7 +118,7 @@ The policy preview describes what the policy would match and what action it woul
 
 If the issue has an active policy, use the policy link to open its detail page. If the issue has a suggested policy, stay on the issue and inspect the preview.
 
-## 5. Follow the policy state
+## 6. Follow the policy state
 
 Open the linked policy, or go to **Policies** and search for the policy by service or issue.
 
@@ -116,9 +144,9 @@ You should see policy status, action, source, service, recent hits, update time,
 
 ## What you reviewed
 
-You reviewed one issue from the work queue, checked the evidence, inspected the recommended policy, and found where Tero shows policy state.
+You started with what your estate costs, saw where compliance exposure lives, reviewed one issue from the work queue, checked the evidence, inspected the recommended policy, and found where Tero shows policy state.
 
-That review flow, from issue to measured impact, is the core of working in Tero.
+That flow, from estate-level cost and risk to a reviewed issue and a measured policy, is the core of working in Tero.
 
 ## Next steps
 
