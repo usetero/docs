@@ -6,6 +6,8 @@ import path from "node:path";
 const ROOT = process.cwd();
 const DEFAULT_BASE_URL =
   process.env.TERO_SCREENSHOT_BASE_URL || "https://demo.usetero.com";
+const DEMO_BASE_URL =
+  process.env.TERO_SCREENSHOT_DEMO_BASE_URL || "https://demo.usetero.com";
 
 const DESKTOP_VIEWPORT = { width: 1440, height: 1000 };
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
@@ -173,6 +175,7 @@ function parseSuggestions(text, file) {
       file,
       blockEnd: match.index + match[0].length,
       blockStart: match.index,
+      demoUrl: new URL(fields.appRoute, normalizedBaseUrl(DEMO_BASE_URL)).toString(),
       url: new URL(fields.appRoute, normalizedBaseUrl(args.baseUrl)).toString(),
       outputPath: path.resolve(ROOT, fields.output.replace(/^\//, "")),
     });
@@ -352,12 +355,24 @@ function renderEmbed(suggestion) {
       suggestion.caption,
     )}" />`,
     "</Frame>",
+    `<p className="screenshot-caption"><small>${escapeHtml(
+      suggestion.caption,
+    )} <a className="demo-screenshot-link" href="${escapeAttribute(
+      suggestion.demoUrl,
+    )}" target="_blank" rel="noopener noreferrer">Open in demo <Icon icon="arrow-up-right-from-square" /></a></small></p>`,
     "{/* /screenshot-generated */}",
   ].join("\n");
 }
 
 function escapeAttribute(value) {
   return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 function escapeRegExp(value) {
