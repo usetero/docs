@@ -5,9 +5,9 @@ icon: "file-lines"
 iconType: "duotone"
 ---
 
-A log event is a grouped pattern of matching log records.
+This reference describes the Log events catalog surface in Tero.
 
-Tero uses log events to make high-volume telemetry reviewable. Instead of asking you to inspect raw logs one by one, Tero groups records that share a stable pattern and shows the service, severity, volume, cost, policies, and related issues.
+A log event is a grouped pattern of matching log records. Tero uses log events to show service, severity, volume, cost, policies, and related issues for recurring telemetry.
 
 {/* screenshot-suggestion
 id: log-events-catalog
@@ -28,7 +28,7 @@ purpose: Shows the catalog object behind many issue evidence panels.
 
 ## Log event list
 
-The Log events screen can show:
+The Log events list can show these fields:
 
 | Field | Description |
 | ----- | ----------- |
@@ -46,18 +46,15 @@ Datadog-scoped accounts can inspect 24-hour, 7-day, and 30-day log-volume window
 
 Log event detail pages show the event in context. Current detail tabs include overview, policies, and issues.
 
-Use the detail view to inspect:
-
-- The service that emits the event
-- Volume and cost context
-- Policies attached to the event
-- Issues related to the event
+| Detail area | Description |
+| ----------- | ----------- |
+| Overview | Service, volume, cost, and event summary. |
+| Policies | Policies attached to the event. |
+| Issues | Issues related to the event. |
 
 ## Relationship to issues
 
 Issues use log events as evidence when a finding concerns a recurring log pattern. A cost issue may point to a high-volume event. A compliance issue may point to an event that carries sensitive fields. A policy recommendation may match a specific log event so the runtime can drop, sample, redact, or transform it.
-
-When you review an issue, open the related log event if you need to confirm the pattern, service, volume, or attached policies.
 
 ## Related pages
 

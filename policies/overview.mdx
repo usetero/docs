@@ -37,22 +37,15 @@ That relationship matters. A policy without issue context is hard to trust. An i
 
 ## Policy actions
 
-Current policy action badges include:
+Policy actions describe what the runtime should do to matching telemetry. Common actions include dropping a matching event, sampling a subset, redacting sensitive values, rewriting fields, or trimming large payloads.
 
-| Action | Meaning |
-| ------ | ------- |
-| **Drop** | Remove matching telemetry from the target path. |
-| **Sample** | Keep a percentage or rate-limited subset. |
-| **Redact** | Replace sensitive values while preserving the event. |
-| **Rewrite** | Change matching telemetry fields or values. |
-| **Trim** | Remove excess payload or fields from matching telemetry. |
-| **Policy** | Generic policy action when the UI cannot summarize a narrower action. |
+For lookup details, use [Policy lifecycle](/policies/lifecycle) and [Policy categories](/policies/categories/overview).
 
 ## Policy states
 
-Policies can appear as **Draft**, **Active**, or **Disabled**.
+Policies move through review, deployment, and impact checks. Tero shows policy state, source, linked issue, activity, deployments, and spec so reviewers can connect the policy back to the evidence that produced it.
 
-Draft policies need review or completion before they run. Active policies are available where they should run. Disabled policies remain visible but should not affect telemetry.
+Use [Policy lifecycle](/policies/lifecycle) for the current state reference.
 
 ## Policy detail
 
@@ -90,6 +83,7 @@ Datadog filter detail can show overview, policy preview, imported policies, and 
 ## Related pages
 
 - [Review an issue](/issues/review-an-issue)
-- [Policy management](/policies/management)
+- [Policy lifecycle](/policies/lifecycle)
+- [Policy categories](/policies/categories/overview)
 - [Policy enforcement](/policies/enforcement/overview)
 - [Datadog integration](/integrations/datadog)

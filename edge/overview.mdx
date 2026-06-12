@@ -1,106 +1,62 @@
 ---
-title: "Overview"
-description:
-  "A lightweight telemetry proxy for policy-based filtering and transformation"
+title: "What is Edge?"
+sidebarTitle: "What is Edge?"
+description: "A telemetry policy runtime for your infrastructure"
 icon: "satellite-dish"
 iconType: "duotone"
 ---
 
-<img src="/images/edge-hero.svg" alt="Tero" />
+<img src="/images/edge-hero.svg" alt="Tero Edge" />
 
-[Edge](https://github.com/usetero/edge) is a high-performance telemetry proxy that applies policies to your
-observability data before it reaches your backends. It sits between your
-applications and observability platforms, filtering noise, redacting sensitive
-data, and transforming telemetry in real time.
+[Edge](https://github.com/usetero/edge) is a telemetry policy runtime. It runs in your infrastructure and applies policies to telemetry before that data reaches an observability provider.
+
+Edge sits between telemetry sources and destinations:
+
+```text
+Applications and agents -> Edge -> Observability provider
+                            ^
+                         Policies
+```
+
+Use Edge when a policy should run before telemetry leaves your network. Common policy actions include dropping low-value logs, sampling high-volume events, redacting sensitive values, and transforming fields into a cleaner shape.
+
+## Where Edge fits
+
+Tero owns policy review, state, and impact. Edge owns runtime execution for the policies deployed to it.
+
+That separation matters. Reviewers can inspect issue evidence and approve policy changes in Tero. Edge receives the policy set, evaluates incoming telemetry, and forwards the telemetry that remains after policy execution.
+
+Edge does not replace your observability provider. It changes what reaches the provider.
 
 ## When to use Edge
 
-Infrastructure growth often brings more debug logs, health checks, and internal metrics. That low-value data clutters dashboards and slows queries.
+Edge is useful when the control should happen close to the telemetry source:
 
-Edge processes telemetry in your environment before it leaves:
+- Sensitive data should be redacted before it leaves your infrastructure.
+- Repetitive logs should be dropped before they consume provider ingestion.
+- High-volume events should be sampled or rate-limited before they flood the pipeline.
+- Field transforms should run consistently across services before storage.
 
-- **Filter noise** before it leaves your infrastructure
-- **Redact sensitive data** to meet compliance requirements
-- **Transform fields** to normalize across services
-- **Sample high-volume events** to reduce noise
+Provider-side controls can still be useful. Edge is the runtime surface for policies that need to execute in your environment instead of only inside Datadog, Splunk, or another destination.
 
-All without changing application code.
+## What Edge processes
 
-## How It Works
+Edge receives telemetry through supported distributions and protocols, evaluates policies, and forwards surviving telemetry upstream.
 
-Edge operates as a proxy between your telemetry sources and destinations:
+Current distribution docs cover:
 
-```
-Applications → Edge → Observability Platform
-                  ↓
-              Policies
-```
-
-1. **Receive** telemetry via standard protocols (OTLP, Datadog API)
-2. **Evaluate** policies against each log, metric, or trace
-3. **Apply** actions: drop, sample, transform, or pass through
-4. **Forward** surviving telemetry to your backend
-
-[Policies](https://github.com/usetero/policy) are evaluated in parallel for each piece of telemetry. Edge does not rely on a sequential pipeline. Matching policies contribute their actions, and the most restrictive action wins.
-
-## Key Features
-
-<CardGroup cols={2}>
-  <Card title="Policy-Based Processing" icon="filter">
-    Define rules that match specific telemetry and apply actions. Policies are atomic and independent.
+<CardGroup cols={3}>
+  <Card title="Datadog" icon="dog" href="/edge/distributions/datadog">
+    Datadog log and metric ingestion.
   </Card>
-  <Card title="Hot Reload" icon="rotate">
-    Update policies without restarting. Edge watches for changes and applies
-    them without downtime.
+  <Card title="OTLP" icon="diagram-project" href="/edge/distributions/otlp">
+    OpenTelemetry Protocol ingestion.
   </Card>
-  <Card title="Fail-Open" icon="shield-check">
-    If a policy fails to evaluate, telemetry passes through unchanged. Edge
-    prioritizes availability over strict filtering.
-  </Card>
-  <Card title="High Performance" icon="bolt">
-    Built in Zig with lock-free reads and Vectorscan regex matching. Handles
-    thousands of policies with sub-millisecond overhead.
+  <Card title="All protocols" icon="cubes" href="/edge/distributions/all">
+    Multi-protocol Edge distribution.
   </Card>
 </CardGroup>
 
-## Distributions
+## Where to go next
 
-Edge ships as focused distributions, each optimized for specific protocols:
-
-| Distribution                                | Protocols                     | Use Case                          |
-| ------------------------------------------- | ----------------------------- | --------------------------------- |
-| [Edge](/edge/distributions/all)             | All protocols                 | Multi-vendor environments         |
-| [Edge Datadog](/edge/distributions/datadog) | Datadog Logs API, Metrics API | Datadog-native environments       |
-| [Edge OTLP](/edge/distributions/otlp)       | OpenTelemetry Protocol        | OpenTelemetry-native environments |
-
-Choose the distribution that matches your telemetry stack.
-
-## Comparisons to Other Solutions
-
-Edge complements telemetry pipelines like the OpenTelemetry Collector, Datadog
-Agent, and Vector. It adds policy-driven filtering and transformation for
-telemetry that needs to be processed in your environment.
-
-### Reach for the Edge if:
-
-- You need to filter noise before it leaves your infrastructure.
-- You need to redact sensitive data to meet compliance requirements.
-- You need to process telemetry in your environment.
-- You struggle with latency or throughput issues.
-- You want remote configuration without downtime and with sub-millisecond overhead.
-
-### Rely on Telemetry Pipelines for:
-
-- Routing telemetry data to external systems.
-- Translating telemetry data formats.
-
-## Next Steps
-
-<CardGroup cols={2}>
-  <Card title="Concepts" icon="lightbulb" href="/edge/concepts">
-    Understand the core ideas behind Edge
-  </Card>
-  <Card title="Quickstart" icon="rocket" href="/edge/quickstart">
-    Get Edge running in 5 minutes
-  </Card>
-</CardGroup>
+Use [How Edge works](/edge/concepts) for the runtime model. Use [Quickstart](/edge/quickstart) to run Edge locally and verify one policy.

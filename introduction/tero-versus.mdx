@@ -8,13 +8,20 @@ iconType: "duotone"
 
 Tero is a control plane for telemetry policy. It sits above the systems that collect, store, route, and execute telemetry changes.
 
-Tero does three jobs those systems do not own as a single loop: it finds policy-remediable issues, presents evidence for review, and tracks policy runtime impact.
+Tero does three jobs those systems do not own as a single loop: it finds telemetry issues a policy can fix, presents evidence for review, and tracks policy runtime impact.
+
+| Work you already do | Existing systems answer | Tero answers |
+| ------------------- | ----------------------- | ------------ |
+| Store, search, and visualize telemetry | What happened in production? | Which telemetry creates cost, compliance, or signal-quality issues, and what policy should address it? |
+| Route, buffer, enrich, and forward telemetry | Where should telemetry go next? | Which policy should run, where should it run, and did the runtime apply it? |
+| Reduce observability spend | Which account, team, or service spent money? | Which log events caused the spend, what evidence supports action, and which policy can reduce it? |
+| Control sensitive telemetry | Which controls and risks does the company track? | Which telemetry exposed sensitive data, what policy can remove it, and did exposure decrease after action? |
 
 ## Observability platforms
 
 Datadog and Splunk store telemetry, run queries, power dashboards, and expose provider-specific controls. Tero connects to them for evidence, catalog context, usage, and provider actions.
 
-Your observability provider remains the source of record for its data and configuration. Tero adds a cross-system review layer: which log events create cost or compliance issues, which policy would address them, and whether the change took effect.
+Your observability provider remains the source of record for its data and configuration. Tero adds a review layer: which log events create cost or compliance issues, which policy would address them, and whether the change took effect.
 
 Provider actions stay provider-specific. In Datadog, that can mean exclusion filters or pipelines. In Splunk, that can mean ingest actions. Tero keeps the policy review and impact model consistent across providers.
 
@@ -38,7 +45,7 @@ Security and compliance tools define controls, detect exposure, and support audi
 
 Tero focuses on telemetry policy issues that create compliance exposure, such as sensitive fields in log events. The Compliance lane groups affected services and links into issues with evidence, recommended policy action, and status.
 
-Tero should feed your control process. It should not replace the system where your company owns risk acceptance, audit evidence, or security operations.
+Tero should feed your control process. Your security or compliance system remains the place where your company owns risk acceptance, audit evidence, and security operations.
 
 ## Policy repositories
 

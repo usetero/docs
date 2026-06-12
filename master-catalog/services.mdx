@@ -5,9 +5,9 @@ icon: "box"
 iconType: "duotone"
 ---
 
-Services are the catalog objects that connect telemetry findings to ownership.
+This reference describes the Services catalog surface in Tero.
 
-The Services screen shows which services Tero knows about, which teams own them, which issues are open, and how much log volume and cost each service contributes.
+Services connect telemetry findings to ownership, issue count, log volume, and cost.
 
 {/* screenshot-suggestion
 id: services-catalog
@@ -28,7 +28,7 @@ purpose: Shows the service catalog surface behind issue review.
 
 ## Service list
 
-The Services list can show:
+The Services list can show these fields:
 
 | Field | Description |
 | ----- | ----------- |
@@ -38,24 +38,20 @@ The Services list can show:
 | Log volume | Observed log volume for the service. |
 | Cost | Estimated annualized log cost. |
 
-Use Services when you need to answer ownership questions during issue review: who owns this telemetry, how many issues affect the service, and where log volume comes from.
-
 ## Service detail
 
 Service detail pages show the service in context. Current detail tabs include overview, issues, log events, and log volume.
 
-Use the detail view to inspect:
-
-- Open and related issues for the service
-- Log events emitted by the service
-- Log volume over time
-- Service state and ownership context
+| Detail area | Description |
+| ----------- | ----------- |
+| Overview | Service state, ownership context, and summary metrics. |
+| Issues | Open and related issues for the service. |
+| Log events | Log events emitted by the service. |
+| Log volume | Observed log volume over time. |
 
 ## Relationship to issues and policies
 
 Issues often point to an affected service. Policies can also show the service they affect. That connection helps platform teams route reviews to service owners instead of approving every telemetry change centrally.
-
-When you review a policy, check the related service if you need ownership, log-event, or volume context.
 
 ## Related pages
 

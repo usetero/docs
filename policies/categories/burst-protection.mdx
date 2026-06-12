@@ -1,15 +1,26 @@
 ---
 title: "Burst protection"
-description: "Circuit breakers for logs that explode during failures"
+description: "Circuit breakers for logs that surge during failures"
 icon: "shield-halved"
 iconType: "duotone"
 ---
 
-Protection against catastrophic log volume during outages. When a dependency fails, every request that touches it generates a log. One database going offline can produce millions of timeout errors in minutes.
+This reference describes the burst protection policy category.
 
-This isn't about signal quality. It's infrastructure protection. Uncontrolled bursts can overwhelm your pipeline and spike costs.
+## Definition
 
-The test: could this log flood when something breaks? Infrastructure symptoms like database timeouts, connection refused, TLS failures can generate unbounded volume. Business events like payment failures are bounded by real customer traffic. Even on a bad day, you can't get a million payment failures unless you have a million customers trying to pay.
+Burst protection applies to infrastructure symptoms that can repeat for every affected request when a dependency fails. Examples include database timeouts, connection failures, and TLS failures.
+
+This category is for pipeline protection rather than signal-quality cleanup. Business events are not treated the same way when their volume is bounded by real user activity.
+
+## Signals
+
+| Signal | Description |
+| ------ | ----------- |
+| Failure amplification | One dependency failure can cause many requests to emit the same error. |
+| Infrastructure symptom | The event describes timeout, refused connection, DNS, TLS, or similar infrastructure failure. |
+| Unbounded repeatability | The event can repeat as fast as traffic reaches the failing path. |
+| Low per-event uniqueness | Repeated events contain the same failure shape with limited distinguishing context. |
 
 ## Example
 
@@ -23,7 +34,6 @@ The test: could this log flood when something breaks? Infrastructure symptoms li
       "database": "products"
     }
     ```
-    Infrastructure failures generate unbounded volume. One connectivity issue, repeated endlessly.
 
     ```yaml
     id: burst-protection-postgres-timeout-order-service
@@ -48,22 +58,19 @@ The test: could this log flood when something breaks? Infrastructure symptoms li
       "error": "card_expired"
     }
     ```
-    Each payment failure is a unique customer with a unique problem. Keep all of them.
   </Tab>
 </Tabs>
 
 ## Recommended enforcement
 
 <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge" horizontal>
-  Rate limit before data leaves your infrastructure. The flood never reaches your pipeline.
+  Rate limit matching infrastructure failures before they leave your infrastructure.
 </Card>
 
-This is pure infrastructure protection. The edge is the right place. Stop the flood as close to the source as possible.
+Edge enforcement is the recommended enforcement mode for burst protection because the purpose is to protect the log pipeline during failure conditions.
 
-## How it works
+## Detection notes
 
-Tero analyzes each log event and asks: if something breaks, could this flood?
+Tero analyzes each log event for burst risk: whether a failure could cause the event to repeat at high volume. For events at risk of bursting, Tero can generate a scoped rate-limit policy.
 
-For events at risk of bursting, Tero generates a policy with a default rate limit of 100/second. High enough to preserve signal during normal operation, low enough to prevent catastrophic floods. During normal operation, you probably see a handful of these per minute and the limit never triggers. During an outage, when you'd otherwise get 10,000/second, the circuit breaker kicks in.
-
-Traditional rate limiting caps your entire log stream, so you lose everything during a spike, including the business events you need. Tero does it per event. Infrastructure symptoms get circuit breakers. Business events flow through normally.
+Tero applies burst protection per event shape. Infrastructure symptoms receive circuit breakers, while unrelated business events continue through their normal policy path.

@@ -1,31 +1,41 @@
 ---
 title: "High cardinality tags"
-description: "Metric tags with unbounded values that explode storage"
+description: "Metric tags with unbounded values that create many time series"
 icon: "chart-scatter"
 iconType: "duotone"
 ---
 
-Metric tags with unbounded or highly variable values. User IDs, request IDs, timestamps, IP addresses as tags. Each unique value creates a new time series, and your metric storage explodes.
+This reference describes the high cardinality tags policy category.
 
-`user_id` on a latency metric seems useful. You could see latency per user. But you have a million users. Now you have a million time series for one metric. Metrics are meant to be aggregated. Tags with high cardinality defeat the purpose.
+## Definition
+
+A high-cardinality tag is a metric label or tag whose values can grow without a small fixed set. Common examples include `user_id`, `request_id`, `session_id`, `trace_id`, `ip_address`, full URLs, timestamps, and raw error messages.
+
+Each unique tag value creates a separate time series for the metric. A `user_id` tag on a latency metric creates one time series per user for each metric and dimension combination.
+
+## Signals
+
+| Signal | Description |
+| ------ | ----------- |
+| Unbounded value set | The tag can contain thousands or millions of distinct values. |
+| Per-request or per-user values | The tag contains identifiers such as users, sessions, requests, traces, or IP addresses. |
+| Sparse series | Many generated time series have little data per series. |
+| Limited query value | The tag is not used in dashboards, alerts, or common queries. |
 
 ## Example
 
 <Tabs>
   <Tab title="Before">
-    A request latency metric with `user_id` as a tag:
     ```
     http_request_duration_seconds{service="api", endpoint="/users", user_id="usr_abc123"} 0.045
     http_request_duration_seconds{service="api", endpoint="/users", user_id="usr_def456"} 0.052
     http_request_duration_seconds{service="api", endpoint="/users", user_id="usr_ghi789"} 0.038
     ```
-    One metric × one endpoint × one million users = one million time series.
   </Tab>
   <Tab title="After">
     ```
     http_request_duration_seconds{service="api", endpoint="/users"} 0.045
     ```
-    Tag removed. Aggregate the metric, use logs for per-user debugging.
   </Tab>
 </Tabs>
 
@@ -42,8 +52,6 @@ metric:
       - user_id
 ```
 
-Common high-cardinality tags: `user_id`, `request_id`, `session_id`, `trace_id`, `ip_address`, `url` (with query params), `error_message`. The test: could this tag have thousands or millions of unique values?
-
 ## Recommended enforcement
 
 <CardGroup cols={2}>
@@ -55,10 +63,10 @@ Common high-cardinality tags: `user_id`, `request_id`, `session_id`, `trace_id`,
   </Card>
 </CardGroup>
 
-The best fix is removing the tag from instrumentation. If that's not possible quickly, strip it at the edge to stop the bleeding while you fix the code.
+The durable remediation is removing the tag from instrumentation. Edge enforcement can remove the tag before metrics reach the provider when instrumentation cannot be changed immediately.
 
-## How it works
+## Detection notes
 
-Tero analyzes tag cardinality across your metrics. Tags with thousands or more unique values are flagged.
+For accounts with metric policy context, Tero analyzes tag cardinality across metrics. Tags with thousands or more unique values can be flagged.
 
-Tero also checks whether these tags are used in queries or dashboards. A tag with 100,000 unique values that nobody filters by is a clear candidate for removal.
+Tero can also check whether these tags are used in queries or dashboards. A tag with many unique values and no query usage is a candidate for removal.

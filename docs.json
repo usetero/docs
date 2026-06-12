@@ -51,41 +51,19 @@
             "group": "Issues",
             "pages": [
               "issues/overview",
-              "issues/review-an-issue",
-              "issues/evidence",
-              "issues/lifecycle"
+              "issues/review-an-issue"
             ]
           },
           {
             "group": "Master Catalog",
             "pages": [
-              "master-catalog/overview",
-              "master-catalog/services",
-              "master-catalog/log-events"
+              "master-catalog/overview"
             ]
           },
           {
             "group": "Policies",
             "pages": [
               "policies/overview",
-              {
-                "group": "Categories",
-                "icon": "tags",
-                "pages": [
-                  "policies/categories/duplicate-fields",
-                  "policies/categories/accidental-debug-statements",
-                  "policies/categories/malformed-data",
-                  "policies/categories/health-checks",
-                  "policies/categories/bot-traffic",
-                  "policies/categories/instrumentation-bloat",
-                  "policies/categories/pii-leakage",
-                  "policies/categories/excessive-payloads",
-                  "policies/categories/debug-mode-left-on",
-                  "policies/categories/logs-in-hot-path",
-                  "policies/categories/burst-protection",
-                  "policies/categories/high-cardinality-tags"
-                ]
-              },
               {
                 "group": "Enforcement",
                 "icon": "gavel",
@@ -98,8 +76,7 @@
                   "policies/enforcement/notify",
                   "policies/enforcement/set-slos"
                 ]
-              },
-              "policies/management"
+              }
             ]
           },
           {
@@ -127,6 +104,35 @@
                 "pages": ["integrations/github"]
               }
             ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "issues/evidence",
+              "issues/lifecycle",
+              "master-catalog/services",
+              "master-catalog/log-events",
+              "policies/lifecycle",
+              {
+                "group": "Policy Categories",
+                "icon": "tags",
+                "pages": [
+                  "policies/categories/overview",
+                  "policies/categories/duplicate-fields",
+                  "policies/categories/accidental-debug-statements",
+                  "policies/categories/malformed-data",
+                  "policies/categories/health-checks",
+                  "policies/categories/bot-traffic",
+                  "policies/categories/instrumentation-bloat",
+                  "policies/categories/pii-leakage",
+                  "policies/categories/excessive-payloads",
+                  "policies/categories/debug-mode-left-on",
+                  "policies/categories/logs-in-hot-path",
+                  "policies/categories/burst-protection",
+                  "policies/categories/high-cardinality-tags"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -135,13 +141,16 @@
         "icon": "cube",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Introduction",
             "pages": [
               "edge/overview",
               "edge/concepts",
-              "edge/architecture",
               "edge/quickstart"
             ]
+          },
+          {
+            "group": "Architecture",
+            "pages": ["edge/architecture"]
           },
           {
             "group": "Distributions",

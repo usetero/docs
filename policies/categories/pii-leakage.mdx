@@ -5,7 +5,22 @@ icon: "shield-exclamation"
 iconType: "duotone"
 ---
 
-Credit card numbers, emails, SSNs, API keys. Sensitive data that ended up in logs. A developer logs a request object. An error message includes user data. A third-party library dumps more than expected.
+This reference describes the PII leakage policy category.
+
+## Definition
+
+PII leakage occurs when logs contain personal data, credentials, secrets, payment data, or other sensitive values that should not be retained in observability storage.
+
+Common sources include request-object logging, error messages that include user input, verbose third-party libraries, and instrumentation that records more fields than intended.
+
+## Signals
+
+| Signal | Description |
+| --- | --- |
+| Sensitive field name | Field names such as `card_number`, `email`, `ssn`, `api_key`, or `token`. |
+| Sensitive value pattern | Values match known formats for payment cards, secrets, credentials, or identifiers. |
+| Free-form message content | A text field contains sensitive substrings inside an otherwise routine message. |
+| High-risk field type | Request bodies, error messages, user input, and metadata fields can contain sensitive data through developer error. |
 
 ## Example
 
@@ -131,30 +146,28 @@ Credit card numbers, emails, SSNs, API keys. Sensitive data that ended up in log
   </Tab>
 </Tabs>
 
-Each PII pattern gets its own policy. You approve them individually based on your compliance requirements.
-
 ## Recommended enforcement
 
 <CardGroup cols={2}>
   <Card title="Enforce at edge" icon="server" href="/policies/enforcement/edge">
-    Redact PII before data leaves your network. It never reaches your provider.
+    Redact or remove sensitive values before data leaves your network.
   </Card>
   <Card title="Open PRs" icon="code-pull-request" href="/policies/enforcement/open-prs">
-    Fix the instrumentation so PII is never logged in the first place.
+    Change source instrumentation so sensitive values are not logged.
   </Card>
 </CardGroup>
 
-Edge enforcement is critical. Redacting at the edge means sensitive data never leaves your infrastructure. No cleanup required. No breach notifications. The blast radius is zero.
+Edge enforcement is appropriate for preventing matched sensitive values from reaching the destination provider. Open PR enforcement is appropriate when the source log statement should stop emitting the sensitive field entirely.
 
-But also fix the source. Open a PR to remove sensitive fields from the log statement entirely.
+Each PII pattern is represented by its own policy and can be approved independently.
 
-## How it works
+## Detection notes
 
-Tero uses the [Master Catalog](/master-catalog) to understand each field: what it represents, what values it contains, why it exists. This determines which fields get scanned for PII.
+Tero uses the [Master Catalog](/master-catalog) to understand fields, including what each field represents, what values it contains, and why it exists. Tero uses that context to determine which fields are scanned for PII.
 
-Any field that could contain PII through normal developer error gets scanned: `error_message`, `request_body`, `user_input`, free-form text fields. Fields that are structurally incompatible with PII are skipped: `timestamp`, `severity`, `status_code`, `pid`. These have fixed formats. PII can't end up there through a logging mistake.
+Fields that can contain PII through normal developer error are scanned, including `error_message`, `request_body`, `user_input`, and free-form text fields. Fields with fixed formats that are structurally incompatible with PII, such as `timestamp`, `severity`, `status_code`, and `pid`, are skipped.
 
-Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), a widely-used open source project for secret detection.
+Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), an open source project for secret detection.
 
 <AccordionGroup>
   <Accordion title="Personal information">
@@ -166,7 +179,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - IP addresses
     - IBANs
   </Accordion>
-  
+
   <Accordion title="Cloud providers">
     - AWS access keys and secret keys
     - GCP API keys
@@ -177,7 +190,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - Cloudflare API keys
     - Databricks API tokens
   </Accordion>
-  
+
   <Accordion title="Source control & CI/CD">
     - GitHub tokens (PAT, OAuth, App, Fine-grained)
     - GitLab tokens (PAT, Deploy, Runner, CI/CD job)
@@ -186,7 +199,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - CircleCI tokens
     - Drone CI tokens
   </Accordion>
-  
+
   <Accordion title="Communication & collaboration">
     - Slack tokens (bot, user, webhook)
     - Discord tokens
@@ -195,7 +208,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - Mattermost tokens
     - Twilio API keys
   </Accordion>
-  
+
   <Accordion title="Databases & infrastructure">
     - Database connection strings
     - Planetscale tokens
@@ -203,7 +216,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - Redis connection strings
     - Elasticsearch credentials
   </Accordion>
-  
+
   <Accordion title="Payment & financial">
     - Stripe API keys
     - Square access tokens
@@ -211,14 +224,14 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - Coinbase access tokens
     - GoCardless tokens
   </Accordion>
-  
+
   <Accordion title="AI & ML services">
     - OpenAI API keys
     - Anthropic API keys
     - Hugging Face tokens
     - Cohere API tokens
   </Accordion>
-  
+
   <Accordion title="Observability & monitoring">
     - Datadog access tokens
     - New Relic API keys
@@ -226,7 +239,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - Sentry tokens
     - Dynatrace API tokens
   </Accordion>
-  
+
   <Accordion title="SaaS & productivity">
     - Notion API tokens
     - Asana client secrets
@@ -236,7 +249,7 @@ Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitl
     - SendGrid API tokens
     - Mailchimp API keys
   </Accordion>
-  
+
   <Accordion title="Cryptographic material">
     - Private keys (RSA, DSA, EC, PGP)
     - JWTs
