@@ -93,7 +93,15 @@ In another terminal, send a debug log to Edge:
 ```bash
 curl -X POST http://localhost:8080/api/v2/logs \
   -H "Content-Type: application/json" \
-  -d '[{"message": "quickstart debug log", "status": "debug", "service": "edge-quickstart"}]'
+  --data-binary @- <<'JSON'
+[
+  {
+    "message": "quickstart debug log",
+    "status": "debug",
+    "service": "edge-quickstart"
+  }
+]
+JSON
 ```
 
 Edge should accept the request. Because the policy matches `status: debug`, the log should be dropped before forwarding.
@@ -105,7 +113,15 @@ Send an error log to the same endpoint:
 ```bash
 curl -X POST http://localhost:8080/api/v2/logs \
   -H "Content-Type: application/json" \
-  -d '[{"message": "quickstart error log", "status": "error", "service": "edge-quickstart"}]'
+  --data-binary @- <<'JSON'
+[
+  {
+    "message": "quickstart error log",
+    "status": "error",
+    "service": "edge-quickstart"
+  }
+]
+JSON
 ```
 
 This log should pass through because it does not match the policy.

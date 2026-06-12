@@ -62,6 +62,23 @@ When a policy can address an issue, Tero presents a recommended policy. The poli
 
 Approved policies appear in the Policies workspace. Policy detail shows identity, source, related issue, activity, spec, and deployments. The spec is reviewable because the policy is the control-plane artifact that other systems execute.
 
+{/* screenshot-suggestion
+id: policy-captures-change
+priority: useful
+appRoute: /policies/kafka-log-segment-deletion
+viewport: desktop
+state: policy detail overview loaded with linked issue banner, KPIs, identity, activity, spec, and deployments visible
+output: /images/screenshots/introduction/policy-captures-change.png
+caption: Policy detail shows the reviewed change, its source issue, spec, activity, and deployment state.
+purpose: Shows how Tero represents an approved recommendation as a reviewable policy artifact.
+*/}
+
+{/* screenshot-generated id: policy-captures-change */}
+<Frame>
+  <img src="/images/screenshots/introduction/policy-captures-change.png" alt="Policy detail shows the reviewed change, its source issue, spec, activity, and deployment state." />
+</Frame>
+{/* /screenshot-generated */}
+
 ## 4. Runtime surfaces show where policies run
 
 Policies can run through provider configuration, repositories, collectors, or [Tero Edge](/edge/overview). The Edge instances screen shows the runtime side of the loop: live instances, deployed policy counts, policy errors, last-seen state, and correlated issues.
@@ -88,5 +105,22 @@ Tero shows state and review controls. Providers, Git repositories, collectors, a
 ## 5. Impact closes the loop
 
 After action, Tero tracks impact: issue status, cost movement, compliance exposure, policy activity, and runtime deployment state. If a policy stops matching, fails to deploy, or leaves a related issue open, Tero keeps that visible.
+
+{/* screenshot-suggestion
+id: cost-impact-overview
+priority: useful
+appRoute: /cost
+viewport: desktop
+state: cost screen loaded with service-level log cost, savings, and issue links visible
+output: /images/screenshots/introduction/cost-impact-overview.png
+caption: Cost shows whether telemetry policy work changed spend and recoverable savings.
+purpose: Shows the impact surface Tero uses to connect issue review to measured cost movement.
+*/}
+
+{/* screenshot-generated id: cost-impact-overview */}
+<Frame>
+  <img src="/images/screenshots/introduction/cost-impact-overview.png" alt="Cost shows whether telemetry policy work changed spend and recoverable savings." />
+</Frame>
+{/* /screenshot-generated */}
 
 Tero keeps that loop visible: issues, policies, runtime, impact.
