@@ -13,7 +13,7 @@ Configure which methods are available in **Settings → Authentication**. Enable
 
 ### Email and password
 
-Users create an account with their email. You can disable this method entirely if you require SSO.
+Users create an account with their email. You can disable this method if you require SSO.
 
 #### MFA
 
@@ -69,11 +69,11 @@ Once configured, you can require SSO for all users, disabling email/password and
 
 ## Directory sync
 
-Sync users and groups from your identity provider automatically. Enable directory sync in the admin portal after configuring SSO.
+Sync users and groups from your identity provider. Enable directory sync in the admin portal after configuring SSO.
 
 - **User provisioning**: Tero creates users when they're added to your IdP and removes them when they leave.
-- **Group sync**: Select which IdP groups to sync. Map them to Tero teams so users get access to the right services automatically.
-- **Real-time updates**: Tero applies changes from your IdP automatically. Your IdP is the source of truth.
+- **Group sync**: Select which IdP groups to sync. Map them to Tero teams so users get access to the right services.
+- **Real-time updates**: Tero applies changes from your IdP. Your IdP is the source of truth.
 
 The admin portal shows sync status, connected users, and group mappings. Your IT team can manage this independently.
 
@@ -82,7 +82,7 @@ The admin portal shows sync status, connected users, and group mappings. Your IT
 - **Admin**: Full access. Manage settings, integrations, users, and teams. Approve any policy.
 - **Member**: Access to assigned services. Review and approve policies for those services.
 
-Roles can be assigned manually or mapped from IdP groups during directory sync.
+Assign roles yourself, or map them from IdP groups during directory sync.
 
 ---
 

@@ -5,9 +5,9 @@ icon: "robot"
 iconType: "duotone"
 ---
 
-Tero shows the state of your telemetry estate: what exists, which issues need review, which policies can fix them, where those policies run, and what impact they have.
+Tero shows the state of your telemetry estate: the issues that need review, the policies that can fix them, and the impact of those policies at runtime.
 
-**Tero does not replace your observability provider**. Datadog, Splunk, collectors, and pipelines remain the systems where telemetry lives. Tero sits above them as the control layer.
+Datadog, Splunk, collectors, and pipelines remain the systems where telemetry lives. Tero is the control layer above them.
 
 {/* screenshot-suggestion
 id: issues-work-queue
@@ -26,23 +26,23 @@ purpose: Shows how Tero moves from a detected issue to reviewable action.
 </Frame>
 {/* /screenshot-generated */}
 
-Tero helps you control telemetry policy. It finds issues across cost, compliance, and signal quality. Each issue carries evidence, provenance, impact, and a recommended policy or action. You review the evidence before you decide what should change.
+Tero helps you control telemetry policy. It finds issues across cost, compliance, and signal quality. Each issue includes evidence, provenance, impact, and a recommended policy or action. You review the evidence before you decide what should change.
 
 Policies are control-plane artifacts. Tero presents them with status, source, spec, related issue, deployment state, and measured activity. The control plane owns durable policy state; your providers, repositories, collectors, and Edge instances run the changes.
 
-In practice, you use Tero this way:
+The workflow:
 
-1. [Issues](/issues/overview): Tero shows what it found and why it matters.
+1. [Issues](/issues/overview): Tero shows what it found and the cost or exposure behind it.
 2. [Policies](/policies): you review the policy that would address the issue.
 3. Runtime: Tero shows where the policy runs, including provider configuration and [Edge instances](/edge/overview).
 4. Impact: Tero measures whether the issue, cost, or compliance exposure changed after action.
 
 ## Why telemetry needs control
 
-Telemetry grows through local decisions. A team adds a debug log during an incident. A health check fires once per second forever. A field duplicates another field because two libraries use different names. Each change can make sense in isolation, but the estate becomes expensive and harder to trust.
+Telemetry grows through local decisions. A team adds a debug log during an incident. A health check logs once per second, long after anyone reads it. Two libraries use different names for the same field, so it ships twice. Each change can make sense in isolation, but together they raise your bill and bury the signals you rely on.
 
-Pipelines can move or transform data. Providers can store and query it. Tero adds the missing control loop: find the issue, show the evidence, propose the policy, track runtime state, and measure the result.
+Pipelines move and transform data, and providers store and query it. Tero adds the missing control loop: find the issue, show the evidence, propose the policy, track runtime state, and measure the result.
 
 ## Where to start
 
-Start with [Quickstart](/quickstart) if you want a guided walkthrough. Start with [Issues](/issues/overview) if you already have Tero connected and want to understand the main workspace. Use [How Tero works](/introduction/how-tero-works) for the full control loop.
+Start with [Quickstart](/quickstart) if you want a guided walkthrough. Start with [Issues](/issues/overview) if you have Tero connected and want to understand the main workspace. Use [How Tero works](/introduction/how-tero-works) for the full control loop.

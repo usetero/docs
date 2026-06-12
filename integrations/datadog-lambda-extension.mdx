@@ -42,7 +42,7 @@ flowchart LR
 We maintain this fork to release within two weeks of upstream Datadog releases.
 
 <Note>
-  FIPS compliance is not currently supported. Reach out to [Tero
+  The extension does not support FIPS compliance. Reach out to [Tero
   Support](mailto:support@usetero.com) if this is required for your environment.
 </Note>
 
@@ -62,7 +62,7 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
     tero
     ```
 
-    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda production"). Copy the key when shown. It's only displayed once.
+    Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda production"). Copy the key when shown. Tero shows it once.
 
   </Step>
 
@@ -237,11 +237,12 @@ When `DD_POLICY_ENABLED=true`:
 
 1. The extension fetches policies from configured providers on startup
 2. HTTP providers poll for updates at the configured interval
-3. Each telemetry item (logs, traces, metrics) is evaluated against policies
-4. Based on policy rules, items are either kept, dropped, sampled, or rate
-   limited
+3. The extension evaluates each telemetry item (logs, traces, metrics) against
+   policies
+4. Based on policy rules, the extension keeps, drops, samples, or rate-limits
+   each item
 
-If no policy matches an item, it is kept (fail-open behavior).
+If no policy matches an item, the extension keeps it (fail open).
 
 See [Policy Reference](/edge/policy-reference/log-filter) for filtering options.
 

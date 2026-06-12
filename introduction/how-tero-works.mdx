@@ -35,9 +35,9 @@ Cost and Compliance lanes give you another view of the same work. They group aff
 
 ## 2. Evidence supports the recommendation
 
-Issue detail explains what Tero found, why the issue matters, and which evidence supports the finding. Evidence can include representative log events, field analysis, related checks, affected services, volume, cost, or compliance exposure.
+Issue detail explains the finding, its cost or compliance stakes, and the supporting evidence. Evidence can include representative log events, field analysis, related checks, affected services, volume, cost, or compliance exposure.
 
-Tero also shows provenance. A reviewer can see whether a recommendation came from a check, catalog context, provider inventory, or runtime state. This keeps review grounded in facts from systems you already operate.
+Tero also shows provenance. A reviewer can see whether a recommendation came from a check, catalog context, provider inventory, or runtime state. This keeps review grounded in facts from systems you operate.
 
 {/* screenshot-suggestion
 id: issue-detail-evidence-policy
@@ -59,7 +59,7 @@ purpose: Shows the policy recommendation without the surrounding issue list or f
 
 ## 3. A policy captures the change
 
-When a policy can address an issue, Tero presents a recommended policy. The policy states what telemetry it matches and what action it takes, such as dropping, sampling, redacting, or transforming matching log events.
+Tero presents a recommended policy for issues a policy can address. The policy states what telemetry it matches and what action it takes, such as dropping, sampling, redacting, or transforming matching log events.
 
 Approved policies appear in the Policies workspace. Policy detail shows identity, source, related issue, activity, spec, and deployments. The spec is reviewable because the policy is the control-plane artifact that other systems execute.
 
@@ -105,7 +105,7 @@ Tero shows state and review controls. Providers, Git repositories, collectors, a
 
 ## 5. Impact closes the loop
 
-After action, Tero tracks impact: issue status, cost movement, compliance exposure, policy activity, and runtime deployment state. If a policy stops matching, fails to deploy, or leaves a related issue open, Tero keeps that visible.
+After action, Tero tracks impact: issue status, cost movement, compliance exposure, policy activity, and runtime deployment state. If a policy stops matching, fails to deploy, or leaves a related issue open, Tero keeps that visible and keeps the issue, its policy, the runtime state, and the impact connected.
 
 {/* screenshot-suggestion
 id: cost-impact-overview
@@ -123,5 +123,3 @@ purpose: Shows the impact surface Tero uses to connect issue review to measured 
   <img src="/images/screenshots/introduction/cost-impact-overview.png" alt="Cost shows whether telemetry policy work changed spend and recoverable savings." />
 </Frame>
 {/* /screenshot-generated */}
-
-Tero keeps that loop visible: issues, policies, runtime, impact.

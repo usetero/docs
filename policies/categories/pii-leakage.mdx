@@ -5,11 +5,7 @@ icon: "shield-exclamation"
 iconType: "duotone"
 ---
 
-This reference describes the PII leakage policy category.
-
-## Definition
-
-PII leakage occurs when logs contain personal data, credentials, secrets, payment data, or other sensitive values that should not be retained in observability storage.
+PII leakage occurs when logs contain personal data, credentials, secrets, payment data, or other sensitive values that don't belong in observability storage.
 
 Common sources include request-object logging, error messages that include user input, verbose third-party libraries, and instrumentation that records more fields than intended.
 
@@ -157,15 +153,15 @@ Common sources include request-object logging, error messages that include user 
   </Card>
 </CardGroup>
 
-Edge enforcement is appropriate for preventing matched sensitive values from reaching the destination provider. Open PR enforcement is appropriate when the source log statement should stop emitting the sensitive field entirely.
+Use edge enforcement to stop matched values from reaching the provider. Open a PR when the source statement should stop emitting the field.
 
-Each PII pattern is represented by its own policy and can be approved independently.
+Tero creates one policy per PII pattern, and you approve each on its own.
 
 ## Detection notes
 
 Tero uses the [Master Catalog](/master-catalog) to understand fields, including what each field represents, what values it contains, and why it exists. Tero uses that context to determine which fields are scanned for PII.
 
-Fields that can contain PII through normal developer error are scanned, including `error_message`, `request_body`, `user_input`, and free-form text fields. Fields with fixed formats that are structurally incompatible with PII, such as `timestamp`, `severity`, `status_code`, and `pid`, are skipped.
+Tero scans fields that can carry PII through developer error, including `error_message`, `request_body`, `user_input`, and free-form text fields. It skips fields with fixed formats that are structurally incompatible with PII, such as `timestamp`, `severity`, `status_code`, and `pid`.
 
 Tero detects PII using patterns from [gitleaks](https://github.com/gitleaks/gitleaks), an open source project for secret detection.
 

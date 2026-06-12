@@ -8,7 +8,7 @@ iconType: "duotone"
 
 Tero is a control plane for telemetry policy. It sits above the systems that collect, store, route, and execute telemetry changes.
 
-Tero does three jobs those systems do not own as a single loop: it finds telemetry issues a policy can fix, presents evidence for review, and tracks policy runtime impact.
+Tero owns one loop across those systems: find telemetry issues a policy can fix, present evidence for review, and track policy runtime impact.
 
 | Work you already do | Existing systems answer | Tero answers |
 | ------------------- | ----------------------- | ------------ |
@@ -21,7 +21,7 @@ Tero does three jobs those systems do not own as a single loop: it finds telemet
 
 Datadog and Splunk store telemetry, run queries, power dashboards, and expose provider-specific controls. Tero connects to them for evidence, catalog context, usage, and provider actions.
 
-Your observability provider remains the source of record for its data and configuration. Tero adds a review layer: which log events create cost or compliance issues, which policy would address them, and whether the change took effect.
+Your observability provider remains the source of record for its data and configuration. Tero adds a review layer that ties costly or sensitive log events to a policy and confirms the change took effect.
 
 Provider actions stay provider-specific. In Datadog, that can mean exclusion filters or pipelines. In Splunk, that can mean ingest actions. Tero keeps the policy review and impact model consistent across providers.
 
@@ -29,7 +29,7 @@ Provider actions stay provider-specific. In Datadog, that can mean exclusion fil
 
 Collectors and pipelines move telemetry. They route, buffer, enrich, filter, and forward data to the next destination.
 
-Tero owns the policy control loop above those runtimes. A policy can come from an issue, carry evidence, move through review, and deploy through the runtime your team chooses. The runtime executes the change; Tero tracks policy state and impact.
+Tero owns the policy control loop above those runtimes. A policy starts from an issue with evidence attached. Your team reviews it and deploys it through the runtime you choose; the runtime executes the change while Tero tracks policy state and impact.
 
 Use the [Edge](/edge/overview) docs when you want policies to run before telemetry leaves your infrastructure.
 
@@ -37,7 +37,7 @@ Use the [Edge](/edge/overview) docs when you want policies to run before telemet
 
 Cost tools show spend. They help you allocate cost by account, service, product line, or team.
 
-Tero shows the telemetry issue behind the spend. The Cost lane links service-level log cost to open issues and policy recommendations. The work happens when a reviewer opens the issue, checks the evidence, and approves or rejects the policy.
+Tero shows the telemetry issue behind the spend. The Cost lane links service-level log cost to open issues and policy recommendations. A reviewer does the work: opens the issue, checks the evidence, and approves or rejects the policy.
 
 ## Security and compliance tools
 
@@ -45,7 +45,7 @@ Security and compliance tools define controls, detect exposure, and support audi
 
 Tero focuses on telemetry policy issues that create compliance exposure, such as sensitive fields in log events. The Compliance lane groups affected services and links into issues with evidence, recommended policy action, and status.
 
-Tero should feed your control process. Your security or compliance system remains the place where your company owns risk acceptance, audit evidence, and security operations.
+Tero feeds your control process. Your security or compliance system remains the place where your company owns risk acceptance, audit evidence, and security operations.
 
 ## Policy repositories
 

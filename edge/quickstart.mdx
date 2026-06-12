@@ -5,7 +5,7 @@ icon: "rocket"
 iconType: "duotone"
 ---
 
-In this tutorial, we will run Edge locally with a file-backed policy, send two test logs, and verify that Edge drops the debug log while forwarding the error log.
+Run Edge locally with a file-backed policy, send two test logs, and verify Edge drops the debug log and forwards the error log.
 
 ## Before you begin
 
@@ -66,7 +66,7 @@ Create `policies.json`:
 }
 ```
 
-This policy matches Datadog log records whose `status` field is `debug` or `trace`. Matching logs are dropped.
+This policy matches Datadog log records whose `status` field is `debug` or `trace`. Edge drops matching logs.
 
 ## 3. Run Edge
 
@@ -104,7 +104,7 @@ curl -X POST http://localhost:8080/api/v2/logs \
 JSON
 ```
 
-Edge should accept the request. Because the policy matches `status: debug`, the log should be dropped before forwarding.
+Edge should accept the request. Because the policy matches `status: debug`, Edge should drop the log before forwarding.
 
 ## 5. Send an error log
 
@@ -132,7 +132,7 @@ Return to the terminal running Edge.
 
 You should see activity for the incoming requests. The debug request should show a policy match or dropped-log activity. The error request should show forwarding activity.
 
-If both requests are forwarded, confirm that `policies.json` is mounted at `/etc/edge/policies.json` and that the policy matches the `status` field.
+If Edge forwards both requests, confirm that `policies.json` is mounted at `/etc/edge/policies.json` and that the policy matches the `status` field.
 
 ## What you ran
 

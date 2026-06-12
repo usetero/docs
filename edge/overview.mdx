@@ -30,18 +30,18 @@ Use Edge when a policy should run before telemetry leaves your network. Common p
 
 Tero owns policy review, state, and impact. Edge owns runtime execution for the policies deployed to it.
 
-That separation matters. Reviewers can inspect issue evidence and approve policy changes in Tero. Edge receives the policy set, evaluates incoming telemetry, and forwards the telemetry that remains after policy execution.
+Reviewers can inspect issue evidence and approve policy changes in Tero. Edge receives the policy set, evaluates incoming telemetry, and forwards the telemetry that remains after policy execution.
 
-**Edge does not replace your observability provider**. It changes what reaches the provider.
+**Edge controls what reaches your observability provider.**
 
 ## When to use Edge
 
 Edge is useful when the control should happen close to the telemetry source:
 
-- Sensitive data should be redacted before it leaves your infrastructure.
-- Repetitive logs should be dropped before they consume provider ingestion.
-- High-volume events should be sampled or rate-limited before they flood the pipeline.
-- Field transforms should run consistently across services before storage.
+- Redact sensitive data before it leaves your infrastructure.
+- Drop repetitive logs before they consume provider ingestion.
+- Sample or rate-limit high-volume events before they flood the pipeline.
+- Run the same field transforms across services before storage.
 
 Provider-side controls can still be useful. Edge is the runtime surface for policies that need to execute in your environment instead of only inside Datadog, Splunk, or another destination.
 

@@ -5,10 +5,6 @@ icon: "chart-scatter"
 iconType: "duotone"
 ---
 
-This reference describes the high cardinality tags policy category.
-
-## Definition
-
 A high-cardinality tag is a metric label or tag whose values can grow without a small fixed set. Common examples include `user_id`, `request_id`, `session_id`, `trace_id`, `ip_address`, full URLs, timestamps, and raw error messages.
 
 Each unique tag value creates a separate time series for the metric. A `user_id` tag on a latency metric creates one time series per user for each metric and dimension combination.
@@ -63,10 +59,10 @@ metric:
   </Card>
 </CardGroup>
 
-The durable remediation is removing the tag from instrumentation. Edge enforcement can remove the tag before metrics reach the provider when instrumentation cannot be changed immediately.
+The durable remediation is removing the tag from instrumentation. Edge enforcement can remove the tag before metrics reach the provider when you can't change instrumentation right away.
 
 ## Detection notes
 
-For accounts with metric policy context, Tero analyzes tag cardinality across metrics. Tags with thousands or more unique values can be flagged.
+For accounts with metric policy context, Tero analyzes tag cardinality across metrics. It flags tags with thousands or more unique values.
 
 Tero can also check whether these tags are used in queries or dashboards. A tag with many unique values and no query usage is a candidate for removal.

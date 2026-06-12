@@ -8,7 +8,7 @@ iconType: "duotone"
 
 Edge receives telemetry, evaluates policies, applies the resulting action, and forwards the remaining telemetry to the configured upstream.
 
-The important idea is that Edge is not a sequential processor chain. Policies evaluate independently against the original telemetry. Matching policies contribute actions, and Edge resolves the final keep and transform result.
+Each policy evaluates against the original telemetry, not the output of earlier policies. Matching policies contribute actions, and Edge resolves the final keep and transform result.
 
 ```mermaid
 flowchart LR
@@ -69,13 +69,13 @@ When multiple policies match the same telemetry, Edge resolves the most restrict
 
 ## Policy sources
 
-Edge loads policies from configured policy providers. A local file provider is useful for development and static deployments. Remote providers are useful when Tero or another control plane manages policy state.
+Edge loads policies from configured policy providers. Use a file provider for development and static deployments. Use a remote provider when Tero or another control plane manages policy state.
 
 When multiple providers emit policies, policy IDs identify the policy. Provider priority controls which source wins when two sources emit the same ID.
 
 ## Failure model
 
-Edge is designed to fail open. If Edge cannot evaluate a policy, telemetry passes through instead of being blocked by an internal policy error.
+Edge fails open. If it cannot evaluate a policy, it forwards the telemetry instead of blocking it.
 
 Fail-open behavior protects observability availability. It also means policy errors need monitoring. Use [Operations](/edge/edge-reference/operations) for runtime logging, health checks, and operational guidance.
 

@@ -6,7 +6,7 @@ iconType: "duotone"
 ---
 
 Log filter policies control which logs pass through Edge. Use them to drop
-noise, sample high-volume events, and rate limit bursts.
+noise and sample high-volume events.
 
 ## Basic Structure
 
@@ -421,7 +421,7 @@ Using `negate` to keep only important logs:
 
 1. **Start broad, then narrow**: Begin with service-level policies, then add
    event-specific ones
-2. **Use regex sparingly**: Exact matches are faster than regex
+2. **Prefer exact matches**: They are faster than regex
 3. **Combine policies**: Multiple simple policies are easier to manage than one
    complex policy
 4. **Document intent**: Use descriptive names and IDs

@@ -5,10 +5,6 @@ icon: "copy"
 iconType: "duotone"
 ---
 
-This reference describes the duplicate fields policy category.
-
-## Definition
-
 Duplicate fields occur when multiple fields in a log record carry the same information.
 
 Common sources include:
@@ -30,7 +26,7 @@ Duplicate fields require either repeated field names or clear semantic equivalen
 
 ## Example
 
-The following log has three duplicate pairs: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`. Same values, different names.
+The following log has three duplicate pairs that carry the same values under different names: `time` and `@timestamp`, `level` and `severity_text`, `host` and `hostname`.
 
 <Tabs>
   <Tab title="Before">
@@ -81,14 +77,14 @@ log:
   Drop duplicate fields before data leaves your network.
 </Card>
 
-Edge enforcement is recommended when duplicate fields come from agents, collectors, SDKs, or exporters rather than application code.
+Use edge enforcement when duplicate fields come from agents, collectors, SDKs, or exporters rather than application code.
 
 ## Detection notes
 
 - Tero compares field values across logs.
-- Exact string matches can be flagged when the fields represent the same concept.
-- Semantic equivalents can be flagged when the values represent the same normalized meaning, such as a numeric severity and a text severity.
+- Tero flags exact string matches when the fields represent the same concept.
+- It flags semantic equivalents when the values share a normalized meaning, such as a numeric severity and a text severity.
 - Fields with similar values but different meanings are not duplicates. For example, `request_id` and `trace_id` are related identifiers, not duplicate fields.
 - Fields with different representations are not duplicates unless they normalize to the same value. For example, UTC and local timestamps are different representations.
 
-Tero keeps the canonical field, usually the more standard field such as `@timestamp` or `severity_text`, and removes the duplicate.
+Tero keeps the more standard field, such as `@timestamp` or `severity_text`, and removes the duplicate.

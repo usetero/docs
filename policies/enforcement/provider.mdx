@@ -15,31 +15,25 @@ Use this when you don't have [Edge](/edge) deployed or want to configure provide
 
 ## How it works
 
-Tero connects to your provider's API and configures filters, pipelines, or routing rules. The provider applies these rules as data arrives. You don't deploy anything. Tero manages the configuration remotely.
+Tero connects to your provider's API and configures filters, pipelines, or routing rules. The provider applies these rules as data arrives. You don't deploy anything. Tero manages the configuration through the provider API.
 
-<Tabs>
-  <Tab title="Datadog">
-    <Frame>
-      <img src="/images/how-it-works-datadog-4-in-provider.svg" alt="Enforce in provider with Datadog" />
-    </Frame>
-    
-    Tero configures [exclusion filters](https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters) and [pipelines](https://docs.datadoghq.com/logs/log_configuration/pipelines/) via the Datadog API.
-  </Tab>
-  <Tab title="Splunk">
-    <Frame>
-      <img src="/images/how-it-works-splunk-4-in-provider.svg" alt="Enforce in provider with Splunk" />
-    </Frame>
-    
-    Tero configures index routing and transforms via the Splunk API.
-  </Tab>
-  <Tab title="OpenTelemetry">
-    <Frame>
-      <img src="/images/how-it-works-otel-4-in-infrastructure.svg" alt="Enforce in provider with OpenTelemetry" />
-    </Frame>
-    
-    For OTel backends, Tero configures provider-specific filtering where supported.
-  </Tab>
-</Tabs>
+```mermaid
+flowchart LR
+    Tero["Tero"] -->|"provider API"| Controls["Filters, pipelines, routing rules"]
+    Controls --> Provider["Observability provider"]
+    Apps["Applications and agents"] -->|"telemetry"| Provider
+    Provider -->|"apply rules as data arrives"| Indexed["Indexed data"]
+    Provider -. "exclude or reroute" .-> Filtered["Filtered telemetry"]
+
+    style Tero fill:#00855c,stroke:#006b49,color:#fafafa
+    style Controls fill:#0e2b22,stroke:#0e2b22,color:#fafafa
+    style Apps fill:#262626,stroke:#262626,color:#fafafa
+    style Provider fill:#262626,stroke:#262626,color:#fafafa
+    style Indexed fill:#d1fae5,stroke:#10b981,color:#065f46
+    style Filtered fill:#d1fae5,stroke:#10b981,color:#065f46
+```
+
+For Datadog, Tero configures [exclusion filters](https://docs.datadoghq.com/logs/log_configuration/indexes/#exclusion-filters) and [pipelines](https://docs.datadoghq.com/logs/log_configuration/pipelines/) via the Datadog API.
 
 ## Setup
 
@@ -62,15 +56,15 @@ Filter name: tero-drop-health-checks-checkout-api
 Query: service:checkout-api http.target:/health* http.status_code:200
 ```
 
-After Datadog applies the filter, matching logs stop being indexed. You still see them in Live Tail (they reach Datadog), but they don't count against your indexed volume.
+Datadog applies the filter and stops indexing matching logs. You still see them in Live Tail (they reach Datadog), but they don't count against your indexed volume.
 
-Your data quality dashboard updates as Datadog reports the change. If something goes wrong, disable the policy and Tero removes the exclusion filter. Logs index normally again.
+Your data quality dashboard updates as Datadog reports the change. If something goes wrong, disable the policy and Tero removes the exclusion filter. Logs index again.
 
 ## When to use
 
 Enforce in provider works best when:
 
-- You don't have Edge deployed and want quick wins
+- You don't have Edge deployed and want savings now
 - You need provider-specific features like index routing
 - Egress costs aren't a concern
 - You want provider-side controls without deploying infrastructure

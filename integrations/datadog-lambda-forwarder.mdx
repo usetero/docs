@@ -47,7 +47,7 @@ Use cases:
 
 - Filter CloudWatch logs from EC2, RDS, ECS, and other AWS services
 - Apply policies to S3 access logs, ALB logs, or CloudTrail events
-- Drop noisy AWS service logs before they're indexed in Datadog
+- Drop noisy AWS service logs before Datadog indexes them
 
 ## Prerequisites
 
@@ -57,7 +57,7 @@ Use cases:
 - Tero account with an API key
 
 <Note>
-  The Tero Edge Extension layer is currently available in `us-east-1` only. Need
+  The Tero Edge Extension layer is available in `us-east-1` only. Need
   support in another region? [Contact us](mailto:support@usetero.com).
 </Note>
 
@@ -100,8 +100,8 @@ Use cases:
 
     <Note>
       The extension configures the Datadog Forwarder to route logs through
-      `localhost:3000`. The upstream URL is derived from your `DdSite`
-      parameter.
+      `localhost:3000`. The extension derives the upstream URL from your
+      `DdSite` parameter.
     </Note>
 
   </Tab>
@@ -117,7 +117,7 @@ Use cases:
         tero
         ```
 
-        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda forwarder"). Copy the key when shown. It's only displayed once.
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Lambda forwarder"). Copy the key when shown. Tero shows it once.
 
       </Step>
 
@@ -219,8 +219,8 @@ After deploying the forwarder, configure triggers to send AWS logs to it.
 
 ## Static policies
 
-For simple use cases, you can embed policies directly in the Lambda
-configuration instead of using the HTTP policy provider.
+For simple use cases, you can embed policies in the Lambda configuration
+instead of using the HTTP policy provider.
 
 Set `TeroPolicyStatic` (or `TERO_POLICY_STATIC` environment variable) to a JSON
 string:
@@ -246,7 +246,7 @@ string:
 ```
 
 <Warning>
-  Static policies don't update without redeploying. Use the HTTP policy provider
+  Static policies change only when you redeploy. Use the HTTP policy provider
   for dynamic policy management.
 </Warning>
 

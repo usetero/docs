@@ -5,13 +5,9 @@ icon: "bug"
 iconType: "duotone"
 ---
 
-This reference describes the accidental debug statements policy category.
-
-## Definition
-
 Accidental debug statements are developer-authored messages that do not describe application behavior, system state, or user activity. Examples include `console.log("here")`, `print("debug")`, and `logger.info("asdf")`.
 
-Severity does not determine this category. Accidental debug statements can appear at `DEBUG`, `INFO`, or any other severity level. The message content is the primary signal.
+Tero classifies by message content; these statements appear at `DEBUG`, `INFO`, or any other severity level.
 
 ## Signals
 
@@ -35,7 +31,7 @@ Severity does not determine this category. Accidental debug statements can appea
     ```
   </Tab>
   <Tab title="After">
-    Dropped entirely.
+    Dropped.
   </Tab>
 </Tabs>
 
@@ -60,11 +56,11 @@ log:
   Remove accidental debug statements from the codebase.
 </Card>
 
-Source enforcement is recommended because the log statement itself should not exist in production code.
+Fix this at the source: the statement should not exist in production code.
 
 ## Detection notes
 
 - Tero evaluates message content rather than severity.
-- Common debug phrases, random character strings, cleanup notes, and bare variable dumps can be flagged.
-- Tero is conservative for this category and flags logs that are unambiguously accidental.
-- Legitimate verbose logging is not included in this category when the message has operational meaning.
+- Tero flags common debug phrases, random character strings, cleanup notes, and bare variable dumps.
+- Detection is conservative for this category: Tero flags only logs that are clear accidents.
+- Tero excludes legitimate verbose logging when the message has operational meaning.

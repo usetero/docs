@@ -5,21 +5,17 @@ icon: "box-open"
 iconType: "duotone"
 ---
 
-This reference describes the instrumentation bloat policy category.
-
-## Definition
-
 Instrumentation bloat consists of fields added by SDKs, agents, collectors, and exporters. These fields describe the telemetry tooling rather than the observed system.
 
-Not all instrumentation fields are bloat. System identity and routing fields such as `service.name` are operational metadata. Tooling metadata such as `telemetry.sdk.version`, `otel.library.name`, and collector build strings is commonly low-value in logs.
+Some instrumentation fields, such as `service.name`, are operational metadata for system identity and routing. Tooling metadata such as `telemetry.sdk.version`, `otel.library.name`, and collector build strings has low value in logs.
 
 ## Signals
 
 - Fields that describe SDKs, agents, collectors, exporters, or instrumentation libraries.
 - Version fields for telemetry tooling.
 - Internal Kubernetes UIDs when human-readable Kubernetes names are also present.
-- Fields added automatically by the telemetry pipeline rather than by application code.
-- Fields that are rarely queried outside telemetry tooling investigations.
+- Fields the telemetry pipeline adds on its own rather than fields from application code.
+- Fields you query only when debugging the telemetry tooling itself.
 
 ## Example
 
@@ -97,7 +93,7 @@ Not all instrumentation fields are bloat. System identity and routing fields suc
       </Tab>
     </Tabs>
 
-    Human-readable Kubernetes names remain available after internal UIDs are removed.
+    Human-readable Kubernetes names remain available after the policy removes internal UIDs.
 
     ```yaml
     id: remove-k8s-uids
@@ -126,11 +122,11 @@ Not all instrumentation fields are bloat. System identity and routing fields suc
   Remove low-value instrumentation metadata before data leaves your network.
 </Card>
 
-Edge enforcement is recommended when fields are added by telemetry tooling rather than application code.
+Use edge enforcement when telemetry tooling, not application code, adds the fields.
 
 ## Detection notes
 
 - Tero maps dependencies and instrumentation metadata to distinguish tooling fields from application fields.
-- Fields such as `telemetry.sdk.version` and `otel.library.name` can be flagged when they come from telemetry tooling.
-- Tero does not classify system identity fields such as `service.name` as instrumentation bloat.
-- Kubernetes UID fields can be removed when equivalent human-readable names are retained.
+- Tero flags fields such as `telemetry.sdk.version` and `otel.library.name` when they come from telemetry tooling.
+- It does not classify system identity fields such as `service.name` as instrumentation bloat.
+- Tero removes Kubernetes UID fields when it keeps the human-readable names.

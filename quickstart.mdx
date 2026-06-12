@@ -5,7 +5,7 @@ icon: "rocket"
 iconType: "duotone"
 ---
 
-In this tutorial, we will review one open issue, inspect the evidence behind it, and find the policy Tero recommends for it.
+You will review one open issue, inspect its evidence, and find the policy Tero recommends.
 
 ## Before you begin
 
@@ -46,7 +46,7 @@ Notice the filters on the left. You can narrow the queue by severity, service, t
 
 Choose one open issue in the queue.
 
-The detail pane should show a summary of what Tero found. Look for:
+The detail pane summarizes what Tero found. Look for:
 
 - The affected service or log event
 - The issue domain and severity
@@ -59,7 +59,7 @@ If the detail pane does not load, use **Retry detail**. If you are on a small sc
 
 Scroll through the issue detail.
 
-Tero should show the evidence behind the finding. Depending on the issue, you may see representative log events, affected fields, volume, cost, related checks, or a timeline of what Tero observed.
+Tero presents the evidence behind the finding. Depending on the issue, you may see representative log events, affected fields, volume, cost, related checks, or a timeline of what Tero observed.
 
 {/* screenshot-suggestion
 id: quickstart-issue-evidence
@@ -84,9 +84,9 @@ Stop here and check whether the finding makes sense. Use this pass to learn how 
 
 Find the policy card in the issue detail.
 
-The policy preview should describe what the policy would match and what action it would take. Common actions include dropping, sampling, redacting, rewriting, or trimming matching telemetry.
+The policy preview describes what the policy would match and what action it would take. Common actions include dropping, sampling, redacting, rewriting, or trimming matching telemetry.
 
-If the issue already has an active policy, use the policy link to open its detail page. If the issue has a suggested policy, stay on the issue and inspect the preview.
+If the issue has an active policy, use the policy link to open its detail page. If the issue has a suggested policy, stay on the issue and inspect the preview.
 
 ## 5. Follow the policy state
 
@@ -115,7 +115,7 @@ You should see policy status, action, source, service, recent hits, update time,
 
 You reviewed one issue from the work queue, checked the evidence, inspected the recommended policy, and found where Tero shows policy state.
 
-That is the basic review flow: issue, evidence, policy, runtime state, impact.
+That review flow, from issue to measured impact, is the core of working in Tero.
 
 ## Next steps
 

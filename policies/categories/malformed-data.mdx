@@ -5,10 +5,6 @@ icon: "file-circle-xmark"
 iconType: "duotone"
 ---
 
-This reference describes the malformed data policy category.
-
-## Definition
-
 Malformed data includes binary payloads, corrupted output, truncated structured data, and strings that cannot be parsed in the expected format.
 
 Typical causes include:
@@ -42,7 +38,7 @@ Typical causes include:
         ```
       </Tab>
       <Tab title="After">
-        Dropped entirely.
+        Dropped.
       </Tab>
     </Tabs>
 
@@ -71,7 +67,7 @@ Typical causes include:
         ```
       </Tab>
       <Tab title="After">
-        Dropped entirely.
+        Dropped.
       </Tab>
     </Tabs>
 
@@ -96,11 +92,11 @@ Typical causes include:
   Drop malformed log events before they reach the destination provider.
 </Card>
 
-Malformed data is generally removed as a whole event because its fields are not reliably parseable.
+Tero removes malformed events whole because their fields fail parsing.
 
 ## Detection notes
 
 - Tero can match explicit binary signatures with regular expressions.
 - Tero can match fields that fail the expected parser, such as malformed JSON.
-- Malformed data policies should be scoped to the emitting service or field when the pattern is specific.
+- Scope malformed-data policies to the emitting service or field when the pattern is specific.
 - Dropping malformed events preserves valid error, warning, and diagnostic logs that are parseable.

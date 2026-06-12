@@ -5,13 +5,9 @@ icon: "weight-hanging"
 iconType: "duotone"
 ---
 
-This reference describes the excessive payloads policy category.
-
-## Definition
-
 An excessive payload is a large value embedded in a log event, such as a full HTTP response body, serialized object, data blob, or oversized stack trace.
 
-These fields increase event size. In many cases, the log keeps its operational meaning after the large field is removed.
+These fields increase event size. In many cases, the log keeps its operational meaning after a policy removes the large field.
 
 ## Signals
 
@@ -100,11 +96,11 @@ These fields increase event size. In many cases, the log keeps its operational m
   Change the source instrumentation when the large field comes from application logging.
 </Card>
 
-Open PR enforcement is appropriate when the payload was added by application code and a developer needs to decide which fields remain useful.
+Use open PR enforcement when application code added the payload and a developer needs to decide which fields stay.
 
 ## Detection notes
 
 - Tero flags fields that are large relative to routine log events for the same service or pattern.
 - Common candidates include full HTTP bodies, entire serialized objects, and long stack traces.
 - Policies can remove a single large field while preserving the rest of the event.
-- A source change is preferable when the log statement should stop emitting the payload entirely.
+- A source change is preferable when the log statement should stop emitting the payload.

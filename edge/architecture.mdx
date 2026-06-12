@@ -5,8 +5,8 @@ icon: "sitemap"
 iconType: "duotone"
 ---
 
-Edge is a lightweight proxy built in Zig, designed for high throughput and low
-latency telemetry processing via Policies.
+Edge is a lightweight Zig proxy that applies policies to telemetry at high
+throughput and low latency.
 
 ## Component Overview
 
@@ -114,7 +114,7 @@ Key properties:
 - **Lock-free reads**: No contention during policy evaluation
 - **Hot reload**: New policies take effect without restart
 
-This design means policy updates never block request processing.
+Policy updates do not block request processing.
 
 ### Policy Engine
 
@@ -150,8 +150,8 @@ set of default policies that can be overridden remotely.
 
 ### Data-Oriented Design
 
-Edge optimizes for memory access patterns and cache coherency. Data structures
-are laid out for sequential access, minimizing cache misses during
+Edge optimizes for memory access patterns and cache coherency. It lays out data
+structures for sequential access to minimize cache misses during
 high-throughput processing.
 
 ### Lock-Free Reads
@@ -186,18 +186,17 @@ sequenceDiagram
 
 ### Fail-Open
 
-Edge prioritizes availability. If policy evaluation fails for any reason,
-telemetry passes through unchanged. You might miss a filter, but you won't lose
-data.
+Edge prioritizes availability. If policy evaluation fails, Edge forwards the
+telemetry unchanged. A filter may not apply, and no data is dropped.
 
 ### Stateless Modules
 
-Protocol modules don't maintain state. All they do is:
+Protocol modules are stateless. Each module:
 
-1. Parse the request
-2. Read policies from the registry
-3. Apply policies to the data
-4. Forward to upstream
+1. Parses the request
+2. Reads policies from the registry
+3. Applies policies to the data
+4. Forwards to upstream
 
 Engineers can inspect each module in isolation, and Edge can run modules in parallel.
 
@@ -265,8 +264,7 @@ flowchart LR
 **Use Case**: Tero Edge sits at the egress point after your telemetry pipeline.
 It acts as a final gateway before data leaves your network and applies
 cost-focused policies that reduce egress to SaaS vendors. Drop redundant health
-checks, sample high-cardinality metrics, and keep actionable data before your
-provider bills for it.
+checks and sample high-cardinality metrics before your provider bills for them.
 
 Best for:
 

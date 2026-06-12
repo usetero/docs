@@ -39,8 +39,7 @@ Transforms execute in a strict order:
 3. **Rename** - Change field names
 4. **Add** - Insert new fields
 
-This order is fixed. You cannot change it. Design your transforms with this
-order in mind.
+This order is fixed, so design your transforms around it.
 
 ## Remove
 
@@ -480,8 +479,6 @@ You can use multiple transform operations in a single policy:
 }
 ```
 
-Remember: operations execute in order (remove -> redact -> rename -> add).
-
 ## Combining with Keep
 
 Transforms only apply to logs that survive the keep stage:
@@ -513,7 +510,8 @@ This keeps 50% of checkout logs and redacts cart contents from the survivors.
 
 ## Best Practices
 
-1. **Redact, don't remove** PII so downstream tools still see that data existed
+1. **Redact PII instead of removing it** so downstream tools still see the
+   field existed
 2. **Use descriptive replacements** for redacted fields (`[EMAIL REDACTED]` vs
    `[REDACTED]`)
 3. **Test transforms** in staging before production

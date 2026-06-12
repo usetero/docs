@@ -39,9 +39,9 @@ purpose: Shows policies as reviewable control-plane artifacts rather than hidden
 
 Tero starts with a finding. The issue explains what Tero found and shows evidence. If a policy can address the issue, Tero presents the recommended policy in issue detail.
 
-After approval or deployment, the policy becomes part of the policy surface. You can open the policy to inspect its identity, source, related issue, activity, deployments, and spec.
+After approval or deployment, Tero adds the policy to the Policies workspace. You can open the policy to inspect its identity, source, related issue, activity, deployments, and spec.
 
-That relationship matters. A policy without issue context is hard to trust. An issue without a policy is harder to act on. Tero keeps both connected.
+Tero links each policy to the issue that produced it, so reviewers can check the evidence before approving.
 
 ## Policy actions
 
@@ -51,7 +51,7 @@ For lookup details, use [Policy lifecycle](/policies/lifecycle) and [Policy cate
 
 ## Policy states
 
-Policies move through review, deployment, and impact checks. Tero shows policy state, source, linked issue, activity, deployments, and spec so reviewers can connect the policy back to the evidence that produced it.
+Policies move through review, deployment, and impact checks. Tero shows policy state, source, linked issue, activity, deployments, and spec so reviewers can connect the policy back to the evidence Tero used to create it.
 
 Use [Policy lifecycle](/policies/lifecycle) for the current state reference.
 
@@ -80,7 +80,7 @@ purpose: Shows how reviewers inspect policy state after approval.
 </Frame>
 {/* /screenshot-generated */}
 
-Use the issue link when you need to revisit evidence. Use deployments when you need runtime state. Use spec when you need to inspect the exact match and action.
+The issue link returns you to the evidence. Open Deployments for runtime state, or Spec for the exact match and action.
 
 ## Provider inventory
 

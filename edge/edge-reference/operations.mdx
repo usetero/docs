@@ -59,7 +59,7 @@ Returns `200 OK` when Edge is healthy and ready to process requests.
 
 ### Kubernetes Probes
 
-Edge starts instantly, so probes can begin immediately:
+Probes can begin as soon as the process starts:
 
 ```yaml
 livenessProbe:
@@ -87,8 +87,8 @@ This shutdown sequence lets Edge finish accepted requests before the process exi
 
 ### Kubernetes Termination
 
-Edge shuts down instantly after draining in-flight requests. A short grace
-period is sufficient:
+Edge exits as soon as in-flight requests drain. A short grace period is
+sufficient:
 
 ```yaml
 terminationGracePeriodSeconds: 10

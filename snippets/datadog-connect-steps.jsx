@@ -48,10 +48,70 @@ export const DatadogConnectSteps = ({ region, host }) => (
       </p>
 
       <p>See <a href="#roles">Roles</a> for details on what each role enables.</p>
+
+      <p>
+        To create the service account from your terminal, use <a href="https://github.com/DataDog/pup" target="_blank" rel="noopener noreferrer">Datadog Pup</a>. Log in, find the role ID you want to assign, and create the service account from a JSON file.
+      </p>
+
+      <CodeBlock language="bash">
+        {`brew tap datadog-labs/pack
+brew install datadog-labs/pack/pup
+
+pup auth login --site ${host.replace(/^app\./, "")}
+pup users roles --output table`}
+      </CodeBlock>
+
+      <p>Create <code>tero-service-account.json</code> with the role ID for <strong>Standard</strong>, <strong>Read-Only</strong>, or your custom Tero role.</p>
+
+      <CodeBlock language="json">
+        {`{
+  "data": {
+    "type": "users",
+    "attributes": {
+      "name": "Tero",
+      "email": "tero@datadoghq.com",
+      "service_account": true
+    },
+    "relationships": {
+      "roles": {
+        "data": [
+          {
+            "id": "<ROLE_ID>",
+            "type": "roles"
+          }
+        ]
+      }
+    }
+  }
+}`}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {`pup users service-accounts create --file tero-service-account.json --output json`}
+      </CodeBlock>
     </Step>
 
     <Step title="Create an application key">
       <p>After creating the service account, click on it in the list. Under <strong>Application Keys</strong>, click <strong>New Key</strong>. Copy the key and paste it into the TUI.</p>
+
+      <p>With Pup, use the service account ID returned by the previous command. Create <code>tero-application-key.json</code>:</p>
+
+      <CodeBlock language="json">
+        {`{
+  "data": {
+    "type": "application_keys",
+    "attributes": {
+      "name": "Tero"
+    }
+  }
+}`}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {`pup users service-accounts app-keys create <SERVICE_ACCOUNT_ID> --file tero-application-key.json --output json`}
+      </CodeBlock>
+
+      <p>Datadog shows the application key secret once. Paste that value into the TUI.</p>
     </Step>
 
     <Step title="Done">

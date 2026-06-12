@@ -35,7 +35,7 @@ the option that fits your environment.
     The Policy Processor supports three actions:
     - **Drop**: Remove logs matching patterns
     - **Keep**: Retain only logs matching patterns
-    - **Sample**: Probabilistically sample at configurable rates
+    - **Sample**: Sample at configurable rates
 
     Policies hot-reload without restarting the collector.
 
@@ -66,7 +66,7 @@ the option that fits your environment.
         tero
         ```
 
-        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Tero Collector"). Copy the key when shown. It's only displayed once.
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Tero Collector"). Copy the key when shown. Tero shows it once.
       </Step>
 
       <Step title="Deploy the collector">
@@ -280,7 +280,7 @@ the option that fits your environment.
 
     ### File provider
 
-    Load from a local file. Good for static policies or GitOps workflows.
+    Load from a local file. Use this for static policies or GitOps workflows.
 
     ```yaml
     processors:
@@ -294,7 +294,7 @@ the option that fits your environment.
 
     ### HTTP provider
 
-    Fetch from a remote endpoint. Good for dynamic policies managed via Tero.
+    Fetch from a remote endpoint. Choose this for dynamic policies managed via Tero.
 
     ```yaml
     processors:
@@ -350,7 +350,7 @@ the option that fits your environment.
         tero
         ```
 
-        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "OTel Collector"). Copy the key when shown. It's only displayed once.
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "OTel Collector"). Copy the key when shown. Tero shows it once.
       </Step>
 
       <Step title="Deploy Edge alongside your collector">
@@ -660,7 +660,7 @@ the option that fits your environment.
 
     ### File provider
 
-    Load policies from a local file. Good for static policies.
+    Load policies from a local file. This suits static policies.
 
     ```json
     {
@@ -672,7 +672,7 @@ the option that fits your environment.
 
     ### HTTP provider
 
-    Fetch policies from a remote endpoint. Good for dynamic policies managed via Tero.
+    Fetch policies from a remote endpoint. This works well for dynamic policies managed via Tero.
 
     ```json
     {
@@ -691,7 +691,7 @@ the option that fits your environment.
 
     ## How it works
 
-    Build a custom collector with the Policy Processor included. This gives you full control over which components to include while adding Tero's filtering capabilities.
+    Build a custom collector with the Policy Processor included. This gives you full control over which components to include while adding Tero's policy filtering.
 
     ```mermaid
     flowchart LR
@@ -745,7 +745,7 @@ the option that fits your environment.
         tero
         ```
 
-        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Custom Collector"). Copy the key when shown. It's only displayed once.
+        Navigate to **Edge** → **API Keys** → **Create**. Name your key (e.g., "Custom Collector"). Copy the key when shown. Tero shows it once.
       </Step>
 
       <Step title="Create the OCB manifest">

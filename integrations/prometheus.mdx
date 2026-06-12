@@ -7,13 +7,13 @@ iconType: "duotone"
 ---
 
 Deploy Tero Edge as a sidecar to your application to filter Prometheus metrics
-before they're scraped. Edge sits between Prometheus and your application,
+before Prometheus scrapes them. Edge sits between Prometheus and your application,
 applying policies as each scrape passes through.
 
 ## How it works
 
 Edge runs as a sidecar container in the same pod as your application. Prometheus
-scrapes Edge instead of your application directly. Edge proxies the request to
+scrapes Edge instead of your application. Edge proxies the request to
 your app's `/metrics` endpoint, applies policies to filter metrics, and returns
 the filtered response.
 
@@ -32,12 +32,12 @@ flowchart LR
 
 ## Key features
 
-- **Streaming processing**: Metrics are filtered line-by-line as they stream
-  through Edge, keeping memory usage bounded regardless of response size
+- **Streaming processing**: Edge filters metrics line-by-line as they stream
+  through, keeping memory usage bounded regardless of response size
 - **Dual byte limits**: Configure `max_input_bytes_per_scrape` to bound memory
   usage and `max_output_bytes_per_scrape` to cap filtered response size
-- **Zero-copy forwarding**: Metrics that pass policy checks are forwarded
-  without additional allocations
+- **Zero-copy forwarding**: Edge forwards metrics that pass policy checks
+  without extra allocations
 - **Fail-open behavior**: If policy evaluation fails, metrics pass through
   unchanged
 
@@ -59,7 +59,7 @@ flowchart LR
     ```
 
     Navigate to **Edge** -> **API Keys** -> **Create**. Name your key (e.g.,
-    "Prometheus Sidecar"). Copy the key when shown--it's only displayed once.
+    "Prometheus Sidecar"). Copy the key when shown. Tero shows it once.
 
   </Step>
 
@@ -290,7 +290,7 @@ array.
 
 #### File provider
 
-Load policies from a local file. Good for static policies bundled in the
+Load policies from a local file. Pick this for static policies bundled in the
 ConfigMap.
 
 ```json
@@ -303,8 +303,8 @@ ConfigMap.
 
 #### HTTP provider
 
-Fetch policies from a remote endpoint. Good for dynamic policies managed via the
-Tero API.
+Fetch policies from a remote endpoint. Use this for dynamic policies managed
+via the Tero API.
 
 ```json
 {
@@ -329,11 +329,11 @@ Edge's streaming architecture keeps memory usage predictable. Key factors:
 2. **Output limit**: `max_output_bytes_per_scrape` caps how much data Edge
    forwards to clients. Set this high if you have aggressive filtering.
 
-3. **Line buffer**: Each metric line is processed individually with a 4KB
-   buffer. Lines exceeding this are passed through unfiltered.
+3. **Line buffer**: Edge processes each metric line with a 4KB buffer. Edge
+   passes lines over the 4KB limit through unfiltered.
 
-4. **Concurrent scrapes**: Memory scales linearly with concurrent scrapes. Each
-   active scrape uses approximately `max_input_bytes_per_scrape` worst-case.
+4. **Concurrent scrapes**: Memory scales with concurrent scrapes. Each active
+   scrape can use up to `max_input_bytes_per_scrape`.
 
 For high-cardinality workloads with aggressive filtering:
 
@@ -383,8 +383,7 @@ resources:
     memory: 256Mi
 ```
 
-Also check `max_input_bytes_per_scrape` isn't truncating large responses
-prematurely.
+Also check `max_input_bytes_per_scrape` isn't truncating large responses.
 
 **Some metrics missing**
 

@@ -5,13 +5,9 @@ icon: "shield-halved"
 iconType: "duotone"
 ---
 
-This reference describes the burst protection policy category.
-
-## Definition
-
 Burst protection applies to infrastructure symptoms that can repeat for every affected request when a dependency fails. Examples include database timeouts, connection failures, and TLS failures.
 
-This category is for pipeline protection rather than signal-quality cleanup. Business events are not treated the same way when their volume is bounded by real user activity.
+These policies guard the log pipeline during failures. Tero excludes business events because user activity bounds their volume.
 
 ## Signals
 
@@ -67,10 +63,10 @@ This category is for pipeline protection rather than signal-quality cleanup. Bus
   Rate limit matching infrastructure failures before they leave your infrastructure.
 </Card>
 
-Edge enforcement is the recommended enforcement mode for burst protection because the purpose is to protect the log pipeline during failure conditions.
+Use edge enforcement: the point is protecting the pipeline during failures.
 
 ## Detection notes
 
 Tero analyzes each log event for burst risk: whether a failure could cause the event to repeat at high volume. For events at risk of bursting, Tero can generate a scoped rate-limit policy.
 
-Tero applies burst protection per event shape. Infrastructure symptoms receive circuit breakers, while unrelated business events continue through their normal policy path.
+Tero scopes burst protection to each event shape. It applies circuit breakers to infrastructure symptoms and routes unrelated business events through their normal policy path.

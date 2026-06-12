@@ -8,7 +8,7 @@ iconType: "duotone"
 
 The Master Catalog is Tero's maintained context for the telemetry estate.
 
-Catalog data helps reviewers understand an issue before they approve a policy. It ties findings to services, log events, ownership, volume, cost, compliance exposure, and related runtime state.
+Use catalog data to understand an issue before you approve a policy: it links findings to services, log events, ownership, volume, cost, compliance exposure, and related runtime state.
 
 ## Current catalog surfaces
 
@@ -32,19 +32,13 @@ Tero also presents catalog-backed lanes:
 
 ## How catalog context helps review
 
-A reviewer needs more than a policy title:
+Before approving a policy you need the owning service, the affected log event pattern, the volume and cost involved, the issue or check that produced the recommendation, and any policy or runtime state that already exists. The catalog supplies those facts across Tero.
 
-- Which service owns the telemetry?
-- Which log event pattern is affected?
-- How much volume or cost is involved?
-- Which issue or check produced the recommendation?
-- Which policy or runtime state already exists?
-
-The catalog supplies those facts across Tero. Issues use catalog context to explain findings. Policies link back to issues and services. Edge instances and provider surfaces show whether approved policies run.
+Issues use catalog context to explain findings, and policies link back to issues and services. Edge instances and provider surfaces show whether approved policies run.
 
 ## Metrics and traces
 
-Tero is telemetry control, but the current primary surfaces documented here are log-oriented: services, log events, checks, issues, policies, log ingestion, cost, compliance, and Edge runtime state.
+Tero is telemetry control, but these docs cover the log-oriented surfaces: services, log events, checks, issues, policies, log ingestion, cost, compliance, and Edge runtime state.
 
 Use the Metrics or Trace Spans pages only when your Tero account exposes those surfaces.
 

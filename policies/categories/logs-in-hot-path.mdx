@@ -5,11 +5,7 @@ icon: "fire"
 iconType: "duotone"
 ---
 
-This reference describes the logs in hot path policy category.
-
-## Definition
-
-A hot-path log is emitted unconditionally from code that runs frequently during normal operation. Common sources include request middleware, item-processing loops, polling loops, and other code paths that execute for most requests or records.
+Code that runs on most requests or records emits hot-path logs without conditions. Common sources include request middleware, item-processing loops, and polling loops.
 
 This category is distinct from [burst protection](/policies/categories/burst-protection). Burst protection applies to logs that flood during failures. Hot-path logs produce high volume even when the service is healthy.
 
@@ -36,7 +32,7 @@ This category is distinct from [burst protection](/policies/categories/burst-pro
         ```
       </Tab>
       <Tab title="After">
-        Log removed from middleware entirely.
+        Log removed from middleware.
       </Tab>
     </Tabs>
   </Tab>
@@ -72,6 +68,6 @@ The durable remediation is a code change. Edge filtering can reduce downstream v
 
 ## Detection notes
 
-Tero identifies hot-path logs primarily by relative volume. If one event shape represents a disproportionate share of a service's logs, the event is treated as a hot-path candidate.
+Tero identifies hot-path logs by relative volume. If one event shape represents a disproportionate share of a service's logs, Tero treats the event as a hot-path candidate.
 
 Message content can support detection. Generic messages such as `Processing request` or `Handling item` often indicate unconditional logging, but volume is the primary signal.

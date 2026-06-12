@@ -5,7 +5,7 @@ icon: "tags"
 iconType: "duotone"
 ---
 
-This reference lists the policy categories documented for Tero.
+Tero groups telemetry issues into the categories below. Each category can produce policy recommendations.
 
 | Category | Signal | Typical action |
 | -------- | ------ | -------------- |
@@ -17,9 +17,9 @@ This reference lists the policy categories documented for Tero.
 | [Instrumentation bloat](/policies/categories/instrumentation-bloat) | SDK, agent, collector, or platform metadata with little review value. | Remove low-value fields. |
 | [PII leakage](/policies/categories/pii-leakage) | Sensitive values in log fields or free-form messages. | Redact or remove sensitive values. |
 | [Excessive payloads](/policies/categories/excessive-payloads) | Large bodies, serialized objects, or oversized stack traces. | Trim or remove large fields. |
-| [Debug mode left on](/policies/categories/debug-mode-left-on) | A service emits prolonged DEBUG-level volume in production. | Create a ticket, open a config PR, or temporarily filter. |
+| [Debug mode left on](/policies/categories/debug-mode-left-on) | A service emits prolonged DEBUG-level volume in production. | Create a ticket, open a config PR, or apply a temporary filter. |
 | [Logs in hot path](/policies/categories/logs-in-hot-path) | One event dominates a service's steady-state log volume. | Remove or relocate the log statement. |
 | [Burst protection](/policies/categories/burst-protection) | Infrastructure error events can flood during outages. | Rate-limit the matching event. |
-| [High cardinality tags](/policies/categories/high-cardinality-tags) | Metric tags have unbounded or highly variable values. | Remove high-cardinality tags. |
+| [High cardinality tags](/policies/categories/high-cardinality-tags) | Metric tags have unbounded or fast-changing values. | Remove high-cardinality tags. |
 
 Use [Policy lifecycle](/policies/lifecycle) for policy states and [Enforcement](/policies/enforcement/overview) for enforcement methods.
