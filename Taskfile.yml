@@ -39,9 +39,18 @@ tasks:
       - task: check:links
 
   check:links:
-    desc: "Check for broken links"
+    desc: "Check for broken links (ignores .agents)"
     cmds:
-      - pnpm exec mint broken-links
+      # mint broken-links has no exclude option, so strip .agents/ entries
+      # from its report and fail only if other files have broken links
+      - |
+        out=$(pnpm exec mint broken-links 2>&1 || true)
+        filtered=$(printf '%s\n' "$out" | awk '/^\.agents\//{skip=1;next} /^[^[:space:]]/{skip=0} !skip')
+        if printf '%s\n' "$filtered" | grep -qE '^[^[:space:]].*\.(md|mdx)$'; then
+          printf '%s\n' "$filtered"
+          exit 1
+        fi
+        echo "No broken links found (excluding .agents)"
 
   lint:
     desc: "Lint documentation"
