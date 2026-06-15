@@ -43,10 +43,10 @@ Tero also shows provenance. A reviewer can see whether a recommendation came fro
 {/* screenshot-suggestion
 id: issue-detail-evidence-policy
 priority: required
-appRoute: /issues
+appRoute: /issues/ISS-1
 viewport: mobile
-selector: article[aria-label^="Issue"] [class*="bg-warning/5"]
-state: mobile issue detail with recommended policy card visible
+selector: article[aria-label="Issue ISS-1"] section:has-text("PROPOSED POLICY")
+state: mobile issue detail with proposed policy card visible
 output: /images/screenshots/introduction/issue-detail-evidence-policy.png
 caption: The recommended policy card connects evidence to a concrete action.
 purpose: Shows the policy recommendation without the surrounding issue list or filters.
@@ -56,7 +56,7 @@ purpose: Shows the policy recommendation without the surrounding issue list or f
 <Frame>
   <img src="/images/screenshots/introduction/issue-detail-evidence-policy.png" alt="The recommended policy card connects evidence to a concrete action." />
 </Frame>
-<p className="screenshot-caption"><small>The recommended policy card connects evidence to a concrete action. <a className="demo-screenshot-link" href="https://demo.usetero.com/issues" target="_blank" rel="noopener noreferrer">Open in demo <Icon icon="arrow-up-right-from-square" /></a></small></p>
+<p className="screenshot-caption"><small>The recommended policy card connects evidence to a concrete action. <a className="demo-screenshot-link" href="https://demo.usetero.com/issues/ISS-1" target="_blank" rel="noopener noreferrer">Open in demo <Icon icon="arrow-up-right-from-square" /></a></small></p>
 {/* /screenshot-generated */}
 
 ## 3. A policy captures the change
