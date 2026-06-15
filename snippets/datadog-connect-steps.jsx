@@ -10,7 +10,7 @@ export const DatadogConnectSteps = ({ region, host }) => (
       <p>This opens the Tero TUI, which guides you through setup.</p>
 
       <Note>
-        Don't have the CLI installed? See the <a href="/quickstart">quickstart</a>.
+        If you don't have the CLI installed, ask your Tero contact for CLI access.
       </Note>
     </Step>
 

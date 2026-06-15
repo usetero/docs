@@ -34,8 +34,7 @@ docs/
 ├── trust/              # Trust Center content (Trust tab)
 ├── snippets/           # Reusable content blocks
 ├── scripts/            # Screenshot tooling
-├── docs.json           # Navigation configuration
-└── quickstart.mdx      # Product quickstart
+└── docs.json           # Navigation configuration
 ```
 
 ## Documentation Organization
