@@ -14,93 +14,99 @@ Tero needs two Datadog credentials:
 - An API key named `Tero`
 - An application key owned by a service account with Datadog's `Read Only` role
 
-You can create them from the Datadog UI or with Pup. Use the same Datadog site your account normally uses.
+Choose one method to create both credentials. You do not need to use both.
 
-## Create credentials from Datadog
+## Choose a method
 
-<Steps>
-  <Step title="Create an API key">
-    In Datadog, open <strong>Organization Settings &rarr; API Keys</strong>. Select <strong>New Key</strong>, name it <code>Tero</code>, and copy the key value.
-  </Step>
+<Tabs>
+  <Tab title="Datadog UI">
+    <Steps>
+      <Step title="Create an API key">
+        In Datadog, open <strong>Organization Settings &rarr; API Keys</strong>. Select <strong>New Key</strong>, name it <code>Tero</code>, and copy the key value.
+      </Step>
 
-  <Step title="Create a service account">
-    Open <strong>Organization Settings &rarr; Service Accounts</strong>. Select <strong>New Service Account</strong>, name it <code>Tero</code>, and assign Datadog's <code>Read Only</code> role.
-  </Step>
+      <Step title="Create a service account">
+        Open <strong>Organization Settings &rarr; Service Accounts</strong>. Select <strong>New Service Account</strong>, name it <code>Tero</code>, and assign Datadog's <code>Read Only</code> role.
+      </Step>
 
-  <Step title="Create an application key">
-    Open the <code>Tero</code> service account. Under <strong>Application Keys</strong>, select <strong>New Key</strong>, name it <code>Tero</code>, and copy the key value. Datadog shows the application key secret once.
-  </Step>
-</Steps>
+      <Step title="Create an application key">
+        Open the <code>Tero</code> service account. Under <strong>Application Keys</strong>, select <strong>New Key</strong>, name it <code>Tero</code>, and copy the key value. Datadog shows the application key secret once.
+      </Step>
+    </Steps>
+  </Tab>
 
-## Create credentials with Pup
+  <Tab title="Pup">
+    Use the same Datadog site your account normally uses. Replace <code>&lt;DATADOG_SITE&gt;</code> with your Datadog site, such as <code>datadoghq.com</code>, <code>us3.datadoghq.com</code>, <code>us5.datadoghq.com</code>, <code>datadoghq.eu</code>, <code>ap1.datadoghq.com</code>, or <code>ddog-gov.com</code>.
 
-Install Pup, authenticate to Datadog, and list the roles in your account. Replace `<DATADOG_SITE>` with your Datadog site, such as `datadoghq.com`, `us3.datadoghq.com`, `us5.datadoghq.com`, `datadoghq.eu`, `ap1.datadoghq.com`, or `ddog-gov.com`.
+    Install Pup, authenticate to Datadog, and list the roles in your account.
 
-```bash
-brew tap datadog-labs/pack
-brew install datadog-labs/pack/pup
+    ```bash
+    brew tap datadog-labs/pack
+    brew install datadog-labs/pack/pup
 
-pup auth login --site <DATADOG_SITE>
-pup users roles --output table
-```
+    pup auth login --site <DATADOG_SITE>
+    pup users roles --output table
+    ```
 
-Create a Datadog API key named `Tero`.
+    Create a Datadog API key named `Tero`.
 
-```bash
-pup api-keys create --name Tero --output json
-```
+    ```bash
+    pup api-keys create --name Tero --output json
+    ```
 
-Create `tero-service-account.json` with the role ID for Datadog's `Read Only` role.
+    Create `tero-service-account.json` with the role ID for Datadog's `Read Only` role.
 
-```json
-{
-  "data": {
-    "type": "users",
-    "attributes": {
-      "name": "Tero",
-      "email": "tero@datadoghq.com",
-      "service_account": true
-    },
-    "relationships": {
-      "roles": {
-        "data": [
-          {
-            "id": "<READ_ONLY_ROLE_ID>",
-            "type": "roles"
+    ```json
+    {
+      "data": {
+        "type": "users",
+        "attributes": {
+          "name": "Tero",
+          "email": "tero@datadoghq.com",
+          "service_account": true
+        },
+        "relationships": {
+          "roles": {
+            "data": [
+              {
+                "id": "<READ_ONLY_ROLE_ID>",
+                "type": "roles"
+              }
+            ]
           }
-        ]
+        }
       }
     }
-  }
-}
-```
+    ```
 
-Create the service account.
+    Create the service account.
 
-```bash
-pup users service-accounts create --file tero-service-account.json --output json
-```
+    ```bash
+    pup users service-accounts create --file tero-service-account.json --output json
+    ```
 
-Create `tero-application-key.json`.
+    Create `tero-application-key.json`.
 
-```json
-{
-  "data": {
-    "type": "application_keys",
-    "attributes": {
-      "name": "Tero"
+    ```json
+    {
+      "data": {
+        "type": "application_keys",
+        "attributes": {
+          "name": "Tero"
+        }
+      }
     }
-  }
-}
-```
+    ```
 
-Create the application key using the service account ID returned by the previous command.
+    Create the application key using the service account ID returned by the previous command.
 
-```bash
-pup users service-accounts app-keys create <SERVICE_ACCOUNT_ID> --file tero-application-key.json --output json
-```
+    ```bash
+    pup users service-accounts app-keys create <SERVICE_ACCOUNT_ID> --file tero-application-key.json --output json
+    ```
 
-Datadog shows the application key secret once. Copy it before closing the output.
+    Datadog shows the application key secret once. Copy it before closing the output.
+  </Tab>
+</Tabs>
 
 ## Share the credentials with Tero
 
