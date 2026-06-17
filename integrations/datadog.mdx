@@ -1,134 +1,113 @@
 ---
 title: "Datadog"
-description: "Connect Tero to Datadog for evidence, catalog context, and provider actions"
+description: "Create read-only Datadog credentials for Tero"
 icon: "dog"
 iconType: "duotone"
 ---
 
-import { DatadogConnectSteps } from "/snippets/datadog-connect-steps.jsx";
+Connect Datadog by creating read-only credentials and sharing them with Tero. This lets Tero review log telemetry, build service and log-event context, and analyze ingestion without changing anything in Datadog.
 
-Connect Datadog when you want Tero to review log telemetry and build service and log-event context. Tero also shows cost and compliance issues, analyzes ingestion, and manages supported provider actions.
+## What to create
 
-## Connect Datadog
+Tero needs two Datadog credentials:
 
-Select your Datadog region, then follow the steps.
+- An API key named `Tero`
+- An application key owned by a service account with Datadog's `Read Only` role
 
-<Tabs>
-  <Tab title="US1">
-    <DatadogConnectSteps region="US1" host="app.datadoghq.com" />
-  </Tab>
-  <Tab title="US3">
-    <DatadogConnectSteps region="US3" host="us3.datadoghq.com" />
-  </Tab>
-  <Tab title="US5">
-    <DatadogConnectSteps region="US5" host="us5.datadoghq.com" />
-  </Tab>
-  <Tab title="EU">
-    <DatadogConnectSteps region="EU" host="app.datadoghq.eu" />
-  </Tab>
-  <Tab title="AP1">
-    <DatadogConnectSteps region="AP1" host="ap1.datadoghq.com" />
-  </Tab>
-  <Tab title="US1-FED">
-    <DatadogConnectSteps region="US1-FED" host="app.ddog-gov.com" />
-  </Tab>
-</Tabs>
+You can create them from the Datadog UI or with Pup. Use the same Datadog site your account normally uses.
 
-## Datadog context in Tero
+## Create credentials from Datadog
 
-Datadog gives Tero provider context for what you review in Tero:
+<Steps>
+  <Step title="Create an API key">
+    In Datadog, open <strong>Organization Settings &rarr; API Keys</strong>. Select <strong>New Key</strong>, name it <code>Tero</code>, and copy the key value.
+  </Step>
 
-- [Issues](/issues/overview) with evidence from log events, services, volume, cost, and compliance exposure
-- [Services](/master-catalog/services) with ownership and log-volume context
-- [Log events](/master-catalog/log-events) grouped from Datadog logs
-- Cost and Compliance lanes tied to open issues
-- Log ingestion analysis for indexed, non-indexed, and migration-candidate volume
-- Datadog exclusion filter inventory in the [Policies](/policies) workspace
+  <Step title="Create a service account">
+    Open <strong>Organization Settings &rarr; Service Accounts</strong>. Select <strong>New Service Account</strong>, name it <code>Tero</code>, and assign Datadog's <code>Read Only</code> role.
+  </Step>
 
-{/* screenshot-suggestion
-id: datadog-log-ingestion
-priority: useful
-appRoute: /ingestion
-viewport: desktop
-state: Datadog ingestion analysis loaded with index breakdown and migration candidates visible
-output: /images/screenshots/integrations/datadog-log-ingestion.png
-caption: Datadog log ingestion analysis shows where you can move waste upstream with policies.
-purpose: Connects the Datadog integration to current Tero screens.
-*/}
+  <Step title="Create an application key">
+    Open the <code>Tero</code> service account. Under <strong>Application Keys</strong>, select <strong>New Key</strong>, name it <code>Tero</code>, and copy the key value. Datadog shows the application key secret once.
+  </Step>
+</Steps>
 
-{/* screenshot-generated id: datadog-log-ingestion */}
-<Frame>
-  <img src="/images/screenshots/integrations/datadog-log-ingestion.png" alt="Datadog log ingestion analysis shows where you can move waste upstream with policies." />
-</Frame>
-<p className="screenshot-caption"><small>Datadog log ingestion analysis shows where you can move waste upstream with policies. <a className="demo-screenshot-link" href="https://demo.usetero.com/ingestion" target="_blank" rel="noopener noreferrer">Open in demo <Icon icon="arrow-up-right-from-square" /></a></small></p>
-{/* /screenshot-generated */}
+## Create credentials with Pup
 
-## Provider actions
+Install Pup, authenticate to Datadog, and list the roles in your account. Replace `<DATADOG_SITE>` with your Datadog site, such as `datadoghq.com`, `us3.datadoghq.com`, `us5.datadoghq.com`, `datadoghq.eu`, `ap1.datadoghq.com`, or `ddog-gov.com`.
 
-With write access, Tero can manage supported Datadog log controls through the Datadog API.
+```bash
+brew tap datadog-labs/pack
+brew install datadog-labs/pack/pup
 
-Common actions include:
+pup auth login --site <DATADOG_SITE>
+pup users roles --output table
+```
 
-| Action | What Tero can do |
-| ------ | ------------- |
-| Exclusion filters | Convert or create filters for log events that should stop reaching indexed storage. |
-| Pipelines | Adjust supported log processing behavior when a policy requires provider-side handling. |
-| Policy import | Inspect Datadog filters, preview Tero policies, and create supported policies from provider inventory. |
+Create a Datadog API key named `Tero`.
 
-Provider actions are one way to run a policy. You can also run policies with [Edge](/edge/overview), deploy the [Datadog Edge distribution](/edge/distributions/datadog), or use repository workflows.
+```bash
+pup api-keys create --name Tero --output json
+```
 
-## Permissions
+Create `tero-service-account.json` with the role ID for Datadog's `Read Only` role.
 
-Datadog has managed roles and custom role permissions. Choose the narrowest role that supports the work you want Tero to do.
+```json
+{
+  "data": {
+    "type": "users",
+    "attributes": {
+      "name": "Tero",
+      "email": "tero@datadoghq.com",
+      "service_account": true
+    },
+    "relationships": {
+      "roles": {
+        "data": [
+          {
+            "id": "<READ_ONLY_ROLE_ID>",
+            "type": "roles"
+          }
+        ]
+      }
+    }
+  }
+}
+```
 
-| Role | What it gives Tero |
-| ---- | ------------------ |
-| **Read-Only** | Context and evidence only. You take action through Edge, your provider, or your own workflow. |
-| **Standard** | Context plus supported provider actions. |
-| **Custom** | Fine-grained access for the permissions below. |
+Create the service account.
 
-### Custom role permissions
+```bash
+pup users service-accounts create --file tero-service-account.json --output json
+```
 
-<AccordionGroup>
-  <Accordion title="Context (read)">
-    | Permission | What Tero can do |
-    | ---------- | ---------------- |
-    | `logs_read_data` | Read log data for evidence and log-event grouping |
-    | `logs_read_index_data` | Read index configuration and ingestion context |
-    | `service_catalog_read` | Read service catalog context |
-    | `dashboards_read` | Read dashboard usage context when available |
-    | `monitors_read` | Read monitor context when available |
-    | `usage_read` | Read usage data for cost and ingestion analysis |
-    | `billing_read` | Read billing context when available |
-  </Accordion>
+Create `tero-application-key.json`.
 
-  <Accordion title="Provider actions (write)">
-    | Permission | What Tero can do |
-    | ---------- | ---------------- |
-    | `logs_write_exclusion_filters` | Create or modify exclusion filters |
-    | `logs_write_pipelines` | Modify supported log pipelines |
-  </Accordion>
-</AccordionGroup>
+```json
+{
+  "data": {
+    "type": "application_keys",
+    "attributes": {
+      "name": "Tero"
+    }
+  }
+}
+```
 
-Start with read access when you only want evidence and recommendations. Add write permissions when you want Tero to apply provider actions.
+Create the application key using the service account ID returned by the previous command.
 
-### Scope access to services
+```bash
+pup users service-accounts app-keys create <SERVICE_ACCOUNT_ID> --file tero-application-key.json --output json
+```
 
-Use Datadog restriction queries when you want Tero to read logs for specific services.
+Datadog shows the application key secret once. Copy it before closing the output.
 
-| Goal | Query |
-| ---- | ----- |
-| Single service | `service:api` |
-| Multiple services | `service:api OR service:web` |
-| Service and environment | `service:api AND env:production` |
-| Exclude a service | `service:* AND NOT service:internal-audit` |
+## Share the credentials with Tero
 
-Attach the restriction query to the role used by Tero.
+Send your Tero contact the Datadog API key, application key, and Datadog site. Tero uses those read-only credentials to start analysis.
 
 ## Related pages
 
 - [Issues](/issues/overview)
 - [Policies](/policies)
 - [Log events](/master-catalog/log-events)
-- [Edge](/edge/overview)
-- [Edge Datadog](/edge/distributions/datadog)
