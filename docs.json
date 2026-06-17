@@ -84,10 +84,7 @@
               {
                 "group": "Observability Platforms",
                 "icon": "cloud",
-                "pages": [
-                  "integrations/datadog",
-                  "integrations/datadog-pup-cli"
-                ]
+                "pages": ["integrations/datadog"]
               }
             ]
           },

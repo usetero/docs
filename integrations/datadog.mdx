@@ -14,23 +14,109 @@ Tero needs two Datadog credentials:
 - An API key named `Tero`
 - An application key owned by a service account with Datadog's `Read-Only` role
 
-Create both credentials in Datadog, then share them with Tero.
+Choose one method to create both credentials. You do not need to use both.
 
-## Create credentials in Datadog
+## Create credentials
 
-<Steps>
-  <Step title="Create an API key">
-    In Datadog, go to <strong>Organization Settings &gt; API Keys</strong>. Create a new key named <code>Tero</code>.
-  </Step>
+<Tabs>
+  <Tab title="Datadog UI">
+    <Steps>
+      <Step title="Create an API key">
+        In Datadog, go to <strong>Organization Settings &gt; API Keys</strong>. Create a new key named <code>Tero</code>.
+      </Step>
 
-  <Step title="Create a service account">
-    Go to <strong>Organization Settings &gt; Service Accounts</strong>. Create a service account named <code>Tero</code> and assign it the <code>Read-Only</code> role.
-  </Step>
+      <Step title="Create a service account">
+        Go to <strong>Organization Settings &gt; Service Accounts</strong>. Create a service account named <code>Tero</code> and assign it the <code>Read-Only</code> role.
+      </Step>
 
-  <Step title="Create an application key">
-    Open the <code>Tero</code> service account. Under <strong>Application Keys</strong>, create an application key and copy it. Datadog shows the application key secret once.
-  </Step>
-</Steps>
+      <Step title="Create an application key">
+        Open the <code>Tero</code> service account. Under <strong>Application Keys</strong>, create an application key and copy it. Datadog shows the application key secret once.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Pup">
+    Use the same Datadog site your account normally uses. Replace <code>&lt;DATADOG_SITE&gt;</code> with your Datadog site, such as <code>datadoghq.com</code>, <code>us3.datadoghq.com</code>, <code>us5.datadoghq.com</code>, <code>datadoghq.eu</code>, <code>ap1.datadoghq.com</code>, or <code>ddog-gov.com</code>.
+
+    <Steps>
+      <Step title="Install Pup and authenticate">
+        ```bash
+        brew tap datadog-labs/pack
+        brew install datadog-labs/pack/pup
+
+        pup auth login --site <DATADOG_SITE>
+        pup users roles --output table
+        ```
+      </Step>
+
+      <Step title="Create an API key">
+        ```bash
+        pup api-keys create --name Tero --output json
+        ```
+
+        Copy the API key value from the output.
+      </Step>
+
+      <Step title="Create the service account request">
+        Create `tero-service-account.json` with the role ID for Datadog's `Read-Only` role.
+
+        ```json
+        {
+          "data": {
+            "type": "users",
+            "attributes": {
+              "name": "Tero",
+              "email": "tero@datadoghq.com",
+              "service_account": true
+            },
+            "relationships": {
+              "roles": {
+                "data": [
+                  {
+                    "id": "<READ_ONLY_ROLE_ID>",
+                    "type": "roles"
+                  }
+                ]
+              }
+            }
+          }
+        }
+        ```
+      </Step>
+
+      <Step title="Create the service account">
+        ```bash
+        pup users service-accounts create --file tero-service-account.json --output json
+        ```
+
+        Copy the service account ID from the output.
+      </Step>
+
+      <Step title="Create the application key request">
+        Create `tero-application-key.json`.
+
+        ```json
+        {
+          "data": {
+            "type": "application_keys",
+            "attributes": {
+              "name": "Tero"
+            }
+          }
+        }
+        ```
+      </Step>
+
+      <Step title="Create the application key">
+        ```bash
+        pup users service-accounts app-keys create <SERVICE_ACCOUNT_ID> --file tero-application-key.json --output json
+        ```
+
+        Datadog shows the application key secret once. Copy it before closing the output.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
 
 ## Share the credentials with Tero
 
