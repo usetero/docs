@@ -7,10 +7,30 @@
     "dev": "mintlify dev",
     "build": "mintlify build",
     "screenshots": "node scripts/screenshot-suggestions.mjs",
-    "screenshots:dry": "node scripts/screenshot-suggestions.mjs --dry-run"
+    "screenshots:dry": "node scripts/screenshot-suggestions.mjs --dry-run",
+    "video:extract": "node --import tsx scripts/demo-video/extract-narration.ts",
+    "video:capture": "node --import tsx demo-videos/capture/record.ts",
+    "video:voice": "node --import tsx scripts/demo-video/generate-voiceover.ts",
+    "video:install-chatterbox": "bash scripts/demo-video/install-chatterbox.sh",
+    "video:captions": "node --import tsx scripts/demo-video/generate-captions.ts",
+    "video:copy-assets": "node --import tsx scripts/demo-video/copy-assets.ts",
+    "video:render": "node --import tsx scripts/demo-video/render.ts",
+    "video:codex:qa": "node --import tsx scripts/demo-video/codex-qa.ts",
+    "video:cost-walkthrough": "pnpm video:extract -- cost-walkthrough && pnpm video:voice -- cost-walkthrough && pnpm video:capture -- cost-walkthrough && pnpm video:captions -- cost-walkthrough && pnpm video:render -- cost-walkthrough",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@remotion/cli": "^4.0.479",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "mintlify": "^4.2.209",
-    "playwright": "^1.60.0"
+    "playwright": "^1.60.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "^4.0.479",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "yaml": "^2.6.1"
   }
 }

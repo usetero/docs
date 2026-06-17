@@ -1,0 +1,44 @@
+name: Demo videos
+
+on:
+  workflow_dispatch:
+    inputs:
+      walkthrough:
+        description: Walkthrough id
+        default: cost-walkthrough
+        required: true
+  pull_request:
+    paths:
+      - "demo-videos/**"
+      - "scripts/demo-video/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/demo-videos.yml"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    env:
+      DEMO_BASE_URL: ${{ vars.DEMO_BASE_URL || 'https://demo.usetero.com' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm video:extract -- ${{ inputs.walkthrough || 'cost-walkthrough' }}
+      - run: pnpm video:capture -- ${{ inputs.walkthrough || 'cost-walkthrough' }}
+      - run: pnpm video:voice -- ${{ inputs.walkthrough || 'cost-walkthrough' }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - run: pnpm video:captions -- ${{ inputs.walkthrough || 'cost-walkthrough' }}
+      - run: pnpm video:render -- ${{ inputs.walkthrough || 'cost-walkthrough' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-videos
+          path: public/videos
