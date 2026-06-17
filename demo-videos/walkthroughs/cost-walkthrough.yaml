@@ -1,0 +1,117 @@
+id: cost-walkthrough
+title: From cost signal to policy action
+url: ${DEMO_BASE_URL:-https://demo.usetero.com}
+durationTargetSeconds: 70
+
+persona: "Platform engineer evaluating the product"
+goal: "Show how Tero turns a cost signal into prioritized work, shared evidence, and a policy-ready fix."
+
+voice:
+  provider: openai
+  voice: alloy
+  tone: calm, technical, confident
+
+viewport:
+  width: 1920
+  height: 1080
+  deviceScaleFactor: 1
+
+auth:
+  mode: none
+  storageState:
+
+scenes:
+  - id: title
+    type: title
+    duration: 3
+    voiceover: false
+    narration: >
+      See how Tero turns telemetry waste into prioritized work, provable savings,
+      and durable policy.
+
+  - id: hook
+    type: browser
+    path: /
+    narration: >
+      See how Tero turns your telemetry into prioritized engineering
+      work, shared financial context, and a policy-ready
+      fix.
+    steps:
+      - waitFor: 'a[href="/cost"][aria-label^="Cost,"]'
+      - spotlight: 'a[href="/cost"][aria-label^="Cost,"]'
+        duration: 3
+      - pause: 4
+
+  - id: problem
+    type: browser
+    narration: >
+      Most teams know there is waste in their logs. Tero helps you decide which work matters,
+      who owns it, and how to keep savings from disappearing next month.
+    steps:
+      - spotlight: 'a[href="/cost"][aria-label^="Cost,"]'
+        duration: 2.75
+      - pause: 4
+      - click: 'a[href="/cost"][aria-label^="Cost,"]'
+      - waitFor: 'a[href="/issues?statusTab=open&view=cost&severity=high"]'
+      - pause: 1
+      - spotlight: 'a[href="/issues?statusTab=open&view=cost&severity=high"]'
+        duration: 3
+      - pause: 2
+
+  - id: magic-moment
+    type: browser
+    narration: >
+      Cost becomes useful when the dashboard turns into a work queue. Review
+      issues opens the high-impact findings behind the number, already filtered
+      for the services and teams that need to act.
+    steps:
+      - spotlight: 'a[href="/issues?statusTab=open&view=cost&severity=high"]'
+        duration: 3
+      - pause: 4
+      - click: 'a[href="/issues?statusTab=open&view=cost&severity=high"]'
+      - waitFor: 'button[aria-label^="ISS-1:"]'
+      - pause: 1
+      - spotlight: 'section[aria-label="Issues"]'
+        duration: 3
+      - pause: 2
+
+  - id: proof
+    type: browser
+    narration: >
+      Open an issue and the context is already there: service ownership, dollar
+      impact, volume data, and the log evidence engineers need before they
+      change production behavior.
+    steps:
+      - spotlight: 'button[aria-label^="ISS-1:"]'
+        duration: 3
+      - pause: 2
+
+  - id: social-proof
+    type: browser
+    narration: >
+      Platform teams can prioritize the fix, service owners can verify the
+      evidence, and finance can see which engineering action protects the
+      savings.
+    steps:
+      - spotlight: 'section[aria-label="Issues"]'
+        duration: 3
+      - pause: 2
+
+  - id: invite
+    type: browser
+    narration: >
+      From here, the next step is policy. Review the proposed control, deploy
+      it when the team is ready, and turn a one-time savings opportunity into
+      a durable operating guardrail.
+    steps:
+      - spotlight: 'button[aria-label="Deploy policy from issue footer"]'
+        duration: 3.5
+      - pause: 2
+
+  - id: outro
+    title: docs.usetero.com
+    type: title
+    duration: 4
+    voiceover: false
+    narration: >
+      Read the docs, explore the model, and build your first policy workflow.

@@ -14,6 +14,15 @@ node_modules/
 .mintlify/
 _dist/
 
+# Demo video outputs
+demo-videos/.venv-chatterbox/
+demo-videos/output/*
+!demo-videos/output/.gitkeep
+public/videos/*
+!public/videos/.gitkeep
+!public/videos/*.mp4
+!public/videos/*-poster.png
+
 # macOS
 .DS_Store
 
