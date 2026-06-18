@@ -31,6 +31,108 @@
     "dismissible": true
   },
   "homepage": "introduction/what-is-tero",
+  "redirects": [
+    {
+      "source": "/questions/waste/taking-action",
+      "destination": "/policies/enforcement/overview"
+    },
+    {
+      "source": "/questions/renewal/getting-started",
+      "destination": "/introduction/what-is-tero"
+    },
+    {
+      "source": "/context/overview",
+      "destination": "/master-catalog/overview"
+    },
+    {
+      "source": "/introduction/how-it-works",
+      "destination": "/introduction/how-tero-works"
+    },
+    {
+      "source": "/control-plane/bring-your-own-ai",
+      "destination": "/trust/controls/ai-data-controls"
+    },
+    {
+      "source": "/data-quality/enforcement/overview",
+      "destination": "/policies/enforcement/overview"
+    },
+    {
+      "source": "/data-quality/enforcement/create-tickets",
+      "destination": "/policies/enforcement/create-tickets"
+    },
+    {
+      "source": "/data-quality/enforcement/set-slos",
+      "destination": "/policies/enforcement/set-slos"
+    },
+    {
+      "source": "/data-quality/logs/bot-traffic",
+      "destination": "/policies/categories/bot-traffic"
+    },
+    {
+      "source": "/data-quality/logs/debug-mode-left-on",
+      "destination": "/policies/categories/debug-mode-left-on"
+    },
+    {
+      "source": "/data-quality/logs/excessive-payloads",
+      "destination": "/policies/categories/excessive-payloads"
+    },
+    {
+      "source": "/data-quality/logs/excessive-repetition",
+      "destination": "/policies/categories/burst-protection"
+    },
+    {
+      "source": "/data-quality/logs/health-checks",
+      "destination": "/policies/categories/health-checks"
+    },
+    {
+      "source": "/data-quality/logs/logs-in-hot-path",
+      "destination": "/policies/categories/logs-in-hot-path"
+    },
+    {
+      "source": "/data-quality/logs/malformed-data",
+      "destination": "/policies/categories/malformed-data"
+    },
+    {
+      "source": "/data-quality/logs/unintended-tool-metadata",
+      "destination": "/policies/categories/instrumentation-bloat"
+    },
+    {
+      "source": "/policies/categories/redundant-attributes",
+      "destination": "/policies/categories/duplicate-fields"
+    },
+    {
+      "source": "/integrations/datadog-lambda",
+      "destination": "/integrations/datadog-lambda-extension"
+    },
+    {
+      "source": "/trust/checklist",
+      "destination": "/trust/reviewer-map"
+    },
+    {
+      "source": "/trust/compliance",
+      "destination": "/trust/assurance/compliance-and-assurance"
+    },
+    {
+      "source": "/trust/documents",
+      "destination": "/trust/assurance/documents-and-requests"
+    },
+    {
+      "source": "/trust/privacy",
+      "destination": "/trust/controls/data-handling"
+    },
+    {
+      "source": "/trust/resilience",
+      "destination": "/trust/controls/incident-response"
+    },
+    {
+      "source": "/trust/security",
+      "destination": "/trust/architecture"
+    },
+    {
+      "source": "/trust/sub-processors",
+      "destination": "/trust/assurance/subprocessors-third-parties"
+    }
+  ],
   "navigation": {
     "tabs": [
       {
