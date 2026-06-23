@@ -5,14 +5,14 @@ icon: "dog"
 iconType: "duotone"
 ---
 
-Edge Datadog targets environments that send telemetry to Datadog. It
-supports the Datadog Logs API and Metrics API.
+Edge Datadog targets environments that send telemetry to Datadog. It supports
+the Datadog Logs API and Metrics API.
 
 ## Supported Endpoints
 
-| Endpoint         | Method | Description               |
-| ---------------- | ------ | ------------------------- |
-| `/api/v2/logs`   | POST   | Datadog log ingestion     |
+| Endpoint         | Method | Description                   |
+| ---------------- | ------ | ----------------------------- |
+| `/api/v2/logs`   | POST   | Datadog log ingestion         |
 | `/api/v1/series` | POST   | Datadog metrics ingestion     |
 | `/_health`       | GET    | Health check                  |
 | `/_edge/metrics` | GET    | Edge's own Prometheus metrics |
@@ -29,7 +29,6 @@ supports the Datadog Logs API and Metrics API.
   "service": {
     "name": "edge",
     "namespace": "production",
-    "version": "1.0.0",
     "resource_attributes": [
       { "key": "deployment.environment", "value": "production" }
     ],

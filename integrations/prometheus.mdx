@@ -7,15 +7,15 @@ iconType: "duotone"
 ---
 
 Deploy Tero Edge as a sidecar to your application to filter Prometheus metrics
-before Prometheus scrapes them. Edge sits between Prometheus and your application,
-applying policies as each scrape passes through.
+before Prometheus scrapes them. Edge sits between Prometheus and your
+application, applying policies as each scrape passes through.
 
 ## How it works
 
 Edge runs as a sidecar container in the same pod as your application. Prometheus
-scrapes Edge instead of your application. Edge proxies the request to
-your app's `/metrics` endpoint, applies policies to filter metrics, and returns
-the filtered response.
+scrapes Edge instead of your application. Edge proxies the request to your app's
+`/metrics` endpoint, applies policies to filter metrics, and returns the
+filtered response.
 
 ```mermaid
 flowchart LR
@@ -81,7 +81,6 @@ flowchart LR
           "service": {
             "name": "edge",
             "namespace": "production",
-            "version": "1.0.0",
             "resource_attributes": [
               { "key": "deployment.environment", "value": "production" }
             ],
@@ -302,8 +301,8 @@ ConfigMap.
 
 #### HTTP provider
 
-Fetch policies from a remote endpoint. Use this for dynamic policies managed
-via the Tero API.
+Fetch policies from a remote endpoint. Use this for dynamic policies managed via
+the Tero API.
 
 ```json
 {

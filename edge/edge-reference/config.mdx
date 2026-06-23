@@ -29,7 +29,6 @@ Edge uses a JSON configuration file. Pass the path as the first argument:
   "service": {
     "name": "edge",
     "namespace": "production",
-    "version": "1.0.0",
     "resource_attributes": [
       { "key": "deployment.environment", "value": "production" }
     ],
@@ -59,25 +58,25 @@ Edge uses a JSON configuration file. Pass the path as the first argument:
 
 <Note>
   Any string value can reference an environment variable with `${VAR}` (for
-  example `${TERO_API_TOKEN}`). See [Environment Variables](#environment-variables).
+  example `${TERO_API_TOKEN}`). See [Environment
+  Variables](#environment-variables).
 </Note>
 
 ## Configuration Reference
 
 <Info>
-  Edge supports up to 8,000 policies. Open an
-  [issue on GitHub](https://github.com/usetero/edge/issues/new) if you need
-  more.
+  Edge supports up to 8,000 policies. Open an [issue on
+  GitHub](https://github.com/usetero/edge/issues/new) if you need more.
 </Info>
 
 ### Server Settings
 
-| Field            | Type   | Default       | Description                                            |
-| ---------------- | ------ | ------------- | ------------------------------------------------------ |
-| `listen_address` | string | `"127.0.0.1"` | IP address to bind to                                  |
-| `listen_port`    | number | `8080`        | Port to listen on                                      |
-| `max_body_size`  | number | `1048576`     | Maximum request body size in bytes (1MB default)       |
-| `log_level`      | string | `"info"`      | Logging level: `debug`, `info`, `warn`, `err`          |
+| Field            | Type   | Default       | Description                                      |
+| ---------------- | ------ | ------------- | ------------------------------------------------ |
+| `listen_address` | string | `"127.0.0.1"` | IP address to bind to                            |
+| `listen_port`    | number | `8080`        | Port to listen on                                |
+| `max_body_size`  | number | `1048576`     | Maximum request body size in bytes (1MB default) |
+| `log_level`      | string | `"info"`      | Logging level: `debug`, `info`, `warn`, `err`    |
 
 ### Upstream Settings
 
@@ -99,7 +98,6 @@ service. `resource_attributes` and `labels` are optional but recommended.
   "service": {
     "name": "edge",
     "namespace": "production",
-    "version": "1.0.0",
     "resource_attributes": [
       { "key": "deployment.environment", "value": "production" }
     ],
@@ -108,7 +106,7 @@ service. `resource_attributes` and `labels` are optional but recommended.
 }
 ```
 
-| Field                 | Type   | Required    | Description                                                    |
+| Field                 | Type   | Required    | Description                                                   |
 | --------------------- | ------ | ----------- | ------------------------------------------------------------- |
 | `name`                | string | Recommended | Service name (default `"tero-edge"`)                          |
 | `namespace`           | string | Recommended | Service namespace (default `"tero"`)                          |
@@ -116,9 +114,7 @@ service. `resource_attributes` and `labels` are optional but recommended.
 | `resource_attributes` | array  | No          | OTel resource attributes (`{key, value}`) sent on policy sync |
 | `labels`              | array  | No          | Free-form labels (`{key, value}`) sent on policy sync         |
 
-<Note>
-  `instance_id` is generated at startup and is not configurable.
-</Note>
+<Note>`instance_id` is generated at startup and is not configurable.</Note>
 
 ### Policy Providers
 
@@ -142,8 +138,8 @@ Loads policies from a local file and watches for changes.
 | `type` | string | Yes      | Must be `"file"`                    |
 | `path` | string | Yes      | Path to the policy file             |
 
-Edge watches the file with inotify (Linux) or kqueue (macOS) and applies
-changes on save.
+Edge watches the file with inotify (Linux) or kqueue (macOS) and applies changes
+on save.
 
 #### HTTP Provider
 
@@ -164,13 +160,13 @@ Loads policies from an HTTP endpoint with periodic polling.
 }
 ```
 
-| Field           | Type   | Required | Description                                      |
-| --------------- | ------ | -------- | ------------------------------------------------ |
-| `id`            | string | Yes      | Unique identifier for this provider              |
-| `type`          | string | Yes      | Must be `"http"`                                 |
-| `url`           | string | Yes      | URL to fetch policies from                       |
-| `poll_interval` | number | No       | Seconds between policy fetches                   |
-| `headers`       | array  | No       | HTTP headers to include in requests              |
+| Field           | Type   | Required | Description                         |
+| --------------- | ------ | -------- | ----------------------------------- |
+| `id`            | string | Yes      | Unique identifier for this provider |
+| `type`          | string | Yes      | Must be `"http"`                    |
+| `url`           | string | Yes      | URL to fetch policies from          |
+| `poll_interval` | number | No       | Seconds between policy fetches      |
+| `headers`       | array  | No       | HTTP headers to include in requests |
 
 ### Prometheus Settings
 
@@ -186,9 +182,9 @@ scrapes (relevant to distributions that handle metrics).
 }
 ```
 
-| Field                         | Type   | Default    | Description                                  |
-| ----------------------------- | ------ | ---------- | -------------------------------------------- |
-| `max_input_bytes_per_scrape`  | number | `10485760` | Max bytes read from upstream per scrape (10MB) |
+| Field                         | Type   | Default    | Description                                         |
+| ----------------------------- | ------ | ---------- | --------------------------------------------------- |
+| `max_input_bytes_per_scrape`  | number | `10485760` | Max bytes read from upstream per scrape (10MB)      |
 | `max_output_bytes_per_scrape` | number | `10485760` | Max bytes forwarded to the client per scrape (10MB) |
 
 ## Policy File Format
@@ -254,17 +250,17 @@ Any string value in the config file can reference an environment variable with
 
 ### Field Overrides
 
-A `TERO_`-prefixed environment variable overrides the matching config field.
-The name is the field path in `SCREAMING_SNAKE_CASE`, with nested fields joined
-by `_`. Overrides win over the file.
+A `TERO_`-prefixed environment variable overrides the matching config field. The
+name is the field path in `SCREAMING_SNAKE_CASE`, with nested fields joined by
+`_`. Overrides win over the file.
 
-| Variable             | Overrides            |
-| -------------------- | -------------------- |
-| `TERO_LOG_LEVEL`     | `log_level`          |
-| `TERO_LISTEN_PORT`   | `listen_port`        |
-| `TERO_UPSTREAM_URL`  | `upstream_url`       |
-| `TERO_MAX_BODY_SIZE` | `max_body_size`      |
-| `TERO_SERVICE_NAME`  | `service.name`       |
+| Variable             | Overrides       |
+| -------------------- | --------------- |
+| `TERO_LOG_LEVEL`     | `log_level`     |
+| `TERO_LISTEN_PORT`   | `listen_port`   |
+| `TERO_UPSTREAM_URL`  | `upstream_url`  |
+| `TERO_MAX_BODY_SIZE` | `max_body_size` |
+| `TERO_SERVICE_NAME`  | `service.name`  |
 
 ```bash
 TERO_LOG_LEVEL=debug TERO_LISTEN_PORT=9090 ./edge config.json

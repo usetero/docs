@@ -5,17 +5,17 @@ icon: "circle-nodes"
 iconType: "duotone"
 ---
 
-Edge OTLP targets OpenTelemetry environments. It supports the
-standard OTLP HTTP endpoints for logs and metrics.
+Edge OTLP targets OpenTelemetry environments. It supports the standard OTLP HTTP
+endpoints for logs and metrics.
 
 ## Supported Endpoints
 
-| Endpoint      | Method | Description         |
-| ------------- | ------ | ------------------- |
-| `/v1/logs`    | POST   | OTLP log export     |
-| `/v1/metrics` | POST   | OTLP metrics export |
-| `/_health`    | GET    | Health check        |
-| `/_edge/metrics` | GET | Edge's own Prometheus metrics |
+| Endpoint         | Method | Description                   |
+| ---------------- | ------ | ----------------------------- |
+| `/v1/logs`       | POST   | OTLP log export               |
+| `/v1/metrics`    | POST   | OTLP metrics export           |
+| `/_health`       | GET    | Health check                  |
+| `/_edge/metrics` | GET    | Edge's own Prometheus metrics |
 
 ## Configuration
 
@@ -28,7 +28,6 @@ standard OTLP HTTP endpoints for logs and metrics.
   "service": {
     "name": "edge",
     "namespace": "production",
-    "version": "1.0.0",
     "resource_attributes": [
       { "key": "deployment.environment", "value": "production" }
     ],
@@ -114,8 +113,8 @@ export OTEL_EXPORTER_OTLP_PROTOCOL="http/json"
 
 ## OTLP Data Model
 
-Edge works with the standard OTLP data model. OTLP fields map to policy
-matchers as follows.
+Edge works with the standard OTLP data model. OTLP fields map to policy matchers
+as follows.
 
 ### Log Records
 
@@ -188,7 +187,9 @@ matchers as follows.
   "id": "drop-library-logs",
   "name": "Drop logs from a noisy instrumentation scope",
   "log": {
-    "match": [{ "scope_attribute": "library.name", "exact": "noisy-http-client" }],
+    "match": [
+      { "scope_attribute": "library.name", "exact": "noisy-http-client" }
+    ],
     "keep": "none"
   }
 }

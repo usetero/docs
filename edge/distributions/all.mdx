@@ -10,13 +10,13 @@ Use this when your environment sends telemetry in multiple formats.
 
 ## Supported Endpoints
 
-| Endpoint         | Method | Protocol | Description       |
-| ---------------- | ------ | -------- | ----------------- |
-| `/api/v2/logs`   | POST   | Datadog  | Log ingestion     |
-| `/api/v1/series` | POST   | Datadog  | Metrics ingestion |
-| `/v1/logs`       | POST   | OTLP     | Log export        |
-| `/v1/metrics`    | POST   | OTLP     | Metrics export    |
-| `/_health`       | GET    | -        | Health check      |
+| Endpoint         | Method | Protocol | Description                   |
+| ---------------- | ------ | -------- | ----------------------------- |
+| `/api/v2/logs`   | POST   | Datadog  | Log ingestion                 |
+| `/api/v1/series` | POST   | Datadog  | Metrics ingestion             |
+| `/v1/logs`       | POST   | OTLP     | Log export                    |
+| `/v1/metrics`    | POST   | OTLP     | Metrics export                |
+| `/_health`       | GET    | -        | Health check                  |
 | `/_edge/metrics` | GET    | -        | Edge's own Prometheus metrics |
 
 ## Configuration
@@ -32,7 +32,6 @@ Use this when your environment sends telemetry in multiple formats.
   "service": {
     "name": "edge",
     "namespace": "production",
-    "version": "1.0.0",
     "resource_attributes": [
       { "key": "deployment.environment", "value": "production" }
     ],
