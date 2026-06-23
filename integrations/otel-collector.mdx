@@ -348,6 +348,15 @@ the option that fits your environment.
               "listen_port": 8080,
               "upstream_url": "https://your-backend-endpoint.com",
               "log_level": "info",
+              "service": {
+                "name": "edge",
+                "namespace": "production",
+                "version": "1.0.0",
+                "resource_attributes": [
+                  { "key": "deployment.environment", "value": "production" }
+                ],
+                "labels": [{ "key": "team", "value": "platform" }]
+              },
               "max_body_size": 1048576,
               "policy_providers": [
                 {
@@ -400,6 +409,15 @@ the option that fits your environment.
                   "listen_port": 8080,
                   "upstream_url": "https://your-backend-endpoint.com",
                   "log_level": "info",
+                  "service": {
+                    "name": "edge",
+                    "namespace": "production",
+                    "version": "1.0.0",
+                    "resource_attributes": [
+                      { "key": "deployment.environment", "value": "production" }
+                    ],
+                    "labels": [{ "key": "team", "value": "platform" }]
+                  },
                   "max_body_size": 1048576,
                   "policy_providers": [
                     {
@@ -514,6 +532,15 @@ the option that fits your environment.
                   "listen_port": 8080,
                   "upstream_url": "https://your-backend-endpoint.com",
                   "log_level": "info",
+                  "service": {
+                    "name": "edge",
+                    "namespace": "production",
+                    "version": "1.0.0",
+                    "resource_attributes": [
+                      { "key": "deployment.environment", "value": "production" }
+                    ],
+                    "labels": [{ "key": "team", "value": "platform" }]
+                  },
                   "max_body_size": 1048576,
                   "policy_providers": [
                     {

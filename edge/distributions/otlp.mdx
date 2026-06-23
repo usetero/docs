@@ -14,7 +14,8 @@ standard OTLP HTTP endpoints for logs and metrics.
 | ------------- | ------ | ------------------- |
 | `/v1/logs`    | POST   | OTLP log export     |
 | `/v1/metrics` | POST   | OTLP metrics export |
-| `/health`     | GET    | Health check        |
+| `/_health`    | GET    | Health check        |
+| `/_edge/metrics` | GET | Edge's own Prometheus metrics |
 
 ## Configuration
 
@@ -24,6 +25,15 @@ standard OTLP HTTP endpoints for logs and metrics.
   "listen_port": 8080,
   "upstream_url": "https://your-otlp-endpoint.com",
   "log_level": "info",
+  "service": {
+    "name": "edge",
+    "namespace": "production",
+    "version": "1.0.0",
+    "resource_attributes": [
+      { "key": "deployment.environment", "value": "production" }
+    ],
+    "labels": [{ "key": "team", "value": "platform" }]
+  },
   "policy_providers": [
     {
       "id": "local",
@@ -176,11 +186,9 @@ matchers as follows.
 ```json
 {
   "id": "drop-library-logs",
-  "name": "Drop logs from noisy library",
+  "name": "Drop logs from a noisy instrumentation scope",
   "log": {
-    "match": [
-      {"scope_name": "exact": "noisy-http-client"}
-    ],
+    "match": [{ "scope_attribute": "library.name", "exact": "noisy-http-client" }],
     "keep": "none"
   }
 }

@@ -78,6 +78,15 @@ flowchart LR
           "listen_port": 9090,
           "upstream_url": "http://localhost:8080",
           "log_level": "info",
+          "service": {
+            "name": "edge",
+            "namespace": "production",
+            "version": "1.0.0",
+            "resource_attributes": [
+              { "key": "deployment.environment", "value": "production" }
+            ],
+            "labels": [{ "key": "team", "value": "platform" }]
+          },
           "prometheus": {
             "max_input_bytes_per_scrape": 10485760,
             "max_output_bytes_per_scrape": 10485760

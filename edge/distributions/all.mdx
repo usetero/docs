@@ -16,7 +16,8 @@ Use this when your environment sends telemetry in multiple formats.
 | `/api/v1/series` | POST   | Datadog  | Metrics ingestion |
 | `/v1/logs`       | POST   | OTLP     | Log export        |
 | `/v1/metrics`    | POST   | OTLP     | Metrics export    |
-| `/health`        | GET    | -        | Health check      |
+| `/_health`       | GET    | -        | Health check      |
+| `/_edge/metrics` | GET    | -        | Edge's own Prometheus metrics |
 
 ## Configuration
 
@@ -28,6 +29,15 @@ Use this when your environment sends telemetry in multiple formats.
   "logs_url": "https://agent-http-intake.logs.datadoghq.com",
   "metrics_url": "https://api.datadoghq.com",
   "log_level": "info",
+  "service": {
+    "name": "edge",
+    "namespace": "production",
+    "version": "1.0.0",
+    "resource_attributes": [
+      { "key": "deployment.environment", "value": "production" }
+    ],
+    "labels": [{ "key": "team", "value": "platform" }]
+  },
   "policy_providers": [
     {
       "id": "local",

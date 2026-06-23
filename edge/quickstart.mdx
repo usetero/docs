@@ -32,6 +32,15 @@ Create `config.json`:
   "upstream_url": "https://http-intake.logs.datadoghq.com",
   "metrics_url": "https://api.datadoghq.com",
   "log_level": "info",
+  "service": {
+    "name": "edge",
+    "namespace": "production",
+    "version": "1.0.0",
+    "resource_attributes": [
+      { "key": "deployment.environment", "value": "production" }
+    ],
+    "labels": [{ "key": "team", "value": "platform" }]
+  },
   "policy_providers": [
     {
       "id": "local",
