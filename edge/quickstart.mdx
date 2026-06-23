@@ -5,10 +5,14 @@ icon: "rocket"
 iconType: "duotone"
 ---
 
-Run Edge locally with a file-backed policy, send two test logs, and verify Edge drops the debug log and forwards the error log.
+Run Edge locally with a file-backed policy, send two test logs, and verify Edge
+drops the debug log and forwards the error log.
 
 <Tip>
-Prefer an AI assistant to walk you through this? Run `npx skills add https://docs.usetero.com` to add these docs as a skill in Claude Code, Codex, or Cursor. Then ask questions like "how do I run Edge locally?" and your agent guides you using Tero's documentation.
+  Prefer an AI assistant to walk you through this? Run `npx skills add
+  https://docs.usetero.com` to add these docs as a skill in Claude Code, Codex,
+  or Cursor. Then ask questions like "how do I run Edge locally?" and your agent
+  guides you using Tero's documentation.
 </Tip>
 
 ## Before you begin
@@ -19,7 +23,8 @@ You need:
 - A Datadog intake endpoint and API key for your region
 - A working directory for the quickstart files
 
-This tutorial uses the Datadog distribution because it gives us a concrete log endpoint to test.
+This tutorial uses the Datadog distribution because it gives us a concrete log
+endpoint to test.
 
 ## 1. Create the Edge configuration
 
@@ -32,6 +37,14 @@ Create `config.json`:
   "upstream_url": "https://http-intake.logs.datadoghq.com",
   "metrics_url": "https://api.datadoghq.com",
   "log_level": "info",
+  "service": {
+    "name": "edge",
+    "namespace": "production",
+    "resource_attributes": [
+      { "key": "deployment.environment", "value": "production" }
+    ],
+    "labels": [{ "key": "team", "value": "platform" }]
+  },
   "policy_providers": [
     {
       "id": "local",
@@ -42,7 +55,9 @@ Create `config.json`:
 }
 ```
 
-If your Datadog account uses another region, replace `upstream_url` and `metrics_url` with the endpoints from [Edge Datadog](/edge/distributions/datadog).
+If your Datadog account uses another region, replace `upstream_url` and
+`metrics_url` with the endpoints from
+[Edge Datadog](/edge/distributions/datadog).
 
 You now have a local Edge listener on port `8080` and a file policy provider.
 
@@ -70,7 +85,8 @@ Create `policies.json`:
 }
 ```
 
-This policy matches Datadog log records whose `status` field is `debug` or `trace`. Edge drops matching logs.
+This policy matches Datadog log records whose `status` field is `debug` or
+`trace`. Edge drops matching logs.
 
 ## 3. Run Edge
 
@@ -108,7 +124,8 @@ curl -X POST http://localhost:8080/api/v2/logs \
 JSON
 ```
 
-Edge should accept the request. Because the policy matches `status: debug`, Edge should drop the log before forwarding.
+Edge should accept the request. Because the policy matches `status: debug`, Edge
+should drop the log before forwarding.
 
 ## 5. Send an error log
 
@@ -134,19 +151,26 @@ This log should pass through because it does not match the policy.
 
 Return to the terminal running Edge.
 
-You should see activity for the incoming requests. The debug request should show a policy match or dropped-log activity. The error request should show forwarding activity.
+You should see activity for the incoming requests. The debug request should show
+a policy match or dropped-log activity. The error request should show forwarding
+activity.
 
-If Edge forwards both requests, confirm that `policies.json` is mounted at `/etc/edge/policies.json` and that the policy matches the `status` field.
+If Edge forwards both requests, confirm that `policies.json` is mounted at
+`/etc/edge/policies.json` and that the policy matches the `status` field.
 
 ## What you ran
 
-You ran Edge locally, loaded one file-backed policy, sent two logs through Edge, and verified the policy decision.
+You ran Edge locally, loaded one file-backed policy, sent two logs through Edge,
+and verified the policy decision.
 
-That is the basic Edge loop: receive telemetry, match policies, apply the keep decision, and forward the result.
+That is the basic Edge loop: receive telemetry, match policies, apply the keep
+decision, and forward the result.
 
 ## Next steps
 
 - Read [How Edge works](/edge/concepts) for the runtime model.
 - Use [Config](/edge/edge-reference/config) for configuration fields.
-- Use [Log filter](/edge/policy-reference/log-filter) for log matching and keep actions.
-- Use [Edge Datadog](/edge/distributions/datadog) for Datadog-specific configuration.
+- Use [Log filter](/edge/policy-reference/log-filter) for log matching and keep
+  actions.
+- Use [Edge Datadog](/edge/distributions/datadog) for Datadog-specific
+  configuration.

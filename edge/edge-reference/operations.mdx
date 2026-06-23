@@ -41,8 +41,7 @@ TERO_LOG_LEVEL=debug ./edge config.json
 
 | Level   | Description                        |
 | ------- | ---------------------------------- |
-| `trace` | Most verbose, includes all details |
-| `debug` | Debugging information              |
+| `debug` | Most verbose, debugging information |
 | `info`  | Normal operation messages          |
 | `warn`  | Warning conditions                 |
 | `err`   | Error conditions only              |
@@ -74,6 +73,18 @@ readinessProbe:
     port: 8080
   periodSeconds: 5
 ```
+
+## Metrics
+
+Edge serves its own operational metrics in Prometheus format:
+
+```bash
+curl http://localhost:8080/_edge/metrics
+```
+
+Point a Prometheus scrape at this endpoint to monitor Edge itself (request
+counts, request durations, policy batch stats, build info). This is separate
+from any `/metrics` traffic Edge filters and forwards to your upstream.
 
 ## Graceful Shutdown
 
