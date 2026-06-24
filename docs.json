@@ -248,6 +248,7 @@
           {
             "group": "How-to guides",
             "pages": [
+              "edge/how-to/helm",
               "integrations/datadog-agent",
               "integrations/datadog-lambda-extension",
               "integrations/datadog-lambda-forwarder",
