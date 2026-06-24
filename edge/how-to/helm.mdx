@@ -211,6 +211,32 @@ tero:
   remote policy sync.
 </Note>
 
+### Values
+
+The keys you'll touch most. For every chart value (image, scheduling, service
+account, ingress), see the chart's `README.md`.
+
+| Key                                 | Default                                        | Description                                                            |
+| ----------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
+| `tero.url`                          | `""`                                           | Control plane base URL; setting it enables HTTP policy sync           |
+| `tero.apiKey`                       | `""`                                           | Inline API key (chart creates the Secret)                            |
+| `tero.existingSecret.name`          | `""`                                           | Name of a Secret you manage instead of `tero.apiKey`                 |
+| `tero.existingSecret.key`           | `api-key`                                      | Key within that Secret holding the API key                           |
+| `config.upstreamUrl`                | `https://agent-http-intake.logs.datadoghq.com` | Logs intake endpoint (set per Datadog region)                        |
+| `config.metricsUrl`                 | `https://api.datadoghq.com`                    | Metrics endpoint (set per Datadog region)                            |
+| `config.logLevel`                   | `info`                                         | Edge log level                                                        |
+| `config.maxBodySize`                | `1048576`                                      | Max request body in bytes                                            |
+| `config.maxConnections`             | `256`                                          | Max concurrent connections; dominant memory cap (≈ `maxConnections × maxBodySize`) |
+| `config.maxDecodedBytes`            | `null`                                         | Post-decompression body ceiling; defaults to `maxBodySize`          |
+| `config.workerCount`                | `null`                                         | httpz event-loop workers (`null` = default 1)                        |
+| `config.threadPoolCount`            | `null`                                         | httpz handler threads (`null` = default 32; scales per-thread memory) |
+| `config.service.name`               | `""`                                           | Service name sent on policy sync (omitted if empty)                 |
+| `config.service.namespace`          | `""`                                           | Service namespace sent on policy sync                                |
+| `config.service.version`            | `""`                                           | Service version sent on policy sync                                  |
+| `config.service.resourceAttributes` | `[]`                                           | OTel resource attributes (`{key, value}`) sent on policy sync        |
+| `config.service.labels`             | `[]`                                           | Free-form labels (`{key, value}`) sent on policy sync                |
+| `policiesJSON`                      | `[]`                                           | Local policies rendered to the file provider (raw JSON objects)     |
+
 ## Verify
 
 ```bash
