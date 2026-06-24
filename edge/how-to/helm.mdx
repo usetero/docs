@@ -1,0 +1,249 @@
+---
+title: "Deploy with Helm"
+description: "Install Tero Edge on Kubernetes with the official Helm chart"
+icon: "dharmachakra"
+iconType: "duotone"
+---
+
+The `tero-edge` Helm chart deploys Edge as a `DaemonSet`, renders `config.json`
+and `policies.json` into a ConfigMap, and (optionally) wires up HTTP policy sync
+with API-key auth. The chart is published two ways — an **OCI registry** and a
+classic **HTTP Helm repository** — pick whichever your tooling prefers.
+
+## Install
+
+<Tabs>
+  <Tab title="OCI (GHCR)">
+    No `helm repo add` needed — reference the chart by its OCI URL:
+
+    ```bash
+    helm upgrade --install tero-edge oci://ghcr.io/usetero/charts/tero-edge \
+      --version <chart-version> \
+      -n tero-system --create-namespace \
+      -f values.yaml
+    ```
+
+    List available versions:
+
+    ```bash
+    helm show chart oci://ghcr.io/usetero/charts/tero-edge --version <chart-version>
+    ```
+
+    <Note>
+      OCI support is built into Helm 3.8+. Older clients need
+      `export HELM_EXPERIMENTAL_OCI=1`.
+    </Note>
+
+  </Tab>
+  <Tab title="Helm repository (HTTP)">
+  For HTTP Helm support, please contact support@usetero.com.
+
+  </Tab>
+</Tabs>
+
+Both sources publish identical charts from the same release, so `values.yaml`
+and every flag below behave the same regardless of which you choose.
+
+## Configure
+
+Create a `values.yaml` with the policy-sync connection and the service identity
+the control plane uses to scope policies:
+
+Pick the tab for your Datadog region — the `upstreamUrl` and `metricsUrl` change
+per region; everything else is identical.
+
+<Tabs>
+  <Tab title="US1">
+    ```yaml values.yaml
+    tero:
+      url: https://sync.usetero.com
+      apiKey: "" # it is recommended to use an existing secret instead
+      existingSecret:
+        name: ""
+        key: ""
+
+    config:
+      upstreamUrl: https://agent-http-intake.logs.datadoghq.com
+      metricsUrl: https://api.datadoghq.com
+
+      # Service identity sent on every policy sync. The control plane scopes and
+      # matches policies to this service, so set name/namespace/version.
+      service:
+        name: edge
+        namespace: production
+        version: 1.0.0
+        resourceAttributes:
+          - key: deployment.environment
+            value: production
+        labels:
+          - key: team
+            value: platform
+    ```
+
+  </Tab>
+  <Tab title="US3">
+    ```yaml values.yaml
+    tero:
+      url: https://sync.usetero.com
+      apiKey: "" # it is recommended to use an existing secret instead
+      existingSecret:
+        name: ""
+        key: ""
+
+    config:
+      upstreamUrl: https://agent-http-intake.logs.us3.datadoghq.com
+      metricsUrl: https://api.us3.datadoghq.com
+
+      service:
+        name: edge
+        namespace: production
+        version: 1.0.0
+        resourceAttributes:
+          - key: deployment.environment
+            value: production
+        labels:
+          - key: team
+            value: platform
+    ```
+
+  </Tab>
+  <Tab title="US5">
+    ```yaml values.yaml
+    tero:
+      url: https://sync.usetero.com
+      apiKey: "" # it is recommended to use an existing secret instead
+      existingSecret:
+        name: ""
+        key: ""
+
+    config:
+      upstreamUrl: https://agent-http-intake.logs.us5.datadoghq.com
+      metricsUrl: https://api.us5.datadoghq.com
+
+      service:
+        name: edge
+        namespace: production
+        version: 1.0.0
+        resourceAttributes:
+          - key: deployment.environment
+            value: production
+        labels:
+          - key: team
+            value: platform
+    ```
+
+  </Tab>
+  <Tab title="EU1">
+    ```yaml values.yaml
+    tero:
+      url: https://sync.usetero.com
+      apiKey: "" # it is recommended to use an existing secret instead
+      existingSecret:
+        name: ""
+        key: ""
+
+    config:
+      upstreamUrl: https://agent-http-intake.logs.datadoghq.eu
+      metricsUrl: https://api.datadoghq.eu
+
+      service:
+        name: edge
+        namespace: production
+        version: 1.0.0
+        resourceAttributes:
+          - key: deployment.environment
+            value: production
+        labels:
+          - key: team
+            value: platform
+    ```
+
+  </Tab>
+  <Tab title="AP1">
+    ```yaml values.yaml
+    tero:
+      url: https://sync.usetero.com
+      apiKey: "" # it is recommended to use an existing secret instead
+      existingSecret:
+        name: ""
+        key: ""
+
+    config:
+      upstreamUrl: https://agent-http-intake.logs.ap1.datadoghq.com
+      metricsUrl: https://api.ap1.datadoghq.com
+
+      service:
+        name: edge
+        namespace: production
+        version: 1.0.0
+        resourceAttributes:
+          - key: deployment.environment
+            value: production
+        labels:
+          - key: team
+            value: platform
+    ```
+
+  </Tab>
+</Tabs>
+
+### Authentication
+
+Setting `tero.url` automatically configures the HTTP policy provider. Provide
+the API key one of two ways — never both:
+
+| Method                        | Values                                                 |
+| ----------------------------- | ------------------------------------------------------ |
+| Inline (chart-managed Secret) | `tero.apiKey: <key>`                                   |
+| Existing Secret               | `tero.existingSecret.name` + `tero.existingSecret.key` |
+
+```yaml
+# Reference a Secret you manage instead of an inline key:
+tero:
+  url: https://sync.usetero.com
+  existingSecret:
+    name: tero-edge-api
+    key: api-key
+```
+
+<Note>
+  Without `tero.url`, Edge loads policies only from the local file provider — no
+  remote policy sync.
+</Note>
+
+## Verify
+
+```bash
+kubectl -n tero-system rollout status ds/tero-edge
+kubectl -n tero-system port-forward ds/tero-edge 8080:8080 &
+curl http://localhost:8080/_health
+```
+
+A `200 OK` from `/_health` confirms Edge is running. Edge's own Prometheus
+metrics are available at `/_edge/metrics`.
+
+## Upgrade and uninstall
+
+```bash
+# Upgrade to a new chart version (re-uses your values.yaml)
+helm upgrade tero-edge <source> --version <chart-version> \
+  -n tero-system -f values.yaml
+
+# Uninstall
+helm uninstall tero-edge -n tero-system
+```
+
+See the [Configuration reference](/edge/edge-reference/config) for every
+`config.*` field, and [Operations](/edge/edge-reference/operations) for probes,
+resource sizing, and graceful shutdown.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/edge/edge-reference/config">
+    Full configuration reference
+  </Card>
+  <Card title="Operations" icon="server" href="/edge/edge-reference/operations">
+    Probes, resources, and shutdown
+  </Card>
+</CardGroup>
