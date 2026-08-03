@@ -252,19 +252,67 @@ Any string value in the config file can reference an environment variable with
 
 A `TERO_`-prefixed environment variable overrides the matching config field. The
 name is the field path in `SCREAMING_SNAKE_CASE`, with nested fields joined by
-`_`. Overrides win over the file.
-
-| Variable             | Overrides       |
-| -------------------- | --------------- |
-| `TERO_LOG_LEVEL`     | `log_level`     |
-| `TERO_LISTEN_PORT`   | `listen_port`   |
-| `TERO_UPSTREAM_URL`  | `upstream_url`  |
-| `TERO_MAX_BODY_SIZE` | `max_body_size` |
-| `TERO_SERVICE_NAME`  | `service.name`  |
+`_`, so `service.namespace` becomes `TERO_SERVICE_NAMESPACE`. Overrides are
+applied after the file is parsed, so they always win over it.
 
 ```bash
 TERO_LOG_LEVEL=debug TERO_LISTEN_PORT=9090 ./edge config.json
 ```
+
+Every scalar field is overridable. The full set:
+
+| Variable                  | Overrides           | Type                          | Default        |
+| ------------------------- | ------------------- | ----------------------------- | -------------- |
+| `TERO_LISTEN_ADDRESS`     | `listen_address`    | IPv4 address                  | `127.0.0.1`    |
+| `TERO_LISTEN_PORT`        | `listen_port`       | port                          | `8080`         |
+| `TERO_UPSTREAM_URL`       | `upstream_url`      | string                        | `http://127.0.0.1:80` |
+| `TERO_LOGS_URL`           | `logs_url`          | string, optional              | unset          |
+| `TERO_METRICS_URL`        | `metrics_url`       | string, optional              | unset          |
+| `TERO_SERVICE_NAME`       | `service.name`      | string                        | `tero-edge`    |
+| `TERO_SERVICE_NAMESPACE`  | `service.namespace` | string                        | `tero`         |
+| `TERO_SERVICE_VERSION`    | `service.version`   | string                        | `latest`       |
+| `TERO_LOG_LEVEL`          | `log_level`         | `debug`/`info`/`warn`/`err`   | `info`         |
+| `TERO_MAX_BODY_SIZE`      | `max_body_size`     | bytes                         | `1048576`      |
+| `TERO_MAX_DECODED_BYTES`  | `max_decoded_bytes` | bytes, optional               | unset          |
+| `TERO_MAX_CONNECTIONS`    | `max_connections`   | count                         | `256`          |
+| `TERO_WORKER_COUNT`       | `worker_count`      | count, optional               | unset          |
+| `TERO_THREAD_POOL_COUNT`  | `thread_pool_count` | count, optional               | unset          |
+| `TERO_TAP_ENABLED`        | `tap_enabled`       | `true`/`false`/`1`/`0`        | `false`        |
+| `TERO_PROMETHEUS_MAX_INPUT_BYTES_PER_SCRAPE`  | `prometheus.max_input_bytes_per_scrape`  | bytes | `10485760` |
+| `TERO_PROMETHEUS_MAX_OUTPUT_BYTES_PER_SCRAPE` | `prometheus.max_output_bytes_per_scrape` | bytes | `10485760` |
+
+<Note>
+  Defaults above are the built-in ones. Each distribution image bakes a
+  `config.json` that already changes some of them — `edge-datadog`, for example,
+  ships `listen_address: 0.0.0.0`, `service.namespace: production`, and a
+  Datadog US1 `upstream_url`. Env vars override whichever value the file set.
+</Note>
+
+Rules worth knowing:
+
+- **Optional fields accept an empty string to mean "unset".** `TERO_METRICS_URL=`
+  sets `metrics_url` back to null rather than to an empty URL.
+- **An unparseable value fails startup.** `TERO_LOG_LEVEL=bogus` or a
+  non-numeric `TERO_LISTEN_PORT` exits with `config.load.error err="InvalidValue"`
+  instead of silently falling back to the default.
+- **Lists are not overridable.** `policy_providers`,
+  `service.resource_attributes`, and `service.labels` are arrays, so they have no
+  env var — supply a config file, or use
+  [value substitution](#value-substitution) for the strings inside it. Setting a
+  `TERO_` variable that matches no field is silently ignored, so a typo fails
+  quietly.
+- **`service.instance_id` and `service.supported_stages` are ignored.** Both are
+  set by the runtime at startup — the instance ID is generated per process, and
+  the supported stages come from the distribution.
+
+### Other Environment Variables
+
+These are read directly rather than as config-field overrides:
+
+| Variable           | Purpose                                                                 |
+| ------------------ | ----------------------------------------------------------------------- |
+| `TERO_IO_BACKEND`  | I/O backend: `inherited` (default) or `single_threaded`. Unknown values warn and fall back to `inherited`. |
+| `TERO_API_KEY`     | Referenced as `${TERO_API_KEY}` by the bundled configs for policy sync.  |
 
 ## Next Steps
 
