@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "mintlify": "^4.2.651",
-    "playwright": "^1.61.1"
+    "playwright": "^1.62.0"
   },
   "pnpm": {
     "overrides": {
