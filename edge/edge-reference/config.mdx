@@ -261,25 +261,25 @@ TERO_LOG_LEVEL=debug TERO_LISTEN_PORT=9090 ./edge config.json
 
 Every scalar field is overridable. The full set:
 
-| Variable                  | Overrides           | Type                          | Default        |
-| ------------------------- | ------------------- | ----------------------------- | -------------- |
-| `TERO_LISTEN_ADDRESS`     | `listen_address`    | IPv4 address                  | `127.0.0.1`    |
-| `TERO_LISTEN_PORT`        | `listen_port`       | port                          | `8080`         |
-| `TERO_UPSTREAM_URL`       | `upstream_url`      | string                        | `http://127.0.0.1:80` |
-| `TERO_LOGS_URL`           | `logs_url`          | string, optional              | unset          |
-| `TERO_METRICS_URL`        | `metrics_url`       | string, optional              | unset          |
-| `TERO_SERVICE_NAME`       | `service.name`      | string                        | `tero-edge`    |
-| `TERO_SERVICE_NAMESPACE`  | `service.namespace` | string                        | `tero`         |
-| `TERO_SERVICE_VERSION`    | `service.version`   | string                        | `latest`       |
-| `TERO_LOG_LEVEL`          | `log_level`         | `debug`/`info`/`warn`/`err`   | `info`         |
-| `TERO_MAX_BODY_SIZE`      | `max_body_size`     | bytes                         | `1048576`      |
-| `TERO_MAX_DECODED_BYTES`  | `max_decoded_bytes` | bytes, optional               | unset          |
-| `TERO_MAX_CONNECTIONS`    | `max_connections`   | count                         | `256`          |
-| `TERO_WORKER_COUNT`       | `worker_count`      | count, optional               | unset          |
-| `TERO_THREAD_POOL_COUNT`  | `thread_pool_count` | count, optional               | unset          |
-| `TERO_TAP_ENABLED`        | `tap_enabled`       | `true`/`false`/`1`/`0`        | `false`        |
-| `TERO_PROMETHEUS_MAX_INPUT_BYTES_PER_SCRAPE`  | `prometheus.max_input_bytes_per_scrape`  | bytes | `10485760` |
-| `TERO_PROMETHEUS_MAX_OUTPUT_BYTES_PER_SCRAPE` | `prometheus.max_output_bytes_per_scrape` | bytes | `10485760` |
+| Variable                                      | Overrides                                | Type                        | Default               |
+| --------------------------------------------- | ---------------------------------------- | --------------------------- | --------------------- |
+| `TERO_LISTEN_ADDRESS`                         | `listen_address`                         | IPv4 address                | `127.0.0.1`           |
+| `TERO_LISTEN_PORT`                            | `listen_port`                            | port                        | `8080`                |
+| `TERO_UPSTREAM_URL`                           | `upstream_url`                           | string                      | `http://127.0.0.1:80` |
+| `TERO_LOGS_URL`                               | `logs_url`                               | string, optional            | unset                 |
+| `TERO_METRICS_URL`                            | `metrics_url`                            | string, optional            | unset                 |
+| `TERO_SERVICE_NAME`                           | `service.name`                           | string                      | `tero-edge`           |
+| `TERO_SERVICE_NAMESPACE`                      | `service.namespace`                      | string                      | `tero`                |
+| `TERO_SERVICE_VERSION`                        | `service.version`                        | string                      | `latest`              |
+| `TERO_LOG_LEVEL`                              | `log_level`                              | `debug`/`info`/`warn`/`err` | `info`                |
+| `TERO_MAX_BODY_SIZE`                          | `max_body_size`                          | bytes                       | `1048576`             |
+| `TERO_MAX_DECODED_BYTES`                      | `max_decoded_bytes`                      | bytes, optional             | unset                 |
+| `TERO_MAX_CONNECTIONS`                        | `max_connections`                        | count                       | `256`                 |
+| `TERO_WORKER_COUNT`                           | `worker_count`                           | count, optional             | unset                 |
+| `TERO_THREAD_POOL_COUNT`                      | `thread_pool_count`                      | count, optional             | unset                 |
+| `TERO_TAP_ENABLED`                            | `tap_enabled`                            | `true`/`false`/`1`/`0`      | `false`               |
+| `TERO_PROMETHEUS_MAX_INPUT_BYTES_PER_SCRAPE`  | `prometheus.max_input_bytes_per_scrape`  | bytes                       | `10485760`            |
+| `TERO_PROMETHEUS_MAX_OUTPUT_BYTES_PER_SCRAPE` | `prometheus.max_output_bytes_per_scrape` | bytes                       | `10485760`            |
 
 <Note>
   Defaults above are the built-in ones. Each distribution image bakes a
@@ -290,14 +290,16 @@ Every scalar field is overridable. The full set:
 
 Rules worth knowing:
 
-- **Optional fields accept an empty string to mean "unset".** `TERO_METRICS_URL=`
-  sets `metrics_url` back to null rather than to an empty URL.
+- **Optional fields accept an empty string to mean "unset".**
+  `TERO_METRICS_URL=` sets `metrics_url` back to null rather than to an empty
+  URL.
 - **An unparseable value fails startup.** `TERO_LOG_LEVEL=bogus` or a
-  non-numeric `TERO_LISTEN_PORT` exits with `config.load.error err="InvalidValue"`
-  instead of silently falling back to the default.
+  non-numeric `TERO_LISTEN_PORT` exits with
+  `config.load.error err="InvalidValue"` instead of silently falling back to the
+  default.
 - **Lists are not overridable.** `policy_providers`,
-  `service.resource_attributes`, and `service.labels` are arrays, so they have no
-  env var — supply a config file, or use
+  `service.resource_attributes`, and `service.labels` are arrays, so they have
+  no env var — supply a config file, or use
   [value substitution](#value-substitution) for the strings inside it. Setting a
   `TERO_` variable that matches no field is silently ignored, so a typo fails
   quietly.
@@ -309,10 +311,10 @@ Rules worth knowing:
 
 These are read directly rather than as config-field overrides:
 
-| Variable           | Purpose                                                                 |
-| ------------------ | ----------------------------------------------------------------------- |
-| `TERO_IO_BACKEND`  | I/O backend: `inherited` (default) or `single_threaded`. Unknown values warn and fall back to `inherited`. |
-| `TERO_API_KEY`     | Referenced as `${TERO_API_KEY}` by the bundled configs for policy sync.  |
+| Variable          | Purpose                                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| `TERO_IO_BACKEND` | I/O backend: `inherited` (default) or `single_threaded`. Unknown values warn and fall back to `inherited`. |
+| `TERO_API_KEY`    | Referenced as `${TERO_API_KEY}` by the bundled configs for policy sync.                                    |
 
 ## Next Steps
 
