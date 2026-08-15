@@ -12,9 +12,36 @@ Connect Datadog by creating read-only credentials and sharing them with Tero. Th
 Tero needs two Datadog credentials:
 
 - An API key named `Tero`
-- An application key owned by a service account with Datadog's `Read-Only` role
+- An application key owned by a service account with the [permissions below](#permissions)
 
 Use the Datadog UI or `pup` CLI to create both credentials.
+
+## Permissions
+
+Every permission Tero asks for is read-only. Tero reads log data out of your indexes and pulls summary statistics for metrics.
+
+Log analysis needs four:
+
+| Permission | What Tero does with it |
+| --- | --- |
+| `logs_read_data` | Reads indexed log data |
+| `logs_read_config` | Reads index, pipeline, and archive configuration |
+| `logs_read_index_data` | Reads data in restricted indexes |
+| `metrics_read` | Reads metric names, tags, and summary statistics |
+
+If your account includes metrics analysis, add five more:
+
+| Permission | What Tero does with it |
+| --- | --- |
+| `timeseries_query` | Queries metric time series |
+| `dashboards_read` | Finds which dashboards use a metric |
+| `monitors_read` | Finds which monitors alert on a metric |
+| `slos_read` | Finds which SLOs depend on a metric |
+| `events_read` | Reads event data |
+
+Datadog's `Read-Only` role covers all nine. Grant it, or build a custom role with only the permissions you need.
+
+Nothing here lets Tero change your Datadog configuration. If you later want Tero to [enforce policies in Datadog](/policies/enforcement/provider), that takes write access you grant separately.
 
 ## Create credentials
 
@@ -26,7 +53,7 @@ Use the Datadog UI or `pup` CLI to create both credentials.
       </Step>
 
       <Step title="Create a service account">
-        Go to <strong>Organization Settings &gt; Service Accounts</strong>. Create a service account named <code>Tero</code> and assign it the <code>Read-Only</code> role.
+        Go to <strong>Organization Settings &gt; Service Accounts</strong>. Create a service account named <code>Tero</code> and assign it the <code>Read-Only</code> role, or a custom role holding the [permissions above](#permissions).
       </Step>
 
       <Step title="Create an application key">
@@ -58,7 +85,7 @@ Use the Datadog UI or `pup` CLI to create both credentials.
       </Step>
 
       <Step title="Create the service account request">
-        Create `tero-service-account.json` with the role ID for Datadog's `Read-Only` role.
+        Create `tero-service-account.json` with the role ID for Datadog's `Read-Only` role, or for a custom role holding the [permissions above](#permissions). The `pup users roles` output lists role IDs.
 
         ```json
         {
