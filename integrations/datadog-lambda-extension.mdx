@@ -39,12 +39,35 @@ flowchart LR
     style Datadog fill:#632ca6,stroke:#632ca6,color:#fff
 ```
 
-We maintain this fork to release within two weeks of upstream Datadog releases.
-
 <Note>
   The extension does not support FIPS compliance. Reach out to [Tero
   Support](mailto:support@usetero.com) if this is required for your environment.
 </Note>
+
+### Versioning
+
+Releases track Datadog's upstream releases. Upstream publishes `v<N>` tags, so a
+Tero release named for upstream v119 contains upstream v119. A new Tero release
+follows each upstream release.
+
+An AWS layer version is a single integer, and AWS only ever appends to it — you
+cannot ask for version 119. So the upstream version goes in the layer **name**,
+and the layer **version** integer is the patch number:
+
+| Release | Layer name                   | Layer version |
+| ------- | ---------------------------- | ------------- |
+| v119    | `Tero-Datadog-Extension-119` | 1             |
+| v119.2  | `Tero-Datadog-Extension-119` | 2             |
+| v120    | `Tero-Datadog-Extension-120` | 1             |
+
+This keeps the upstream number exact in every region without publishing filler
+versions to advance a counter, and it gives patches somewhere to live. A region
+we add later starts at patch 1, so patch numbers can differ per region. The
+upstream number never does.
+
+The older `Tero-Datadog-Extension` and `Tero-Datadog-Extension-ARM` layers, at
+versions 1 through 4, still exist and still work. Move to a versioned name when
+you next update the layer.
 
 ## Prerequisites
 
@@ -62,16 +85,22 @@ We maintain this fork to release within two weeks of upstream Datadog releases.
 
     **ARM64:**
     ```
-    arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:<version>
+    arn:aws:lambda:<region>:242046726909:layer:Tero-Datadog-Extension-<dd-version>-ARM:<patch>
     ```
 
     **AMD64:**
     ```
-    arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension:<version>
+    arn:aws:lambda:<region>:242046726909:layer:Tero-Datadog-Extension-<dd-version>:<patch>
     ```
 
+    Three parts change. The account ID `242046726909` does not.
+
+    - `<region>` must match your function's region. We publish to `us-east-1`, `us-east-2`, `us-west-1`, `us-west-2`, `eu-west-1`, `eu-west-2`, `eu-west-3`, `eu-central-1`, and `eu-north-1`.
+    - `<dd-version>` is the Datadog extension version the layer is built from. Pick the name matching the version you want: `Tero-Datadog-Extension-119` contains Datadog v119.
+    - `<patch>` is Tero's patch number for that Datadog version. Use the highest one published for it in your region.
+
     <Note>
-    Replace `<version>` with the latest version number. Check the [releases](https://github.com/usetero/datadog-lambda-extension/releases) for current versions.
+    The [releases](https://github.com/usetero/datadog-lambda-extension/releases) list both numbers. A `v119.2` release is Datadog v119, patch 2. See [Versioning](#versioning) for why the version lives in the name.
     </Note>
 
   </Step>
@@ -153,7 +182,7 @@ DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.jso
       architectures = ["arm64"]
 
       layers = [
-        "arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1"
+        "arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-<dd-version>-ARM:<patch>"
       ]
 
       environment {
@@ -187,7 +216,7 @@ DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.jso
         Architectures:
           - arm64
         Layers:
-          - arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1
+          - arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-<dd-version>-ARM:<patch>
         Environment:
           Variables:
             DD_API_KEY: !Ref DatadogApiKey
@@ -204,7 +233,7 @@ DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.jso
         runtime: python3.12
         architecture: arm64
         layers:
-          - arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1
+          - arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-<dd-version>-ARM:<patch>
         environment:
           DD_API_KEY: ${ssm:/datadog/api-key}
           DD_EXTENSION_ENABLED: "true"
@@ -216,7 +245,7 @@ DD_POLICY_PROVIDERS='[{"id":"local","type":"file","path":"/var/task/policies.jso
     ```bash
     aws lambda update-function-configuration \
       --function-name my-function \
-      --layers "arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-ARM:1" \
+      --layers "arn:aws:lambda:us-east-1:242046726909:layer:Tero-Datadog-Extension-<dd-version>-ARM:<patch>" \
       --environment "Variables={DD_API_KEY=your-api-key,DD_EXTENSION_ENABLED=true,DD_POLICY_ENABLED=true,DD_POLICY_PROVIDERS='[{\"id\":\"tero\",\"type\":\"http\",\"url\":\"https://sync.usetero.com/v1/policy/sync\",\"headers\":[{\"name\":\"Authorization\",\"value\":\"Bearer your-tero-key\"}]}]'}"
     ```
   </Tab>
@@ -241,8 +270,16 @@ See [Policy Reference](/edge/policy-reference/log-filter) for filtering options.
 
 **Extension not loading**
 
-Verify the layer ARN matches your Lambda architecture (ARM64 vs x86_64). Check
-CloudWatch logs for extension startup errors.
+Verify the layer ARN matches your Lambda architecture (ARM64 vs x86_64) and your
+function's region. Check CloudWatch logs for extension startup errors.
+
+**Layer ARN does not resolve**
+
+The layer name carries the Datadog version, so `Tero-Datadog-Extension-118` and
+`Tero-Datadog-Extension-119` are different layers. Confirm the version in the
+name is one we publish, and that the patch number exists in that region. Patch
+numbers can differ per region: a region we added later starts at patch 1, so a
+patch that resolves in `us-east-1` may not resolve in `eu-north-1` yet.
 
 **Policies not applying**
 
