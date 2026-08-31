@@ -1,0 +1,56 @@
+---
+title: "Workforce Device and Endpoint Security Standard"
+sidebarTitle: "Device & Endpoint Standard"
+description: "BYOD and endpoint protection baseline for workforce access to company systems."
+icon: "laptop-shield"
+iconType: "duotone"
+---
+
+import { securityEmail } from '/snippets/variables.mdx';
+
+<Badge>Last reviewed: March 5, 2026</Badge>
+<Badge>Owner: Security + Engineering</Badge>
+<Badge>Review cadence: Quarterly</Badge>
+<Badge color="green">Status: Implemented</Badge>
+
+This standard defines minimum controls for workforce devices that access company systems, including personal-device (BYOD) and endpoint protection requirements.
+
+## What this standard answers
+
+- Whether BYOD is allowed and under what constraints
+- Required endpoint security controls for company access
+- How anti-malware and endpoint updates are managed
+
+## Device security baseline
+
+| Control area | Requirement |
+|--------------|-------------|
+| Device encryption | Full-disk encryption required |
+| Authentication | Strong device unlock controls and MFA for company account access |
+| Patching | Supported OS and security updates enabled |
+| Endpoint protection | Centrally managed endpoint protection required for managed endpoints |
+| Access restriction | Non-compliant endpoints can be restricted from privileged access paths |
+
+## BYOD baseline
+
+| Area | Requirement |
+|------|-------------|
+| BYOD eligibility | Allowed for approved use cases under security baseline controls |
+| Required controls | Encryption, screen lock, patched OS, approved account security controls |
+| Sensitive access | Production and privileged access paths remain restricted and least-privilege scoped |
+
+## Anti-malware management
+
+| Area | Baseline |
+|------|----------|
+| Engine/definitions | Vendor-managed automatic updates |
+| Update frequency | Continuous/automatic based on provider update channels |
+| Administration | Centrally managed policy baseline and monitoring for managed endpoints |
+
+## Evidence and enforcement
+
+- Access follows identity and role-based least privilege.
+- Security exceptions require explicit approval and time-bound remediation.
+- Additional policy evidence can be shared under NDA for enterprise review.
+
+Questions: [{securityEmail}](mailto:{securityEmail})
