@@ -10,7 +10,7 @@
     "screenshots:dry": "node scripts/screenshot-suggestions.mjs --dry-run"
   },
   "devDependencies": {
-    "mintlify": "^4.2.651",
+    "mintlify": "^4.3.76",
     "playwright": "^1.61.1"
   },
   "pnpm": {
